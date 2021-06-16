@@ -20,8 +20,8 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
     "File count: #{details["contents"].count}" if details["contents"]
   end
 
-  def enrichment_taskss
-    ['enrichment/aws_s3_bucket']
+  def enrichment_tasks
+    ['enrich/aws_s3_bucket']
   end
 
   def scoped?(conditions={})

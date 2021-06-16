@@ -23,7 +23,6 @@ module Intrigue
         ## Default method, subclasses must override this
         def run
           bucket_name = _get_entity_detail 'name'
-
           return unless check_if_bucket_exists(bucket_name)
 
           s3_client = initialize_s3_client bucket_name

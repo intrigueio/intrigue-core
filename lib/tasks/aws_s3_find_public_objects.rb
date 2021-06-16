@@ -1,12 +1,12 @@
 module Intrigue
   module Task
-      class AwsS3Bucket < Intrigue::Task::BaseTask
+      class AwsS3BucketFindPublicObjects < BaseTask
         def self.metadata
           {
             name: 'tasks/aws_s3_find_public_objects',
             pretty_name: 'AWS S3 Find Readable Objects',
             authors: ['maxim'],
-            description: 'Searches the S3 bucket for any public objects.',
+            description: 'Searches the S3 bucket for any public objects!!!!.',
             references: [],
             type: 'enrichment',
             passive: true,
@@ -14,7 +14,9 @@ module Intrigue
             example_entities: [
               { 'type' => 'AwsS3Bucket', 'details' => { 'name' => 'bucket-name' } }
             ],
-            allowed_options: [],
+            allowed_options: [
+              { :name => 'bruteforce_found_objects', :regex => 'boolean', :default => true }
+            ],
             created_types: []
           }
         end
@@ -22,15 +24,13 @@ module Intrigue
         ## Default method, subclasses must override this
         def run
           #require_enrichment if _get_entity_detail('region').nil?
-
           bucket_name = _get_entity_detail 'name'
           s3_client = initialize_s3_client bucket_name
-          # s3_client = initialize_s3_client bucket_name
-
+ 
           bucket_objects = retrieve_public_objects s3_client, bucket_name
           return if bucket_objects.nil?
 
-          _log_good "Found #{bucket_objects.size} object(s); attempting to filter out the public objects."
+          _log_good "Found #{bucket_objects.size} listable object(s)."
 
           _create_linked_issue 'aws_s3_bucket_readable', {
             proof: "#{bucket_name} lists the names of objects to any authenticated AWS user and/or everyone.",
@@ -42,26 +42,18 @@ module Intrigue
             }
           }
 
-          public_objects = filter_public_objects(s3_client, bucket_name, bucket_objects)
-          return if public_objects.nil?
+          require 'pry'; binding.pry
 
-          _create_linked_issue 'aws_s3_bucket_data_leak', {
-            proof: "#{bucket_name} contains objects which are readable by any authenticated AWS user and/or everyone.",
-            uri: "https://#{bucket_name}.s3.amazonaws.com",
-            status: 'confirmed',
-            details: {
-              readable_objects: public_objects
-            }
-          }
+          return unless _get_option('bruteforce_found_objects')
 
-          # start_task to bruteforce if public objects are found
-
+          start_task('task', @entity.project, nil, 'tasks/aws_s3_bruteforce_objects', @entity, 1, [{ 'name' => 'objects_list', 'value' => bucket_objects.join(',') }]) 
         end
 
         def initialize_s3_client(bucket)
           return unless _get_task_config('aws_access_key_id') && _get_task_config('aws_secret_access_key')
 
-          region = _get_entity_detail 'region'
+          region = _get_entity_detail 'region' 
+          region = 'us-west-2' ### DEBUG
           aws_access_key = _get_task_config('aws_access_key_id')
           aws_secret_key = _get_task_config('aws_secret_access_key')
 
