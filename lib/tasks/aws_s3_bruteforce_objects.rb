@@ -23,9 +23,9 @@ module Intrigue
 
       ## Default method, subclasses must override this
       def run
-        #require_enrichment if _get_entity_detail('region').nil?
+        super
+        require_enrichment if _get_entity_detail('region').nil?
 
-        http_get_body('http://requestbin.net/r/1q27cg5e')
         objects_list = parse_objects
         return if objects_list.empty?
 
@@ -57,7 +57,6 @@ module Intrigue
         return unless _get_task_config('aws_access_key_id') && _get_task_config('aws_secret_access_key')
 
         region = _get_entity_detail 'region'
-        region = 'us-west-2' # DEBUG
         aws_access_key = _get_task_config('aws_access_key_id')
         aws_secret_key = _get_task_config('aws_secret_access_key')
 

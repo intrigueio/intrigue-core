@@ -21,9 +21,13 @@ module Intrigue
           }
         end
 
+        ### HANDLE IF OBJECT IS FOLDER
+
         ## Default method, subclasses must override this
         def run
-          #require_enrichment if _get_entity_detail('region').nil?
+          super
+          require_enrichment if _get_entity_detail('region').nil?
+
           bucket_name = _get_entity_detail 'name'
           s3_client = initialize_s3_client bucket_name
  
@@ -42,8 +46,6 @@ module Intrigue
             }
           }
 
-          require 'pry'; binding.pry
-
           return unless _get_option('bruteforce_found_objects')
 
           start_task('task', @entity.project, nil, 'tasks/aws_s3_bruteforce_objects', @entity, 1, [{ 'name' => 'objects_list', 'value' => bucket_objects.join(',') }]) 
@@ -53,7 +55,6 @@ module Intrigue
           return unless _get_task_config('aws_access_key_id') && _get_task_config('aws_secret_access_key')
 
           region = _get_entity_detail 'region' 
-          region = 'us-west-2' ### DEBUG
           aws_access_key = _get_task_config('aws_access_key_id')
           aws_secret_key = _get_task_config('aws_secret_access_key')
 
