@@ -6,6 +6,7 @@ class BaseTask
   sidekiq_options queue: "task", backtrace: true
 
   # include default helpers
+  include Intrigue::Task::Aws
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge
@@ -19,7 +20,6 @@ class BaseTask
   include Intrigue::Task::Regex
   include Intrigue::Task::Serp
   include Intrigue::Task::Services
-  #include Intrigue::Task::S3Bucket
   include Intrigue::Task::Socket
   include Intrigue::Task::VulnCheck
   include Intrigue::Task::VulnDb

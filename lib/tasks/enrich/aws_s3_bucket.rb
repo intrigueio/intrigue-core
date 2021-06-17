@@ -2,6 +2,7 @@ module Intrigue
   module Task
     module Enrich
       class AwsS3Bucket < Intrigue::Task::BaseTask
+        
         def self.metadata
           {
             name: 'enrich/aws_s3_bucket',
@@ -25,7 +26,7 @@ module Intrigue
           bucket_name = _get_entity_detail 'name'
           return unless check_if_bucket_exists(bucket_name)
 
-          s3_client = initialize_s3_client bucket_name
+          s3_client = initialize_s3_client
           bucket_belongs_to_api_key?(s3_client, bucket_name) if s3_client
         end
 
