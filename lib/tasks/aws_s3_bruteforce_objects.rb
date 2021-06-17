@@ -16,7 +16,8 @@ module Intrigue
           ],
           allowed_options: [
             { name: 'objects_list', regex: 'alpha_numeric_list', default: [] },
-            { name: 'use_authentication', regex: 'boolean', default: false }
+            { name: 'use_authentication', regex: 'boolean', default: false },
+            { name: 'alternate_aws_api_key', regex: 'alpha_numeric_list', default: [] }
           ],
           created_types: []
         }
@@ -61,28 +62,17 @@ module Intrigue
       def filter_public_objects(s3_client, bucket, objs)
         public_objs = []
 
-        ### COMBINE THESE METHODS INTO 2
-        if s3_client && _get_entity_detail('belongs_to_api_key').nil?
-          _log 'Running belongs authenticated method'
-          objs = objs.dup
-          workers = (0...20).map do
+        workers = (0...20).map do
+          if s3_client && _get_entity_detail('belongs_to_api_key').nil?
             check = determine_public_object_via_api(s3_client, bucket, objs, public_objs)
-            [check]
-          end
-          workers.flatten.map(&:join)
-        end
-
-        if s3_client.nil? || public_objs.empty?
-          _log 'Running third method'
-          objs = objs.dup
-          workers = (0...20).map do
+          else
             check = determine_public_object_via_http(bucket, objs, public_objs)
-            [check]
           end
-          workers.flatten.map(&:join)
+          [check]
         end
+        workers.flatten.map(&:join)
 
-        _log "Found #{public_objs.size} public object(s) that are readable."
+        _log_good "Found #{public_objs.size} public object(s) that are readable."
         _log public_objs # DEBUG
         public_objs
       end
@@ -94,11 +84,8 @@ module Intrigue
             while key = input_q.shift
               begin
                 client.get_object({ bucket: bucket, key: key })
-              rescue Aws::S3::Errors::AccessDenied
+              rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::NoSuchKey
                 next
-              rescue Aws::S3::Errors::NoSuchKey
-                next
-                # access can be denied due to various reasons including if object is encrypted using KMS and we don't have access to the key, object ACL's, etc.
               end
               output_q << key
             end

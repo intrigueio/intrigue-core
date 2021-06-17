@@ -16,19 +16,18 @@ module Intrigue
           ],
           allowed_options: [
             { name: 'bruteforce_found_objects', regex: 'boolean', default: true },
-            { name: 'use_authentication', regex: 'boolean', default: false }
+            { name: 'use_authentication', regex: 'boolean', default: false },
+            { name: 'alternate_aws_api_key', regex: 'alpha_numeric_list', default: [] }
           ],
           created_types: []
         }
       end
 
-      ### HANDLE IF OBJECT IS FOLDER
 
       ## Default method, subclasses must override this
       def run
         super
         require_enrichment if _get_entity_detail('region').nil?
-    #    _set_entity_detail('region', 'us-west-2') #### DEBUG
 
         bucket_name = _get_entity_detail 'name'
         s3_client = initialize_s3_client(bucket_name) if use_authentication?
@@ -36,7 +35,6 @@ module Intrigue
         bucket_objects = retrieve_listable_objects s3_client, bucket_name
         return if bucket_objects.nil?
 
-        bucket_objects.reject! { |b| b =~ /.+\/$/ } # remove folder names
         _log_good "Found #{bucket_objects.size} listable object(s)."
         create_issue(bucket_name, bucket_objects)
 
@@ -48,7 +46,7 @@ module Intrigue
 
       def use_authentication?
         auth = _get_option('use_authentication')
-        if _get_entity_detail('belongs_to_api_key')
+        if auth && _get_entity_detail('belongs_to_api_key')
           _log 'Cannot use authentication if bucket belongs to API key as false positives will occur.'
           auth = false
         end
@@ -81,7 +79,7 @@ module Intrigue
 
       # Calls different methods based on the API Key provided to retrieve an object's listable objects
       #
-      # Tries three different techniques depending on the API Key provided:
+      # Tries two different techniques depending on the API Key provided:
       # - Bucket not owned by API Key => Use the AWS 'authenticated' API call to attempt to list object
       # - API Key invalid or no listable objects found via API call => Use HTTP as last resort
       def retrieve_listable_objects(client, bucket)
@@ -89,6 +87,7 @@ module Intrigue
         bucket_objs = retrieve_objects_via_api(client, bucket) if client
         # if the api route fails (mostly due to lack permissions/or no public objects; we'll quickly try the unauth http route)
         bucket_objs = retrieve_objects_via_http(bucket) if client.nil? || bucket_objs.nil?
+        bucket_objs&.reject! { |b| b =~ /.+\/$/ } # remove folder names if bucket_objs is not nil
         bucket_objs
       end
 
@@ -129,6 +128,7 @@ module Intrigue
           }
         }
       end
+
     end
   end
 end
