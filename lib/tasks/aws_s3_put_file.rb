@@ -8,7 +8,7 @@ module Intrigue
           name: 'aws_s3_put_file',
           pretty_name: 'AWS S3 Put File',
           authors: ['jcran', 'maxim'],
-          description: 'This task puts a file into a specified S3 bucket.',
+          description: 'This task verifies whether an S3 Bucket is publicly writeable.<br><br><b>Please note:</b> If the bucket belongs to the provided AWS Keys, the task will be stopped. This task is meant to test whether the bucket is writeable by other "authenticated" AWS users.',
           references: [],
           type: 'discovery',
           passive: true,
@@ -25,58 +25,58 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        bucket_url = _get_entity_name
-        bucket_name = bucket_url.split('//').last.split('.').first
-        _log "Working on bucket: #{bucket_name}"
+        region = bucket_enriched?
+        return if region.nil?
 
-        _log 'Trying public file write'
-        positive_result = _write_test_file(bucket_name) # try public first
+        bucket_name = _get_entity_name
 
-        unless positive_result # try non-public file if we can't write a public
-          _log 'Trying private file write'
-          _write_test_file(bucket_name, false)
-        end
+        s3_client = get_s3_client(bucket_name, region)
+        return unless s3_client
+
+        write_to_bucket(s3_client, bucket_name)
       end
 
-      def _write_test_file(bucket_name, public = true)
-        access_key_id = _get_task_config 'aws_access_key_id'
-        secret_access_key = _get_task_config 'aws_secret_access_key'
+      def get_s3_client(bucket_name, region)
+        aws_access_key = _get_task_config('aws_access_key_id')
+        aws_secret_key = _get_task_config('aws_secret_access_key')
 
-        connection = Fog::Storage.new({
-                                        provider: 'AWS',
-                                        aws_access_key_id: access_key_id,
-                                        aws_secret_access_key: secret_access_key
-                                      })
+        s3_client = initialize_s3_client(aws_access_key, aws_secret_key, region)
+        s3_client = aws_key_valid?(s3_client, bucket_name) if s3_client
 
+        _log_error 'AWS Keys are invalid; cannot proceed with task' unless s3_client
+
+        if _get_entity_detail('belongs_to_api_key')
+          _log 'Bucket belongs to API Key; skipping task as key may have permission to write to bucket.'
+          return
+        end
+
+        s3_client
+      end
+
+      def bucket_enriched?
+        require_enrichment if _get_entity_detail('region').nil?
+        region = _get_entity_detail('region')
+        _log_error 'Bucket does not have a region meaning it does not exist; exiting task.' if region.nil?
+        region
+      end
+
+      def write_to_bucket(client, name)
+        filename = SecureRandom.uuid
         begin
-          dir = connection.directories.new(key: bucket_name) # no request mad
-
-          random_number = rand(100_000_000).to_s
-          file_name = "intrigue-test-#{random_number}.html"
-          file_contents = "<html><title>testing!</title><body><h1>intrigue test: #{random_number}</h1></body></html>"
-
-          file = dir.files.create(
-            key: file_name,
-            body: file_contents,
-            public: public
-          )
-
-          url = "#{_get_entity_name}/#{file_name}"
-
-          _log_good "Successful write to #{public ? 'public' : 'private'} file: #{url}"
-
-          if public
-            _create_linked_issue 'aws_s3_bucket_writable', { proof: url, uri: url, public: false }
-          else
-            _create_linked_issue 'aws_s3_bucket_writable', { proof: url, uri: url, public: true }
-          end
-        rescue Excon::Error::Forbidden => e
-          _log_error "Permission denied writing #{public ? 'public' : 'private'} file."
-          return false
+          client.put_object({ bucket: name, key: "#{filename}.txt" })
+        rescue Aws::S3::Errors
+          _log_error 'Permission denied; unable to upload file.'
+          return
         end
-
-        true
+        # no error? file uploaded successfully
+        # maybe worth doing an additional check?
+        _log_good 'Bucket is writable.'
+        _create_linked_issue 'aws_s3_bucket_writable', {
+          'proof' => "#{name}.s3.amazonaws.com/#{filename}.txt",
+          'uri' => "#{name}.s3.amazonaws.com"
+        }
       end
+
     end
   end
 end

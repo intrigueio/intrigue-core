@@ -29,7 +29,7 @@ module Intrigue
           # set default entity details because if there are no keys stored in task.config the enrichment task will abruptly end
           # even if there are no keys; we can still use unauthenticated techniques (in other tasks) to retrieve information about the bucket
           _set_entity_detail 'aws_keys_valid', false
-          _set_entity_detail 'bucket_belongs_to_key', false
+          _set_entity_detail 'belongs_to_api_key', false
 
           aws_access_key = _get_task_config('aws_access_key_id')
           aws_secret_key = _get_task_config('aws_secret_access_key')
@@ -45,6 +45,7 @@ module Intrigue
         def bucket_exists?(bucket_name)
           exists = true
           region = http_request(:get, "https://#{bucket_name}.s3.amazonaws.com").headers['x-amz-bucket-region']
+          
           if region.nil?
             @entity.hidden = true # bucket is invalid; hide the entity
             _log_error 'Unable to determine region of bucket. Bucket most likely does not exist.'
@@ -54,6 +55,7 @@ module Intrigue
             _set_entity_detail 'region', region
             _set_entity_detail 'bucket_name', bucket_name if _get_entity_detail('bucket_name').nil?
           end
+
           exists
         end
 

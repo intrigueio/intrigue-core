@@ -6,7 +6,7 @@ module Intrigue
           name: 'tasks/aws_s3_find_listable_objects',
           pretty_name: 'AWS S3 Find Listable Objects',
           authors: ['maxim'],
-          description: 'Searches the AWS S3 Bucket for any listable objects. If valid AWS Keys are provided, the task will use authenticated techniques to determine if the bucket is listable by any authenticated AWS user. <br><br><b>Please note:</b> if the provided AWS Keys are owned by the bucket, the task will default to using non-authenticated techniques as false positives will occur.<br><br>Task Options:<br><ul><li>bruteforce_found_objects - (default value: true) - Bruteforce the listable objects to confirm their contents are readable.</li><li>use_authentication - (default value: false) - Use authenticated techniques to attempt to list the bucket\'s objects.</ul>',
+          description: 'Searches the AWS S3 Bucket for any listable objects. If valid AWS Keys are provided, the task will use authenticated techniques to determine if the bucket is listable by any authenticated AWS user. <br><br><b>Please note:</b> if the bucket belongs to the provided AWS Keys, the task will default to using non-authenticated techniques as false positives will occur.<br><br>Task Options:<br><ul><li>bruteforce_found_objects - (default value: true) - Bruteforce the listable objects to confirm their contents are readable.</li><li>use_authentication - (default value: false) - Use authenticated techniques to attempt to list the bucket\'s objects.</ul>',
           references: [
             'https://www.cloudconformity.com/knowledge-base/aws/S3/bucket-public-access-block.html',
             'https://www.cloudconformity.com/knowledge-base/aws/S3/account-public-access-block.html'
