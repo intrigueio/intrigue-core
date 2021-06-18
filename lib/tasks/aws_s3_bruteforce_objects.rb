@@ -32,7 +32,7 @@ module Intrigue
         region = bucket_enriched?
         return if region.nil?
 
-        bucket_name = _get_entity_detail 'name'
+        bucket_name = _get_entity_detail 'bucket_name'
         objects_list = parse_objects
 
         keys = determine_aws_keys 

@@ -31,7 +31,7 @@ module Intrigue
         region = bucket_enriched?
         return if region.nil?
 
-        bucket_name = _get_entity_detail('name')
+        bucket_name = _get_entity_detail 'bucket_name'
 
         keys = determine_aws_keys 
         s3_client = initialize_s3_client(keys['access'], keys['secret'], region) if keys # if keys exist; initalize the s3 client

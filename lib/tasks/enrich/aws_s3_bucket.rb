@@ -23,7 +23,7 @@ module Intrigue
 
         ## Default method, subclasses must override this
         def run
-          bucket_name = _get_entity_detail 'name'
+          bucket_name = _get_entity_detail('name') || _get_entity_detail('bucket_name')
           return unless bucket_exists?(bucket_name)
 
           # set default entity details because if there are no keys stored in task.config the enrichment task will abruptly end
@@ -52,6 +52,7 @@ module Intrigue
           else
             _log "Bucket lives in the #{region} region."
             _set_entity_detail 'region', region
+            _set_entity_detail 'bucket_name', bucket_name if _get_entity_detail('bucket_name').nil?
           end
           exists
         end
