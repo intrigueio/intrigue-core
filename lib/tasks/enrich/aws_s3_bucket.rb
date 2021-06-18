@@ -23,6 +23,7 @@ module Intrigue
 
         ## Default method, subclasses must override this
         def run
+          # TODO bug fix: when entity is created from task; name detail is not stored
           bucket_name = _get_entity_detail('name') || _get_entity_detail('bucket_name')
           return unless bucket_exists?(bucket_name)
 
@@ -31,12 +32,9 @@ module Intrigue
           _set_entity_detail 'aws_keys_valid', false
           _set_entity_detail 'belongs_to_api_key', false
 
-          aws_access_key = _get_task_config('aws_access_key_id')
-          aws_secret_key = _get_task_config('aws_secret_access_key')
           region = _get_entity_detail('region')
 
-          s3_client = initialize_s3_client(aws_access_key, aws_secret_key, region)
-          s3_client = s3_aws_key_valid?(s3_client, bucket_name)
+          s3_client = initialize_s3_client(region, bucket_name)
 
           bucket_belongs_to_api_key?(s3_client, bucket_name) if s3_client
         end
@@ -45,7 +43,7 @@ module Intrigue
         def bucket_exists?(bucket_name)
           exists = true
           region = http_request(:get, "https://#{bucket_name}.s3.amazonaws.com").headers['x-amz-bucket-region']
-          
+
           if region.nil?
             @entity.hidden = true # bucket is invalid; hide the entity
             _log_error 'Unable to determine region of bucket. Bucket most likely does not exist.'

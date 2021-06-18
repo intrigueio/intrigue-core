@@ -19,8 +19,7 @@ module Intrigue
           ],
           allowed_options: [
             { name: 'objects_list', regex: 'alpha_numeric_list', default: [] },
-            { name: 'use_authentication', regex: 'boolean', default: false },
-            { name: 'alternate_aws_api_key', regex: 'alpha_numeric_list', default: [] }
+            { name: 'use_authentication', regex: 'boolean', default: true },
           ],
           created_types: []
         }
@@ -29,15 +28,13 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        region = bucket_enriched? # check if bucket is enriched and if so a region will be returned if bucket exists
+        region = s3_bucket_enriched? # check if bucket is enriched and if so a region will be returned if bucket exists
         return if region.nil?
 
         bucket_name = _get_entity_detail 'bucket_name'
         objects_list = parse_objects
 
-        keys = determine_aws_keys 
-        s3_client = initialize_s3_client(keys['access'], keys['secret'], region) if keys # if keys exist; initalize the s3 client
-        s3_client = s3_aws_key_valid?(s3_client, bucket_name) if s3_client # if client initialized, validate keys exist
+        s3_client = initialize_s3_client(region, bucket_name)
 
         readable_objects = filter_readable_objects(s3_client, bucket_name, objects_list)
         return if readable_objects.empty?
@@ -45,51 +42,13 @@ module Intrigue
         create_issue(bucket_name, readable_objects)
       end
 
-      # talk to Shpend about this
-      def determine_aws_keys
-        keys = nil
-        if _get_option('use_authentication')
-          if _get_option('alternate_aws_api_key')
-            # user provided alternative aws keys -> use them
-            keys = parse_alternative_keys(_get_option('alternate_aws_api_key'))
-          elsif _get_entity_detail('api_key_valid')
-            # keys which are stored in task config are valid -> use them
-            keys = { 'access' => _get_task_config('aws_access_key_id'), 'secret' => _get_task_config('aws_secret_access_key') }
-          end
-        end
-        keys
-      end
-
-      # confirm that the bucket is enriched so we are not dealing with a non-existent bucket
-      def bucket_enriched?
-        require_enrichment if _get_entity_detail('region').nil?
-        region = _get_entity_detail('region')
-        _log_error 'Bucket does not have a region meaning it does not exist; exiting task.' if region.nil?
-        region
-      end
-
-=begin
-      def parse_alternative_keys(key_string)
-        regex = /(?<![A-Z0-9])[A-Z0-9]{20}(?![A-Z0-9]):(?<![A-Za-z0-9\/+=])[A-Za-z0-9\/+=]{40}(?![A-Za-z0-9\/+=])/
-        unless key_string.match?(regex)
-          _log_error 'Ignoring alternative AWS Key as its not in the correct format; should be accesskey:secretkey'
-          return
-        end
-
-        key_string = key_string.split(':')
-        access_key = key_string[0]
-        secret_key = key_string[1]
-
-        { 'access' => access_key, 'secret' => secret_key }
-      end
-=end
-
-      # checks to see if use_authentication option has been set to true 
+      # checks to see if use_authentication option has been set to true
       # if the bucket owns the key, we return false as false positives will occur
       def use_authentication?
         auth = _get_option('use_authentication')
         if auth && _get_entity_detail('belongs_to_api_key')
           _log 'Cannot use authentication if bucket belongs to API key as false positives will occur.'
+          _log 'Defaulting to using unauthenticated techniques.'
           auth = false
         end
         auth
@@ -104,9 +63,10 @@ module Intrigue
       # take in a list of objects and return the ones that are readable
       def filter_readable_objects(s3_client, bucket, objs)
         readable_objects = []
+        use_auth_method = use_authentication?
 
         workers = (0...20).map do
-          if s3_client && _get_entity_detail('belongs_to_api_key').nil?
+          if s3_client && use_auth_method
             # we have valid aws keys and bucket does not belong to api key -> use api calls to get objects
             check = determine_public_object_via_api(s3_client, bucket, objs, readable_objects)
           else
@@ -119,7 +79,6 @@ module Intrigue
         workers.flatten.map(&:join)
 
         _log_good "Found #{readable_objects.size} public object(s) that are readable."
-        _log readable_objects # DEBUG
         readable_objects
       end
 

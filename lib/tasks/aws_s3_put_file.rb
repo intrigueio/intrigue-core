@@ -9,7 +9,7 @@ module Intrigue
           pretty_name: 'AWS S3 Put File',
           authors: ['jcran', 'maxim'],
           description: 'This task verifies whether an S3 Bucket is publicly writeable.<br><br><b>Please note:</b> If the bucket belongs to the provided AWS Keys, the task will be stopped. This task is meant to test whether the bucket is writeable by other "authenticated" AWS users.',
-          references: [],
+          references: ['https://www.cloudconformity.com/knowledge-base/aws/S3/s3-bucket-authenticated-users-write-access.html'],
           type: 'discovery',
           passive: true,
           allowed_types: ['AwsS3Bucket'],
@@ -25,42 +25,21 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        region = bucket_enriched?
+        region = s3_bucket_enriched?
         return if region.nil?
 
         bucket_name = _get_entity_name
-        s3_client = get_s3_client(bucket_name, region)
+        s3_client = initialize_s3_client(region, bucket_name)
         return unless s3_client
+
+        if _get_entity_detail('belongs_to_api_key')
+          _log 'Bucket belongs to API Key; skipping task as key may have permission to write to bucket.'
+          return nil
+        end
 
         write_to_bucket(s3_client, bucket_name)
       end
 
-      # wrapper over helper method which confirms if keys are valid
-      # we do this because if keys are invalid; we are unable to write the object
-      def get_s3_client(bucket_name, region)
-        aws_access_key = _get_task_config('aws_access_key_id')
-        aws_secret_key = _get_task_config('aws_secret_access_key')
-
-        s3_client = initialize_s3_client(aws_access_key, aws_secret_key, region)
-        s3_client = s3_aws_key_valid?(s3_client, bucket_name) if s3_client
-
-        _log_error 'AWS Keys are invalid; cannot proceed with task' unless s3_client
-
-        if _get_entity_detail('belongs_to_api_key')
-          _log 'Bucket belongs to API Key; skipping task as key may have permission to write to bucket.'
-          return
-        end
-
-        s3_client
-      end
-
-      # confirm bucket is enriched -> so we are not working with an invalid bucket
-      def bucket_enriched?
-        require_enrichment if _get_entity_detail('region').nil?
-        region = _get_entity_detail('region')
-        _log_error 'Bucket does not have a region meaning it does not exist; exiting task.' if region.nil?
-        region
-      end
 
       # attempt to write a random file to the bucket
       def write_to_bucket(client, name)

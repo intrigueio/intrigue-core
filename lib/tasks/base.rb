@@ -6,7 +6,7 @@ class BaseTask
   sidekiq_options queue: "task", backtrace: true
 
   # include default helpers
-  include Intrigue::Task::Cloud
+  include Intrigue::Task::AwsHelper
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge

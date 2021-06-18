@@ -1,17 +1,29 @@
 module Intrigue
   module Task
-    module Cloud
-      # cloud helpers?
-
+    module AwsHelper # conflicts with official AWS module so this is named AWS Helper
+    
       # return an s3 client
-      def initialize_s3_client(aws_access_key, aws_secret_key, region)
+      def initialize_s3_client(region='us-east-1', bucket_name)
+        # use us-east-1 as default bucket unless one is specified
+        aws_access_key = _get_task_config('aws_access_key_id')
+        aws_secret_key = _get_task_config('aws_secret_access_key')
         client = Aws::S3::Client.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
+        client = _s3_aws_key_valid?(client, bucket_name)
         client
+      end
+
+      # checks if the bucket has been enriched and if so returns the region (as its required to initalize the s3 client)
+      # if bucket does not exist; we end the task abruptly as theres no point in working with a non-existent bucket
+      def s3_bucket_enriched?
+        require_enrichment if _get_entity_detail('region').nil?
+        region = _get_entity_detail('region')
+        _log_error 'Bucket does not have a region meaning it does not exist; exiting task.' if region.nil?
+        region
       end
 
       # return whether the s3 client is valid
       # in the future abstract this to work with different types of AWS clients
-      def s3_aws_key_valid?(client, bucket_name)
+      def _s3_aws_key_valid?(client, bucket_name)
         client.get_object({ bucket: bucket_name, key: "#{SecureRandom.uuid}.txt" })
       rescue Aws::S3::Errors::InvalidAccessKeyId, Aws::S3::Errors::SignatureDoesNotMatch
         _log 'AWS Access Keys are invalid; ignoring keys.'
@@ -30,7 +42,7 @@ module Intrigue
         # https://bucketname.s3-us-west-2.amazonaws.com/
         # bucketname.s3.amazonaws.com
         # bucketname.s3-region.amazonaws.com
-        virtual_style_regex = /(?:https:\/\/)?(.+)\.s3\.amazonaws.com/ 
+        virtual_style_regex = /(?:https:\/\/)?(.+)\.s3(?:-|.+)?\.amazonaws.com/ 
 
         ## Path Style -> being deprecated soon; adding in for legacy support
         # https://s3.amazonaws.com/bucketname

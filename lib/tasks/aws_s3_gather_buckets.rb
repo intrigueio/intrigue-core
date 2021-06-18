@@ -25,6 +25,7 @@ module Intrigue
         aws_access_key = _get_task_config('aws_access_key_id')
         aws_secret_key = _get_task_config('aws_secret_access_key')
 
+        # when querying account for buckets; region doesn't make a difference so we use us-east-1 by default
         s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key)
 
         begin
