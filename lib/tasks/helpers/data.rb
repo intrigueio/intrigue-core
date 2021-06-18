@@ -105,12 +105,13 @@ module Data
       "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "incapsula.com",
       "jiveon.com",
+      "kavasa.in",
       "lithium.com",
       "pantheon.io",
       "sucuri.net",
       "swagcache.com",
       "wpengine.com",
-      "yottaa.net"
+      "yottaa.net",
     ]
   end
 
