@@ -21,7 +21,7 @@ module Intrigue
 
       # extracts the bucket_name from a URL
       # there can be different types of naming schemes - virtual hosted & path_style
-      def parse_bucket_name_from_url(bucket_url)
+      def extract_bucket_name_from_url(bucket_url)
         # Virtual Hosted Style
         # https://bucketname.s3.amazonaws.com
         # https://bucketname.s3-us-west-2.amazonaws.com/
