@@ -52,15 +52,15 @@ module Ident
       next unless fp && fp["tags"]
       fp["tags"].each do |t|
         tags << fp["tags"]
-        if  t.match(/Admin Panel/i) || t.match(/Login Panel/i)
+        if  t.match(/^Admin Panel$/i) || t.match(/^Login Panel$/i)
           issues_to_create << ["exposed_admin_panel_unauthenticated", fp]
-        elsif t.match(/DatabaseService/i) || t.match(/Database/i)
+        elsif t.match(/^DatabaseService/i) || t.match(/^Database$/i)
           issues_to_create << ["exposed_database_service", fp]
-        elsif t.match(/DefaultPage/i)
+        elsif t.match(/^DefaultPage$/i)
           issues_to_create << ["default_web_server_page_exposed", fp]
-        elsif t.match(/Printer/i)
+        elsif t.match(/^Printer$/i)
           issues_to_create << ["exposed_printer_control_panel", fp]
-        elsif t.match(/Webcam/i)
+        elsif t.match(/^Webcam$/i)
           issues_to_create << ["exposed_webcam_interface", fp]
         end
       end
