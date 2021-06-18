@@ -45,7 +45,7 @@ module Intrigue
           _create_entity 'AwsS3Bucket', {
             'name' => name, # use the new virtual host path since path style will be deprecated,
             'bucket_name' => name,
-            'bucket_host' => "#{name}.s3.amazonaws.com"
+            'bucket_uri' => "#{name}.s3.amazonaws.com"
           }
         end
       end

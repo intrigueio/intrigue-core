@@ -47,13 +47,15 @@ class UriExtractLinkedHosts  < BaseTask
     ## Parse contents for s3 buckets
     ###
     URI.extract(contents).each do |s|
-      if s =~ /s3.amazonaws.com/
-        _log "Found s3 bucket: #{s}"
-        u = URI.parse(s)
-        _create_entity "AwsS3Bucket", "name" => "#{u.host}".gsub(/s3.amazonaws.com/,"")
-      end
-    end
+      next unless extract_bucket_name_from_url(s)
 
+      _log "Found S3 bucket: #{s}"
+      _create_entity 'AwsS3Bucket', {
+        'name' => extract_bucket_name_from_url(s),
+        'bucket_name' => extract_bucket_name_from_url(s),
+        'bucket_uri' => "#{extract_bucket_name_from_url(s)}.s3.amazonaws.com" # convert to virtual path style
+      }
+    end
 
     ###
     ### Now, parse out all links and do analysis on

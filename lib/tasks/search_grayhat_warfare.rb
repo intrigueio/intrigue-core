@@ -44,8 +44,9 @@ module Intrigue
           if b['type'] == 'aws'
             _create_entity 'AwsS3Bucket', {
               'name' => extract_bucket_name_from_url(b['bucket']),
+              'bucket_name' => extract_bucket_name_from_url(b['bucket']),
               'bucket_uri' => "https://#{b["bucket"]}",
-              'fileCount' =>  b['fileCount'],
+              'objects' =>  b['fileCount'],
             }
           elsif b['type'] == 'azure'
             _create_entity 'AzureBlob', {

@@ -78,25 +78,27 @@ module Intrigue
 
         request_urls = browser_data_hash["extended_browser_request_urls"]
         request_urls.each do |s|
-          if s =~ /s3([\w\d\-]*).amazonaws.com/
-            _log "Found s3 bucket from requested URL: #{s}"
-            u = URI.parse(s)
-            _create_entity "AwsS3Bucket",
-              "name" => "#{u.scheme}://#{u.host}",
-              "bucket_name" => "#{u.host}".gsub(/s3([\,\w\d\-]+).amazonaws.com/,"")
-          end
+          next unless extract_bucket_name_from_url(s)
+
+          _log "Found S3 bucket: #{s}"
+          _create_entity 'AwsS3Bucket', {
+            'name' => extract_bucket_name_from_url(s),
+            'bucket_name' => extract_bucket_name_from_url(s),
+            'bucket_uri' => "#{extract_bucket_name_from_url(s)}.s3.amazonaws.com" # convert to virtual path style
+          }
         end
 
         # then check our page (unrequested urls?)
         if page_capture = browser_data_hash["extended_browser_page_capture"]
-          URI.extract(page_capture).each do |string|
-            if string =~ /s3([\w\d\-]+).amazonaws.com/
-              _log "Found s3 bucket from parsing page: #{string}"
-              u = URI.parse(string)
-              _create_entity "AwsS3Bucket",
-                "name" => "#{u.scheme}://#{u.host}",
-                "bucket_name" => "#{u.host}".gsub(/s3([\,\w\d\-]+).amazonaws.com/,"")
-            end
+          URI.extract(page_capture).each do |s|
+            next unless extract_bucket_name_from_url(s)
+
+            _log "Found S3 bucket: #{s}"
+            _create_entity 'AwsS3Bucket', {
+              'name' => extract_bucket_name_from_url(s),
+              'bucket_name' => extract_bucket_name_from_url(s),
+              'bucket_uri' => "#{extract_bucket_name_from_url(s)}.s3.amazonaws.com" # convert to virtual path style
+            }
           end
         end
       end
@@ -142,3 +144,4 @@ module Intrigue
   end
   end
   end
+  
