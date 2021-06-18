@@ -29,7 +29,7 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        region = bucket_enriched?
+        region = bucket_enriched? # check if bucket is enriched and if so a region will be returned if bucket exists
         return if region.nil?
 
         bucket_name = _get_entity_detail 'bucket_name'
@@ -37,7 +37,7 @@ module Intrigue
 
         keys = determine_aws_keys 
         s3_client = initialize_s3_client(keys['access'], keys['secret'], region) if keys # if keys exist; initalize the s3 client
-        s3_client = aws_key_valid?(s3_client, bucket_name) if s3_client # if client initialized, validate keys exist
+        s3_client = s3_aws_key_valid?(s3_client, bucket_name) if s3_client # if client initialized, validate keys exist
 
         readable_objects = filter_readable_objects(s3_client, bucket_name, objects_list)
         return if readable_objects.empty?
@@ -45,6 +45,7 @@ module Intrigue
         create_issue(bucket_name, readable_objects)
       end
 
+      # talk to Shpend about this
       def determine_aws_keys
         keys = nil
         if _get_option('use_authentication')
@@ -59,6 +60,7 @@ module Intrigue
         keys
       end
 
+      # confirm that the bucket is enriched so we are not dealing with a non-existent bucket
       def bucket_enriched?
         require_enrichment if _get_entity_detail('region').nil?
         region = _get_entity_detail('region')
@@ -99,15 +101,17 @@ module Intrigue
         objects
       end
 
-
+      # take in a list of objects and return the ones that are readable
       def filter_readable_objects(s3_client, bucket, objs)
         readable_objects = []
 
         workers = (0...20).map do
           if s3_client && _get_entity_detail('belongs_to_api_key').nil?
+            # we have valid aws keys and bucket does not belong to api key -> use api calls to get objects
             check = determine_public_object_via_api(s3_client, bucket, objs, readable_objects)
           else
             # WHAT IF THE API KEY HAS RESTRICTED PERMISSIONS? CAN WE SOMEHOW SAVE THE USER?
+            # either invalid aws keys/key owned by buckets -> attempt to retrieve the object using http
             check = determine_public_object_via_http(bucket, objs, readable_objects)
           end
           [check]
@@ -119,7 +123,7 @@ module Intrigue
         readable_objects
       end
 
-      # TEST IF NO LIST PERMISSION KEYS ARE GIVEN BUT GET ARE
+      # determine whether the object exists by issuing API calls
       def determine_public_object_via_api(client, bucket, input_q, output_q)
         t = Thread.new do
           until input_q.empty?
@@ -136,8 +140,8 @@ module Intrigue
         t
       end
 
+      # determine whether the object exists by issuing HTTP Requests
       def determine_public_object_via_http(bucket, input_q, output_q)
-        # responses = make_threaded_http_requests_from_queue(work_q, 20)
         t = Thread.new do
           until input_q.empty?
             while key = input_q.shift

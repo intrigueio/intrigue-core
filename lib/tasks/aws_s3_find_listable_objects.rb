@@ -35,10 +35,10 @@ module Intrigue
 
         keys = determine_aws_keys 
         s3_client = initialize_s3_client(keys['access'], keys['secret'], region) if keys # if keys exist; initalize the s3 client
-        s3_client = aws_key_valid?(s3_client, bucket_name) if s3_client # if client initialized, validate keys exist
+        s3_client = s3_aws_key_valid?(s3_client, bucket_name) if s3_client # if client initialized, validate keys exist
 
-        # retrieve listable objects
-        bucket_objects = retrieve_listable_objects s3_client, bucket_name
+        # retrieve all listable objects 
+        bucket_objects = retrieve_listable_objects s3_client, bucket_name 
         return if bucket_objects.nil?
 
         _log_good "Found #{bucket_objects.size} listable object(s)."

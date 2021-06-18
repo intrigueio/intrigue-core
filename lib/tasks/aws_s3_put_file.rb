@@ -29,19 +29,20 @@ module Intrigue
         return if region.nil?
 
         bucket_name = _get_entity_name
-
         s3_client = get_s3_client(bucket_name, region)
         return unless s3_client
 
         write_to_bucket(s3_client, bucket_name)
       end
 
+      # wrapper over helper method which confirms if keys are valid
+      # we do this because if keys are invalid; we are unable to write the object
       def get_s3_client(bucket_name, region)
         aws_access_key = _get_task_config('aws_access_key_id')
         aws_secret_key = _get_task_config('aws_secret_access_key')
 
         s3_client = initialize_s3_client(aws_access_key, aws_secret_key, region)
-        s3_client = aws_key_valid?(s3_client, bucket_name) if s3_client
+        s3_client = s3_aws_key_valid?(s3_client, bucket_name) if s3_client
 
         _log_error 'AWS Keys are invalid; cannot proceed with task' unless s3_client
 
@@ -53,6 +54,7 @@ module Intrigue
         s3_client
       end
 
+      # confirm bucket is enriched -> so we are not working with an invalid bucket
       def bucket_enriched?
         require_enrichment if _get_entity_detail('region').nil?
         region = _get_entity_detail('region')
@@ -60,6 +62,7 @@ module Intrigue
         region
       end
 
+      # attempt to write a random file to the bucket
       def write_to_bucket(client, name)
         filename = SecureRandom.uuid
         begin

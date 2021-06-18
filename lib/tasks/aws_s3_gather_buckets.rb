@@ -28,12 +28,12 @@ module Intrigue
         s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key)
 
         begin
-          bucket_names = s3.buckets.collect(&:name)
+          bucket_names = s3.buckets.collect(&:name) # collect the buckets from the account
         rescue Aws::S3::Errors::InvalidAccessKeyId, Aws::S3::Errors::SignatureDoesNotMatch
           _log_error 'Invalid AWS Keys.'
           return
         rescue Aws::S3::Errors::AccessDenied
-          _log_error 'Credentials lack perimissions to list buckets.'
+          _log_error 'Credentials lack permissions to list buckets.'
           return
         end
 

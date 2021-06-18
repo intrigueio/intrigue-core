@@ -36,7 +36,7 @@ module Intrigue
           region = _get_entity_detail('region')
 
           s3_client = initialize_s3_client(aws_access_key, aws_secret_key, region)
-          s3_client = aws_key_valid?(s3_client, bucket_name)
+          s3_client = s3_aws_key_valid?(s3_client, bucket_name)
 
           bucket_belongs_to_api_key?(s3_client, bucket_name) if s3_client
         end
@@ -53,7 +53,7 @@ module Intrigue
           else
             _log "Bucket lives in the #{region} region."
             _set_entity_detail 'region', region
-            _set_entity_detail 'bucket_name', bucket_name if _get_entity_detail('bucket_name').nil?
+            _set_entity_detail 'bucket_name', bucket_name 
           end
 
           exists
