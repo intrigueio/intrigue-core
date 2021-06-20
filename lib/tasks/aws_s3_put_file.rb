@@ -46,7 +46,7 @@ module Intrigue
         filename = SecureRandom.uuid
         begin
           client.put_object({ bucket: name, key: "#{filename}.txt" })
-        rescue Aws::S3::Errors
+        rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled
           _log_error 'Permission denied; unable to upload file.'
           return
         end
