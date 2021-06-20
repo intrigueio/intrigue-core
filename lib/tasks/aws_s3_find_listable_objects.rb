@@ -81,7 +81,7 @@ module Intrigue
         _log 'Retrieving objects via authenticated method.'
         begin
           objs = client.list_objects_v2(bucket: bucket).contents.collect(&:key) # maximum of 1000 objects
-        rescue Aws::S3::Errors::AccessDenied
+        rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled
           objs = []
           _log_error 'Could not retrieve bucket objects using the authenticated technique due to insufficient permissions.'
         end

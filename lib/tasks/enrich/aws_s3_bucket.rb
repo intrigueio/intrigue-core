@@ -64,7 +64,7 @@ module Intrigue
 
           begin
             result = client.list_buckets['buckets'].collect(&:name).include? bucket
-          rescue Aws::S3::Errors::AccessDenied
+          rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled
             _log 'AWS Keys do not have permission to list the buckets belonging to the account; defaulting to false.'
           end
 

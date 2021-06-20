@@ -89,7 +89,7 @@ module Intrigue
             while key = input_q.shift
               begin
                 client.get_object({ bucket: bucket, key: key })
-              rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::NoSuchKey
+              rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::NoSuchKey, Aws::S3::Errors::AllAccessDisabled
                 next
               end
               output_q << key

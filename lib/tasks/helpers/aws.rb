@@ -28,7 +28,7 @@ module Intrigue
       rescue Aws::S3::Errors::InvalidAccessKeyId, Aws::S3::Errors::SignatureDoesNotMatch
         _log 'AWS Access Keys are invalid; ignoring keys.'
         nil
-      rescue Aws::S3::Errors::NoSuchKey, Aws::S3::Errors::AccessDenied
+      rescue Aws::S3::Errors::NoSuchKey, Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled
         # keys are valid, we are expecting this error
         _set_entity_detail 'aws_keys_valid', true
         client

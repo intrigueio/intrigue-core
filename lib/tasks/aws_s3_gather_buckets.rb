@@ -33,7 +33,7 @@ module Intrigue
         rescue Aws::S3::Errors::InvalidAccessKeyId, Aws::S3::Errors::SignatureDoesNotMatch
           _log_error 'Invalid AWS Keys.'
           return
-        rescue Aws::S3::Errors::AccessDenied
+        rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled
           _log_error 'Credentials lack permissions to list buckets.'
           return
         end
