@@ -33,7 +33,7 @@ module Intrigue
 
         permutations = additional_keywords.map { |k| generate_permutations(k) } # generate permutations
         permutations = permutations.flatten # turn 2d into 1d array
-        permutations << additional_keywords.flatten # add the original keywords to the wordlist as well just in case
+        permutations << additional_keywords.flatten # add the original keywords to the wordlist 
 
         valid_buckets = bruteforce_buckets(permutations)
         _log "Found #{valid_buckets.size} valid buckets."
@@ -49,8 +49,9 @@ module Intrigue
         patterns = ['.', '-', '']
 
         words = ['backup', 'backups', 'dev', 'development', 'eng', 'engineering', 'old', 'prod', 'qa', 'stage', 'staging', 'test', 'testing', 'marketing', 'web']
-        words = (words << _get_option('additional_permutation_wordlist').split(',')).flatten.uniq # append the user's provided permutations to our default ones
+        words = (words << _get_option('additional_permutation_wordlist').split(',')).flatten.uniq # append additional permutations
 
+        # generate different sets of permutations
         patterns.each do |pattern|
           words.each do |word|
             permutations << "#{keyword}#{pattern}#{word}"
@@ -71,6 +72,7 @@ module Intrigue
         buckets
       end
 
+      # confirm the bucket exists by extracting the region from the response headers
       def bucket_exists?(input_q, output_q)
         t = Thread.new do
           until input_q.empty?
