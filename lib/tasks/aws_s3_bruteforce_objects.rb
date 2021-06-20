@@ -56,7 +56,7 @@ module Intrigue
 
       def parse_objects
         objects = _get_option('objects_list').split(',')
-        objects = File.read("#{$intrigue_basedir}/data/common_files.list").split("\n") if objects.empty?
+        objects = File.read("#{$intrigue_basedir}/data/s3_common_objects.list").split("\n") if objects.empty?
         objects
       end
 
