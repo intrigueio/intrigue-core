@@ -8,7 +8,7 @@ module Intrigue
           name: 'aws_s3_bruteforce_buckets',
           pretty_name: 'AWS S3 Bruteforce Buckets',
           authors: ['jcran', 'maxim'],
-          description: 'This task takes any keywords (including domains) and uses them to create permutations which are then bruteforced to confirm if a bucket with that name exists.',
+          description: 'This task takes any keywords (including domains) and uses them to create permutations which are then bruteforced to confirm if a bucket with that name exists.<br><br>Task Options:<br><ul><li>additional_permutation_wordlist - (default value: empty) - Additional strings to use as a wordlist to generate permutations.</li><li>additional_keywords - (default value: false) - Additional keywords that can be used to generate bucket names with.</ul>',
           references: [],
           type: 'discovery',
           passive: true,
