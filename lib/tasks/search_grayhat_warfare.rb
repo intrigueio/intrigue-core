@@ -43,8 +43,8 @@ module Intrigue
           # {"id"=>137, "bucket"=>"abteststore.blob.core.windows.net", "fileCount"=>2, "type"=>"azure", "container"=>"files"}
           if b['type'] == 'aws'
             _create_entity 'AwsS3Bucket', {
-              'name' => extract_bucket_name_from_url(b['bucket']),
-              'bucket_name' => extract_bucket_name_from_url(b['bucket']),
+              'name' => extract_bucket_name_from_uri(b['bucket']),
+              'bucket_name' => extract_bucket_name_from_uri(b['bucket']),
               'bucket_uri' => "https://#{b["bucket"]}",
               'objects' =>  b['fileCount'],
             }

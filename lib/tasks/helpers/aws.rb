@@ -5,8 +5,13 @@ module Intrigue
       # return an s3 client
       def initialize_s3_client(region='us-east-1', bucket_name)
         # use us-east-1 as default bucket unless one is specified
-        aws_access_key = _get_task_config('aws_access_key_id')
-        aws_secret_key = _get_task_config('aws_secret_access_key')
+        begin
+          aws_access_key = _get_task_config('aws_access_key_id')
+          aws_secret_key = _get_task_config('aws_secret_access_key')
+        rescue MissingTaskConfigurationError
+          # keys are not set in config; return nil so unauth techniques can be used for some tasks
+          return nil
+        end
         client = Aws::S3::Client.new(region: region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
         client = _s3_aws_key_valid?(client, bucket_name)
         client
@@ -36,10 +41,11 @@ module Intrigue
 
       # extracts the bucket_name from a URL
       # there can be different types of naming schemes - virtual hosted & path_style
-      def extract_bucket_name_from_url(bucket_url)
+      def extract_bucket_name_from_uri(bucket_url)
         # Virtual Hosted Style
         # https://bucketname.s3.amazonaws.com
         # https://bucketname.s3-us-west-2.amazonaws.com/
+        # https://bucketname.s3.us-west-2.amazonaws.com
         # bucketname.s3.amazonaws.com
         # bucketname.s3-region.amazonaws.com
         virtual_style_regex = /(?:https:\/\/)?(.+)\.s3(?:-|.+)?\.amazonaws.com/ 
