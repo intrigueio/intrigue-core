@@ -7,7 +7,7 @@ module Intrigue
           name: 'search_spyse_cert',
           pretty_name: 'Search Spyse Cert',
           authors: ['Anas Ben Salah'],
-          description: 'This task hits Spyse API for discovring domains registered with the same certificate',
+          description: 'This task hits Spyse API for discovering domains registered with the same certificate',
           references: ['https://spyse-dev.readme.io/'],
           type: 'discovery',
           passive: true,
