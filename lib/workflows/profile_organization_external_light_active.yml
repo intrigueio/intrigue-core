@@ -16,7 +16,7 @@ definition:
   - task: aws_s3_find_listable_objects
   - task: aws_s3_put_file
   Domain:
-  - task: aws_bruteforce_buckets
+  - task: aws_s3_bruteforce_buckets
   - task: dns_brute_sub
     options:
     - brute_alphanumeric_size: 2
@@ -47,7 +47,7 @@ definition:
   - task: search_sublister
   - task: search_threatcrowd
   DnsRecord:
-  - task: aws_bruteforce_buckets
+  - task: aws_s3_bruteforce_buckets
   - task: threat/search_opendns
   EmailAddress:
   - task: vuln/saas_google_calendar_check
@@ -61,13 +61,12 @@ definition:
     - tcp_ports: scannable
     - udp_ports: scannable
   Organization:
-  - task: aws_bruteforce_buckets
+  - task: aws_s3_bruteforce_buckets
   - task: saas_jira_check
   - task: search_bgp
   - task: web_account_check
   - task: whois_lookup
   UniqueKeyword:
-  - task: aws_bruteforce_buckets
   - task: saas_jira_check
   - task: search_bgp
   - task: web_account_check
