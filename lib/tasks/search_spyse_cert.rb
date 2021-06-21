@@ -39,7 +39,7 @@ module Intrigue
         json["data"]["items"].each do |result|
           ## Create issues
           # Create an issue if many domains founded registered with same Certificate
-          if result['parsed']['names']
+          if (result['parsed']['names']).count > 1
             _create_linked_issue('wildcard_certificate', {
               proof: result['parsed']['names'],
               references: ['https://spyse.com/'],
