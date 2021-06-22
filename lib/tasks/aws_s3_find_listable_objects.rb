@@ -3,7 +3,7 @@ module Intrigue
     class AwsS3BucketFindPublicObjects < BaseTask
       def self.metadata
         {
-          name: 'tasks/aws_s3_find_listable_objects',
+          name: 'aws_s3_find_listable_objects',
           pretty_name: 'AWS S3 Find Listable Objects',
           authors: ['maxim'],
           description: 'Searches the AWS S3 Bucket for any listable objects. If valid AWS Keys are provided, the task will use authenticated techniques to determine if the bucket is listable by any authenticated AWS user. <br><br><b>Please note:</b> if the bucket belongs to the provided AWS Keys, the task will default to using non-authenticated techniques as false positives will occur.<br><br>Task Options:<br><ul><li>bruteforce_found_objects - (default value: true) - Bruteforce the listable objects to confirm their contents are readable.</li><li>use_authentication - (default value: false) - Use authenticated techniques to attempt to list the bucket\'s objects.</ul>',
@@ -45,7 +45,7 @@ module Intrigue
 
         # if any listable objects are found; the bruteforce task is automatically started to see if objects are accessible
         # the objects that are found will be used as a wordlist
-        start_task('task', @entity.project, nil, 'tasks/aws_s3_bruteforce_objects', @entity, 1, [{ 'name' => 'objects_list', 'value' => bucket_objects.join(',') }])
+        start_task('task', @entity.project, nil, 'aws_s3_bruteforce_objects', @entity, 1, [{ 'name' => 'objects_list', 'value' => bucket_objects.join(',') }])
       end
 
       # checks to see if use_authentication option has been set to true 
