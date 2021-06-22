@@ -55,7 +55,7 @@ module Data
 
   def cymru_ip_whois_lookup(ip)
     whois_detail = Intrigue::Client::Search::Cymru::IPAddress.new.whois(ip)
-    { 
+    {
       :net_asn => "AS#{whois_detail[0]}",
       :net_block => "#{whois_detail[1]}",
       :net_country_code => "#{whois_detail[2]}",
@@ -76,22 +76,22 @@ module Data
       "akamaitechnologies.com",
       "static.akamaitechnologies.com",
       "1e100.net"
-    ]   
+    ]
   end
 
   # Some domains provide a cert which is valid for many other domains
-  # this is, sometimes, very annoying, as you can't really be sure if the 
-  # other domains are related to your organization. We know the following 
+  # this is, sometimes, very annoying, as you can't really be sure if the
+  # other domains are related to your organization. We know the following
   # domains below are those that will host a single "universal" certificate
-  # and thus, this list exists to scope those out of the normal collection 
-  # process. More here: 
-  # - https://blog.cloudflare.com/introducing-universal-ssl/ 
+  # and thus, this list exists to scope those out of the normal collection
+  # process. More here:
+  # - https://blog.cloudflare.com/introducing-universal-ssl/
   #
   def get_universal_cert_domains
     [
       "acquia-sites.com",
       "careers.talemetry.com",
-      "cdn.myqcloud.com", 
+      "cdn.myqcloud.com",
       "chinacloudsites.cn",
       "chinanetcenter.com",
       "cloudflare.com",
@@ -110,7 +110,8 @@ module Data
       "sucuri.net",
       "swagcache.com",
       "wpengine.com",
-      "yottaa.net"
+      "yottaa.net",
+      "zohohost.com"
     ]
   end
 
@@ -135,15 +136,15 @@ module Data
   end
 
   def scannable_web_ports
-    [ 
+    [
       80,81,82,83,84,85,88,443,888,3000,6443,7443,
       8000,8080,8081,8087,8088,8089,8090,8095,
-      8098,8161,8180,8443,8880,8888,9443,10000 
+      8098,8161,8180,8443,8880,8888,9443,10000
     ]
   end
 
   def scannable_udp_ports
-    
+
     udp_ports = ""
     udp_ports << "53,"      # dns
     udp_ports << "123,"     # ntp
@@ -154,7 +155,7 @@ module Data
     udp_ports << "631,"     # ipp
     udp_ports << "1434,"    # msrpc
     udp_ports << "1900,"    # upnp
-    udp_ports << "2049,"    # nfs 
+    udp_ports << "2049,"    # nfs
     udp_ports << "17185"    # vxworks https://blog.rapid7.com/2010/08/02/new-vxworks-vulnerabilities/
 
   udp_ports.split(",")
@@ -208,24 +209,24 @@ module Data
     tcp_ports << "4506,"            # salt stack
     tcp_ports << "4786,"            # Cisco Smart Install
     tcp_ports << "4848,"            # Glassfish
-    tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port	
+    tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port
     tcp_ports << "5555,"            # HP Data Protector
     tcp_ports << "5556,"            # HP Data Protector
     tcp_ports << "5900,5901,"       # vnc
-    tcp_ports << "6379,"            # redis 
+    tcp_ports << "6379,"            # redis
     tcp_ports << "6443,"
-    tcp_ports << "7001,"            # Oracle WebLogic Server Listen Port for Administration Server 
-    tcp_ports << "7002,"            # Oracle WebLogic Server Listen Port for Administration Server 
+    tcp_ports << "7001,"            # Oracle WebLogic Server Listen Port for Administration Server
+    tcp_ports << "7002,"            # Oracle WebLogic Server Listen Port for Administration Server
     tcp_ports << "7003,"            # Oracle WebLogic Server
     tcp_ports << "7004,"            # Oracle WebLogic Server
-    tcp_ports << "7070,"            # Oracle WebLogic Server 
-    tcp_ports << "7071,"            # Oracle WebLogic Server 
-    tcp_ports << "7443,"        
+    tcp_ports << "7070,"            # Oracle WebLogic Server
+    tcp_ports << "7071,"            # Oracle WebLogic Server
+    tcp_ports << "7443,"
     tcp_ports << "7777,"
-    tcp_ports << "8000,"            # Oracle WebLogic Server 
-    tcp_ports << "8001,"            # Oracle WebLogic Server Listen Port for Managed Server	
-    tcp_ports << "8002,"            # Oracle WebLogic Server 
-    tcp_ports << "8003,"            # Oracle WebLogic Server 
+    tcp_ports << "8000,"            # Oracle WebLogic Server
+    tcp_ports << "8001,"            # Oracle WebLogic Server Listen Port for Managed Server
+    tcp_ports << "8002,"            # Oracle WebLogic Server
+    tcp_ports << "8003,"            # Oracle WebLogic Server
     tcp_ports << "8009,"
     tcp_ports << "8032,"
     tcp_ports << "8080,8081,"       # HTTP
@@ -234,17 +235,17 @@ module Data
     tcp_ports << "8443,"
     tcp_ports << "8686,"            # JMX
     tcp_ports << "8883,"
-    tcp_ports << "9000,"            # Oracle WebLogic Server 
-    tcp_ports << "9001,"            # Oracle WebLogic Server 
-    tcp_ports << "9002,"            # Oracle WebLogic Server 
-    tcp_ports << "9003,"            # Oracle WebLogic Server 
+    tcp_ports << "9000,"            # Oracle WebLogic Server
+    tcp_ports << "9001,"            # Oracle WebLogic Server
+    tcp_ports << "9002,"            # Oracle WebLogic Server
+    tcp_ports << "9003,"            # Oracle WebLogic Server
     tcp_ports << "9012,"            # JMX
     tcp_ports << "9091,9092,"
     tcp_ports << "9094,"
     tcp_ports << "9200,9201,"         # elasticsearch
     tcp_ports << "9300,9301,"         # elasticsearch
     tcp_ports << "9443,"
-    tcp_ports << "9503,"            # Oracle WebLogic Server 
+    tcp_ports << "9503,"            # Oracle WebLogic Server
     tcp_ports << "10999,"            # java rmi
     tcp_ports << "10443,"
     tcp_ports << "11099,"            # java rmi
@@ -269,12 +270,12 @@ module Data
 
   tcp_ports.split(",")
   end
-  
+
   def geolocate_ip(ip)
 
     return nil unless File.exist? "#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb"
 
-    begin 
+    begin
       db = MaxMindDB.new("#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb",MaxMindDB::LOW_MEMORY_FILE_READER)
 
       _log "looking up location for #{ip}"
@@ -297,7 +298,7 @@ module Data
       hash[:registered_country] = location.to_hash["registered_country"]["names"]["en"] if location.to_hash["registered_country"]
       hash[:registered_country_code] = location.to_hash["registered_country"]["iso_code"] if location.to_hash["registered_country"]
       hash[:subdivisions] = location.to_hash["subdivisions"].map{|s| s["names"]["en"] } if location.to_hash["subdivisions"]
-      
+
     rescue RuntimeError => e
       _log "Error reading file: #{e}"
     rescue ArgumentError => e
