@@ -14,6 +14,7 @@ definition:
   - task: asn_to_netblocks
   AwsS3Bucket:
   - task: aws_s3_find_listable_objects
+  - task: aws_s3_bruteforce_objects
   - task: aws_s3_put_file
   Domain:
   - task: aws_s3_bruteforce_buckets
