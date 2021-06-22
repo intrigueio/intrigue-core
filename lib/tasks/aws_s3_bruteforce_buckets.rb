@@ -17,8 +17,8 @@ module Intrigue
             { 'type' => 'String', 'details' => { 'name' => 'test' } }
           ],
           allowed_options: [
-            { name: 'additional_permutation_wordlist', regex: 'alpha_numeric_list', default: [] },
-            { name: 'additional_keywords', regex: 'alpha_numeric_list', default: [] } # these can only be alphanumerical due to regex
+            { name: 'additional_permutation_wordlist', regex: 'alpha_numeric_list', default: '' },
+            { name: 'additional_keywords', regex: 'alpha_numeric_list', default: '' } # these can only be alphanumerical due to regex
           ],
           created_types: ['AwsS3Bucket']
         }
@@ -28,12 +28,12 @@ module Intrigue
       def run
         super
         # create permutations
-        additional_keywords = _get_option('additional_keywords').split(',')
+        additional_keywords = _get_option('additional_keywords').delete(' ').split(',')
         additional_keywords << _get_entity_name
 
         permutations = additional_keywords.map { |k| generate_permutations(k) } # generate permutations
-        permutations = permutations.flatten # turn 2d into 1d array
-        permutations << additional_keywords.flatten # add the original keywords to the wordlist 
+        permutations << additional_keywords
+        permutations.flatten!
 
         valid_buckets = bruteforce_buckets(permutations)
         _log "Found #{valid_buckets.size} valid buckets."
@@ -45,11 +45,14 @@ module Intrigue
       # generate permutations using the keywords provided along with the additional permutations wordlist
       def generate_permutations(keyword)
         _log "Generating permutations for keyword: #{keyword}"
+
         permutations = []
         patterns = ['.', '-', '']
+        additional_permutations = _get_option('additional_permutation_wordlist').delete(' ').split(',') 
 
         words = ['backup', 'backups', 'dev', 'development', 'eng', 'engineering', 'old', 'prod', 'qa', 'stage', 'staging', 'test', 'testing', 'marketing', 'web']
-        words = (words << _get_option('additional_permutation_wordlist').split(',')).flatten.uniq # append additional permutations
+        words << additional_permutations
+        words.flatten!.uniq!
 
         # generate different sets of permutations
         patterns.each do |pattern|
