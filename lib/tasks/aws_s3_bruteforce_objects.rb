@@ -6,7 +6,7 @@ module Intrigue
           name: 'tasks/aws_s3_bruteforce_objects',
           pretty_name: 'AWS S3 Bruteforce Objects',
           authors: ['maxim'],
-          description: 'Bruteforces the S3 Bucket using a wordlist to find any readable objects. If valid AWS Keys are provided, the task will use authenticated techniques to attempt to read the object. <br><br><b>Please note:</b> if the bucket belongs to the provided AWS Keys, the task will default to using non-authenticated techniques as false positives will occur.<br><br>Task Options:<br><ul><li>objects_list - (default value: empty) - The list of objects to use as the wordlist. If no objects are provided, a default wordlist of 100 common files will be used.</li><li>use_authentication - (default value: false) - Use authenticated techniques to attempt to list the bucket\'s objects.</ul>',
+          description: 'Bruteforces the S3 Bucket using a wordlist to find any readable objects. If valid AWS Keys are provided, the task will use authenticated techniques to attempt to read the object. <br><br><b>Please note:</b> if the bucket belongs to the provided AWS Keys, the task will default to using non-authenticated techniques as false positives will occur.<br><br>Task Options:<br><ul><li>objects_list - (default value: empty) - The list of comma-separated objects to use as the wordlist. If no objects are provided, a default wordlist of 100 common files will be used.</li><li>use_authentication - (default value: false) - Use authenticated techniques to attempt to list the bucket\'s objects.</ul>',
           references: [
           'https://www.cloudconformity.com/knowledge-base/aws/S3/s3-bucket-authenticated-users-read-access.html',
           'https://www.cloudconformity.com/knowledge-base/aws/S3/s3-bucket-public-read-access.html'
@@ -18,8 +18,8 @@ module Intrigue
             { 'type' => 'AwsS3Bucket', 'details' => { 'name' => 'bucket-name' } }
           ],
           allowed_options: [
-            { name: 'objects_list', regex: 'alpha_numeric_list', default: [] },
-            { name: 'use_authentication', regex: 'boolean', default: true },
+            { name: 'objects_list', regex: 'alpha_numeric_list', default: '' },
+            { name: 'use_authentication', regex: 'boolean', default: true }
           ],
           created_types: []
         }
@@ -55,7 +55,7 @@ module Intrigue
       end
 
       def parse_objects
-        objects = _get_option('objects_list').split(',')
+        objects = _get_option('objects_list').delete(' ').split(',') # remove whitespaces between values and return array
         objects = File.read("#{$intrigue_basedir}/data/s3_common_objects.list").split("\n") if objects.empty?
         objects
       end
