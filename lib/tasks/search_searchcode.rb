@@ -32,7 +32,7 @@ module Intrigue
         begin
           page = 0
           while page <= 49 # max 49 pages
-            response = http_get_body "https://intrigue.io/api/codesearch_I/?q=#{key}&p=#{page}"
+            response = http_get_body "https://searchcode.com/api/codesearch_I/?q=#{key}&p=#{page}"
             output = JSON.parse(response)
             results = output['results']
 
