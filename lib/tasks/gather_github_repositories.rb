@@ -26,7 +26,7 @@ module Intrigue
         super
 
         gh_token = retrieve_gh_access_token
-        account = _get_option('account')
+        account = _get_option('account') # this is messy
 
         repos = gh_token ? retrieve_repos_authenticated(gh_token, account) : retrieve_repos_unauthenticated(account)
 
@@ -37,7 +37,21 @@ module Intrigue
         repos.each { |r| create_repo_entity(r) }
       end
 
-      def retrieve_repos_authenticated(token, name); end
+      def retrieve_repos_authenticated(token, name)
+        client = Octokit::Client.new('access_token' => token)
+        client.auto_paginate = true
+
+        scraped_repos = if name.empty?
+                          client.repos
+                        else
+                          client.repos(name)
+                        end
+
+        # get all repos client has access to
+        repos = scraped_repos.map { |r| r['full_name'] } if scraped_repos # what happens if empty?
+
+        repos
+      end
 
       def retrieve_repos_unauthenticated(name)
         # check if name is not nil
@@ -46,6 +60,9 @@ module Intrigue
         return nil if pages.nil?
 
         search_urls = 1.step(pages.to_i).map { |p| "https://api.github.com/users/#{name}/repos?page=#{p}" }
+        # Note: If the user provided is a GitHub organization, only the organization's public repositories will be listed. 
+        # For retrieving organization repositories the Organizations#organization_repositories method should be used instead.
+        # client.org_repos
         output = []
 
         workers = (0...20).map do
@@ -89,6 +106,7 @@ module Intrigue
       def create_repo_entity(repo)
         _create_entity 'GithubRepository', {
           'name' => repo,
+          'repository_name' => repo,
           'uri' => "https://github.com/#{repo}"
         }
       end
@@ -105,9 +123,9 @@ module Intrigue
         return access_token if verify_gh_access_token(access_token)
       end
 
-      def verify_gh_access_token
+      def verify_gh_access_token(token)
         valid = true
-        client = Octokit::Client.new(access_token: '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')
+        client = Octokit::Client.new(access_token: token)
         begin
           client.user
         rescue Octokit::Unauthorized
@@ -116,7 +134,6 @@ module Intrigue
         end
         valid
       end
-
     end
   end
 end
