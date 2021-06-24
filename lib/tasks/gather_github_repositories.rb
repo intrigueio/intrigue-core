@@ -25,36 +25,73 @@ module Intrigue
       def run
         super
 
-        access_token = retrieve_gh_access_token
-        account = _get_option('account_name')
+        gh_token = retrieve_gh_access_token
+        account = _get_option('account')
 
-        repos = token ? retrieve_repos_authenticated(access_token, account) : retrieve_repos_unauthenticated(account)
+        repos = gh_token ? retrieve_repos_authenticated(gh_token, account) : retrieve_repos_unauthenticated(account)
 
-        p repos
+        _log 'No repositories discovered.' if repos.nil?
+        return if repos.nil?
 
+        _log_good "Retrieved #{repos.size} repositories."
+        repos.each { |r| create_repo_entity(r) }
       end
 
       def retrieve_repos_authenticated(token, name); end
 
       def retrieve_repos_unauthenticated(name)
+        # check if name is not nil
         # only 60 results per hour; 30 results per page
         pages = return_max_pages(name)
-        return if pages.nil?
+        return nil if pages.nil?
 
-        # should we thread this?
+        search_urls = 1.step(pages.to_i).map { |p| "https://api.github.com/users/#{name}/repos?page=#{p}" }
+        output = []
+
+        workers = (0...20).map do
+          results = fire_http_request(search_urls, output)
+          [results]
+        end
+        workers.flatten.map(&:join)
+
+        output ? output.flatten : nil
+      end
+
+      def fire_http_request(input_q, output_q) # change the name of this method
+        t = Thread.new do
+          until input_q.empty?
+            while url = input_q.shift
+              begin
+                r = http_get_body(url)
+                results = JSON.parse(r)
+                # should there be a check if the rate limit is hit?
+              rescue JSON::ParserError
+                next
+              end
+              output_q << results.map { |res| res['full_name'] }
+            end
+          end
+        end
+        t
       end
 
       def return_max_pages(account)
         r = http_request(:get, "https://api.github.com/users/#{account}/repos")
         max_pages_header = r.headers['link']
 
+        return nil unless r.code == '200' # 404 repo does not exist / or other issues such as rate limiting
         return 1 if r.code == '200' && max_pages_header.nil? # only one page
 
         max_pages = max_pages_header.scan(/\?page=(\d*)/i).last.first
         max_pages
       end
 
-      def create_repo_entities; end
+      def create_repo_entity(repo)
+        _create_entity 'GithubRepository', {
+          'name' => repo,
+          'uri' => "https://github.com/#{repo}"
+        }
+      end
 
       def retrieve_gh_access_token
         begin
@@ -65,7 +102,7 @@ module Intrigue
           return nil
         end
 
-        verify_gh_access_token(access_token)
+        return access_token if verify_gh_access_token(access_token)
       end
 
       def verify_gh_access_token
