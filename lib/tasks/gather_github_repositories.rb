@@ -16,19 +16,21 @@ module Intrigue
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [
             { name: 'account', regex: 'alpha_numeric', default: '' }
-          ], # github access token; # username/org to scan
+          ],
           created_types: ['GithubRepository']
         }
       end
+
+      # NEED TO CATCH RATE LIMIT EXCEPTION
 
       ## Default method, subclasses must override this
       def run
         super
 
-        gh_token = retrieve_gh_access_token
-        account = _get_option('account') # this is messy
+        gh_client = initialize_gh_client
+        account = _get_option('account')
 
-        repos = gh_token ? retrieve_repos_authenticated(gh_token, account) : retrieve_repos_unauthenticated(account)
+        repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
 
         _log 'No repositories discovered.' if repos.nil?
         return if repos.nil?
@@ -37,36 +39,64 @@ module Intrigue
         repos.each { |r| create_repo_entity(r) }
       end
 
-      def retrieve_repos_authenticated(token, name)
-        client = Octokit::Client.new('access_token' => token)
+      def retrieve_repos_authenticated(client, name)
         client.auto_paginate = true
 
-        scraped_repos = if name.empty?
-                          client.repos
-                        else
-                          client.repos(name)
-                        end
-
-        # get all repos client has access to
-        repos = scraped_repos.map { |r| r['full_name'] } if scraped_repos # what happens if empty?
+        retrieved_repos = client_api_request(client, name)
+        repos = retrieved_repos.map { |r| r['full_name'] } if retrieved_repos
 
         repos
       end
 
+      def client_api_request(client, name)
+        return client.repos if name.empty?
+        return nil unless account_exists?(name)
+
+        repositories = if org?(name)
+                         client.org_repos(name, { 'type' => 'all' })
+                       else
+                         client.repos(name)
+                       end
+        repositories
+      end
+
+      def abstract_github_http_request(url)
+        r = http_get_body(url)
+        begin
+          parsed_response = JSON.parse(r)
+        rescue JSON::ParserError
+          _log_error 'Cannot parse JSON.'
+          return nil
+        end
+
+        parsed_response
+      end
+
+      def account_exists?(name)
+        response = abstract_github_http_request("https://api.github.com/users/#{name}")
+
+        exists = response['message'] != 'Not Found'
+        _log_error "#{name} is not a valid Github user/repository; exiting." unless exists
+
+        exists
+      end
+
+      def org?(name)
+        response = abstract_github_http_request("https://api.github.com/users/#{name}")
+        response['type'].eql? 'Organization'
+      end
+
       def retrieve_repos_unauthenticated(name)
-        # check if name is not nil
-        # only 60 results per hour; 30 results per page
+        return nil unless account_exists?(name) # if account doesnt exist return nil
+
         pages = return_max_pages(name)
         return nil if pages.nil?
 
         search_urls = 1.step(pages.to_i).map { |p| "https://api.github.com/users/#{name}/repos?page=#{p}" }
-        # Note: If the user provided is a GitHub organization, only the organization's public repositories will be listed. 
-        # For retrieving organization repositories the Organizations#organization_repositories method should be used instead.
-        # client.org_repos
         output = []
 
         workers = (0...20).map do
-          results = fire_http_request(search_urls, output)
+          results = api_http_request(search_urls, output)
           [results]
         end
         workers.flatten.map(&:join)
@@ -74,17 +104,13 @@ module Intrigue
         output ? output.flatten : nil
       end
 
-      def fire_http_request(input_q, output_q) # change the name of this method
+      def api_http_request(input_q, output_q) # change the name of this method
         t = Thread.new do
           until input_q.empty?
             while url = input_q.shift
-              begin
-                r = http_get_body(url)
-                results = JSON.parse(r)
-                # should there be a check if the rate limit is hit?
-              rescue JSON::ParserError
-                next
-              end
+              results = abstract_github_http_request(url)
+              next if results.nil?
+              # what happens if we hit rate limiting here?
               output_q << results.map { |res| res['full_name'] }
             end
           end
@@ -111,7 +137,7 @@ module Intrigue
         }
       end
 
-      def retrieve_gh_access_token
+      def initialize_gh_client
         begin
           access_token = _get_task_config('github_access_token')
         rescue MissingTaskConfigurationError
@@ -120,19 +146,18 @@ module Intrigue
           return nil
         end
 
-        return access_token if verify_gh_access_token(access_token)
+        verify_gh_access_token(access_token) # returns client if valid else nil
       end
 
       def verify_gh_access_token(token)
-        valid = true
         client = Octokit::Client.new(access_token: token)
         begin
           client.user
         rescue Octokit::Unauthorized
           _log_error 'Github Access Token invalid; defaulting to unauthenticated.'
-          valid = false
+          return nil
         end
-        valid
+        client
       end
     end
   end
