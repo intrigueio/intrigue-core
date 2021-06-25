@@ -8,8 +8,8 @@ module Intrigue
           name: 'gather_github_repositories',
           pretty_name: 'Gather Github Repositories',
           authors: ['maxim'],
-          description: 'balbalabla',
-          references: ['http://balbalabla'],
+          description: 'Gathers repositories belonging to a Github account (personal/organization). This task uses either authenticated or unauthenticated techniques based on whether a Github Access Token is provided. Please note that the unauthenticated technique is rate limited at 60 requests per hour, while the authenticated technique allows for 5,000 requests per hour. <br><br>Task Options:<br><ul><li><b>account</b> - (default value: empty) - Gather a specific account\'s repositories. This value is required for when attempting to retrieve the repositories without providing a Github Access Token. If a Github Access Token is provided, this can be used to retrieve Github Repositories of another account without being limited to 60 requests per hour. However leave this value blank if you are attempting to retrieve the repositories associated with the provided Github Access Token as this will not retrieve private repositories due to how Github\'s API works.</li></ul>',
+          references: ['https://docs.github.com/en/rest'],
           type: 'discovery',
           passive: true,
           allowed_types: ['String'],
@@ -20,8 +20,6 @@ module Intrigue
           created_types: ['GithubRepository']
         }
       end
-
-      # NEED TO CATCH RATE LIMIT EXCEPTION
 
       ## Default method, subclasses must override this
       def run
@@ -49,20 +47,26 @@ module Intrigue
       end
 
       def client_api_request(client, name)
-        return client.repos if name.empty?
-        return nil unless account_exists?(name)
+        begin
+            return client.repos if name.empty?
+            return nil unless account_exists?(name)
 
-        repositories = if org?(name)
-                         client.org_repos(name, { 'type' => 'all' })
-                       else
-                         client.repos(name)
-                       end
+            repositories = if org?(name)
+                             client.org_repos(name, { 'type' => 'all' })
+                           else
+                             client.repos(name)
+                           end
+        rescue Octokit::TooManyRequests, Octokit::AbuseDetected
+          _log_error 'Rate limiting via authenticated techniques reached.'
+          return nil
+          end
+
         repositories
       end
 
-      def abstract_github_http_request(url)
+      def http_get_json_body(url)
         r = http_get_body(url)
-        _log 'Rate limiting encountered' if r.include? 'API rate limit exceeded'
+        return nil if http_rate_limiting?(r)
 
         begin
           parsed_response = JSON.parse(r)
@@ -74,8 +78,14 @@ module Intrigue
         parsed_response
       end
 
+      def http_rate_limiting?(response)
+        rate_limiting = response.include? 'API rate limit exceeded'
+        _log 'HTTP requests are being rate limited.' if rate_limiting
+        rate_limiting
+      end
+
       def account_exists?(name)
-        response = abstract_github_http_request("https://api.github.com/users/#{name}")
+        response = http_get_json_body("https://api.github.com/users/#{name}")
 
         exists = response['message'] != 'Not Found'
         _log_error "#{name} is not a valid Github user/repository; exiting." unless exists
@@ -84,7 +94,7 @@ module Intrigue
       end
 
       def org?(name)
-        response = abstract_github_http_request("https://api.github.com/users/#{name}")
+        response = http_get_json_body("https://api.github.com/users/#{name}")
         response['type'].eql? 'Organization'
       end
 
@@ -110,8 +120,9 @@ module Intrigue
         t = Thread.new do
           until input_q.empty?
             while url = input_q.shift
-              results = abstract_github_http_request(url)
+              results = http_get_json_body(url)
               next if results.nil?
+
               # what happens if we hit rate limiting here?
               output_q << results.map { |res| res['full_name'] }
             end
@@ -156,8 +167,8 @@ module Intrigue
         client = Octokit::Client.new(access_token: token)
         begin
           client.user
-        rescue Octokit::Unauthorized
-          _log_error 'Github Access Token invalid; defaulting to unauthenticated.'
+        rescue Octokit::Unauthorized, Octokit::TooManyRequests
+          _log_error 'Github Access Token invalid either due to invalid credentials or rate limiting reached; defaulting to unauthenticated.'
           return nil
         end
         client
@@ -165,16 +176,3 @@ module Intrigue
     end
   end
 end
-
-# gather_github_repositories
-# - uses gh token from task_config [optional]
-# - username/organization [optional] ->
-# - if you have key but no user/organization provided get all repositories that key can access
-#
-# - if you have and user/organization only get repos from specific users
-#
-# - if you only get username/organization but no key you only get public ones [experimental]
-#
-# once repo is found -> create github repo entity
-#
-# github repo entity -> enrich task -> gitleaks should be called from enrich task
