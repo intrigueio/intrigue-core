@@ -5,7 +5,7 @@ module Intrigue
         {
           added: '2021-06-24',
           name: 'cisco_asa_cve_2020_3580',
-          pretty_name: 'Cisco ASA Reflected XSS (CVE-2020-3580)',
+          pretty_name: 'Cisco ASA Reflected Cross-Site Scripting (CVE-2020-3580)',
           severity: 3,
           category: 'vulnerability',
           status: 'confirmed',
