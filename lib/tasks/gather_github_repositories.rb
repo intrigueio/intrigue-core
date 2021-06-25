@@ -62,6 +62,8 @@ module Intrigue
 
       def abstract_github_http_request(url)
         r = http_get_body(url)
+        _log 'Rate limiting encountered' if r.include? 'API rate limit exceeded'
+
         begin
           parsed_response = JSON.parse(r)
         rescue JSON::ParserError
@@ -93,8 +95,8 @@ module Intrigue
         return nil if pages.nil?
 
         search_urls = 1.step(pages.to_i).map { |p| "https://api.github.com/users/#{name}/repos?page=#{p}" }
-        output = []
 
+        output = []
         workers = (0...20).map do
           results = api_http_request(search_urls, output)
           [results]
@@ -116,6 +118,7 @@ module Intrigue
           end
         end
         t
+        # rate limit occurs when 403 forbidden code returns
       end
 
       def return_max_pages(account)
