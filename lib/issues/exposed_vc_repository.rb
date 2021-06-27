@@ -1,7 +1,7 @@
 module Intrigue
   module Issue
   class ExposedVcRepository < BaseIssue
-  
+
     def self.generate(instance_details={})
       to_return = {
         added: "2020-01-01",
@@ -15,14 +15,14 @@ module Intrigue
         references: [
           { type: "description", uri: "https://royduineveld.nl/hacking-public-git-repositories/" },
           { type: "description", uri: "https://pentester.land/tutorials/2018/10/25/source-code-disclosure-via-exposed-git-folder.html" },
-          { type: "exploit", uri: "https://github.com/internetwache/GitTools/tree/master/Dumper" }
-        ], 
+          { type: "exploit", uri: "https://github.com/internetwache/GitTools/tree/master/Dumper" },
+          { type: "exploit", uri: "https://github.com/liamg/gitjacker" }
+        ],
         task: "uri_brute_focused_content"
       }.merge!(instance_details)
     to_return
     end
-  
+
   end
   end
   end
-  

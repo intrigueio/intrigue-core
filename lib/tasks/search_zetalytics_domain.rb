@@ -7,7 +7,7 @@ class SearchZetalyticsDomain < BaseTask
       :name => "search_zetalytics_domain",
       :pretty_name => "Search Zetalytics By Domain",
       :authors => ["Anas Ben Salah"],
-      :description => "This task searches Zetalytics for a given domain and returns 
+      :description => "This task searches Zetalytics for a given domain and returns
         Domain, DnsRecord and EmailAddress results found via Passive DNS ",
       :references => [],
       :type => "discovery",
@@ -27,23 +27,23 @@ class SearchZetalyticsDomain < BaseTask
 
     domain_name = _get_entity_name
 
-    # first check... if this is a wildcard domain, we cannot continue, 
-    # results will be generally untrustworthy. 
-    # todo... in the future, make a list and we can check against it 
+    # first check... if this is a wildcard domain, we cannot continue,
+    # results will be generally untrustworthy.
+    # todo... in the future, make a list and we can check against it
     wildcards = gather_wildcard_ips(domain_name)
     unless wildcards.empty?
       _log_error "Cowardly refusing to pull data on a wildcard domains"
       _log_error "wildcards: #{wildcards}"
-      return 
+      return
     end
 
     # Make sure the key is set
     api_key = _get_task_config("zetalytics_api_key")
 
-    # search it 
+    # search it
     result = search_zetalytics_by_domain(api_key, domain_name)
-    
-    # create our entities 
+
+    # create our entities
     create_entities(result) if result
 
   end #end run
@@ -108,10 +108,11 @@ class SearchZetalyticsDomain < BaseTask
     result["results"].each do |e|
       keys_to_check.each do |k|
         if e.key?(k)
-          if e[k] =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
-            _create_entity("EmailAddress", "name" => e[k])
-          else 
-            create_dns_entity_from_string(e[k], nil, false, e) if resolve_name e[k]
+          safe_name = "#{e[k]}".sanitize_unicode
+          if safe_name =~ /[a-zA-Z0-9\.\_\%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,12}/
+            _create_entity("EmailAddress", "name" => safe_name )
+          else
+            create_dns_entity_from_string(safe_name, nil, false, e) if resolve_name safe_name
           end
         end
       end

@@ -29,10 +29,14 @@ class Gitrob < BaseTask
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting Gitrob on #{github_account}, saving to #{temp_file}!"
-    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 20 --threads 20 -in-mem-clone #{github_account}"
-    # gitrob tends to hang so we set a timeout of 5 minutes (300 seconds)
+    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 10 --threads 20 -in-mem-clone #{github_account}"
+    # gitrob tends to hang so we set a timeout of 10 minutes (600 seconds)
     # the gitrob fork we use requires two files in the current working directory, hence setting working dir to ~/bin/data/gitrob
-    _unsafe_system command_string, 300, "#{Dir.home}/bin/data/gitrob"
+    _log "Running Command:"
+    _log "#{command_string}"
+    _log "-"
+
+    _unsafe_system command_string, 3600, "#{Dir.home}/bin/data/gitrob"
     _log "Gitrob finished on #{github_account}!"
 
     # parse output
@@ -68,14 +72,15 @@ class Gitrob < BaseTask
     #end
 
     # create respositories
+    repo_entities = []
     if output["Repositories"]
       output["Repositories"].each do |r|
-        _create_entity "GithubRepository", {
+        repo_entities << _create_entity("GithubRepository", {
           "name" => "#{r["FullName"]}",
           "uri" => "#{r["URL"]}",
           "description" => "#{r["description"]}",
           "raw" => r
-        }
+        })
       end
     else
       _log "No repositories!"
@@ -88,28 +93,30 @@ class Gitrob < BaseTask
       output["Findings"].each do |f|
 
         # skip if credentials or password is used in the fileurl
-        next if (f["Description"] == "Contains word: credential" && f["FilePath"] =~ /credential.html/i )
-        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /password.html/i )
-        sp = {}
-        sp["Commit URL"] = "#{f["CommitUrl"]}"
-        sp["Repository URL"] = "#{f['RepositoryUrl']}"
-        sp["Commit Author"] = "#{f["CommitAuthor"]}"
-        sp["Commit Message"] = "#{f["CommitMessage"]}"
-        sp["Action"] = "#{f["Action"]}"
-        sp["File URL"] = "#{f["FileUrl"]}"
+        next if (f["Description"] == "Contains word: credential" && f["FilePath"] =~ /htm/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /htm/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /reset/i )
+        next if (f["Description"] == "Contains word: password" && f["FilePath"] =~ /form/i )
 
-        suspicious_commits.append(sp)
+        # add it to our output
+        suspicious_commits << f
       end
+
     else
       _log "No findings!"
     end
 
-    if suspicious_commits.length > 0
+    suspicious_commits.each do |sc|
+      repo_name = "#{sc["RepositoryOwner"]}/#{sc["RepositoryName"]}"
+      e = repo_entities.find{|x| "#{x.name}".downcase == repo_name.downcase }
+      _log "Creating suspicious_commit for #{repo_name}, #{e.name}"
       _create_linked_issue("suspicious_commit", {
-        name: "Suspicious commit(s) found in Github Repository",
-        detailed_description:  "One or more suspicious commits were found in a public Github repository",
-        details: suspicious_commits
-      })
+        source: sc["Id"],
+        proof: {
+          sig: sc["FileSignatureDescription"],
+          commit: sc["CommitUrl"]
+        }
+      }.merge(sc), e )
     end
 
     # clean up

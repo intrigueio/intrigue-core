@@ -105,6 +105,7 @@ module Data
       "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "incapsula.com",
       "jiveon.com",
+      "kavasa.in",
       "lithium.com",
       "pantheon.io",
       "sucuri.net",
@@ -131,15 +132,16 @@ module Data
   end
 
   def fingerprintable_tcp_ports
-    [21, 22, 23, 25, 110, 2181, 3299, 3306, 3389, 4786, 7001, 8649, 9100, 11211].concat(scannable_web_ports).sort.uniq
+    [21, 22, 23, 25, 110, 2181, 3299, 3306, 3389, 4786, 5672,
+      6379, 7001, 8649, 9100, 9200, 9201, 11211, 27017, 27018].concat(scannable_web_ports).sort.uniq
   end
 
   def scannable_web_ports
     [
       80,81,82,83,84,85,88,443,888,3000,6443,7443,
       8000,8080,8081,8087,8088,8089,8090,8095,
-      8098,8161,8180,8443,8880,8888,9443,10000
-    ].sort.uniq
+      8098,8161,8180,8443,8880,8888,9443,10000,10001
+    ]
   end
 
   def scannable_udp_ports
@@ -212,6 +214,7 @@ module Data
     tcp_ports << "5000,"            # Oracle WebLogic Server Node Manager Port
     tcp_ports << "5555,"            # HP Data Protector
     tcp_ports << "5556,"            # HP Data Protector
+    tcp_ports << "5672,"
     tcp_ports << "5900,5901,"       # vnc
     tcp_ports << "6379,"            # redis
     tcp_ports << "6443,"

@@ -10,6 +10,7 @@ module Intrigue
 
         # Make sure the key is set before querying intrigue api
         begin
+          intrigueio_api = _get_task_config "intrigueio_api_hostname"
           intrigueio_api_key = _get_task_config "intrigueio_api_key"
           use_api = true
         rescue MissingTaskConfigurationError
@@ -25,7 +26,7 @@ module Intrigue
             cpe = Intrigue::VulnDb::Cpe.new(fp["cpe"])
             if use_api # get vulns via intrigue API
               _log "Matching vulns for #{fp["cpe"]} via Intrigue API"
-              vulns = cpe.query_intrigue_vulndb_api(intrigueio_api_key)
+              vulns = cpe.query_intrigue_vulndb_api(intrigueio_api, intrigueio_api_key)
             else
               vulns = cpe.query_local_nvd_json
             end
@@ -67,15 +68,13 @@ module VulnDb
 
     end
 
-    def query_intrigue_vulndb_api(api_key)
+    def query_intrigue_vulndb_api(api_host, api_key)
 
       #puts "Querying VulnDB API!"
       #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
 
       begin
-
-        
-        uri = "https://app.intrigue.io/api/vulndb/match_cpe/#{@cpe}"
+        uri = "#{api_host}/api/vulndb/match_cpe/#{@cpe}"
         uri << "?key=#{api_key}"
 
         puts "Requesting Vulns for CPE: #{@cpe}"

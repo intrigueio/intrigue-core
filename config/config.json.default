@@ -58,7 +58,14 @@
       "uri": "http://127.0.0.1:9999/"
     }
   },
-  "intrigue_global_machine_config": {},
+  "intrigue_global_machine_config": {
+    "platform_credentials_api_key": {
+      "value": "",
+      "uri": "https://api.intrigue.io/integrations/credentials",
+      "editable": "true",
+      "comment": ""
+    }
+  },
   "intrigue_global_module_config": {
     "42matters_api_key": {
       "value": "",
@@ -153,6 +160,12 @@
     "certspotter_api_key": {
       "value": "",
       "uri": "https://sslmate.com/certspotter/api/",
+      "editable": "true",
+      "comment": ""
+    },
+    "cloudclassifier_api_key": {
+      "value": "",
+      "uri": "",
       "editable": "true",
       "comment": ""
     },
@@ -330,9 +343,15 @@
       "editable": "true",
       "comment": ""
     },
+    "intrigueio_api_hostname": {
+      "value": "https://api.intrigue.io",
+      "uri": "https://api.intrigue.io",
+      "editable": "true",
+      "comment": ""
+    },
     "intrigueio_api_key": {
       "value": "OPENENGINEAPICLIENT",
-      "uri": "https://app.intrigue.io/api",
+      "uri": "https://api.intrigue.io/api",
       "editable": "true",
       "comment": ""
     },
@@ -417,6 +436,12 @@
     "security_trails_api_key": {
       "value": "",
       "uri": "https://securitytrails.com/corp/apidocs",
+      "editable": "true",
+      "comment": ""
+    },
+    "serp_api_key": {
+      "value": "",
+      "uri": "https://serpapi.com/",
       "editable": "true",
       "comment": ""
     },

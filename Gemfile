@@ -3,11 +3,11 @@ ruby '2.7.2'
 
 ###
 ### Depending on the environment we have to make a few adjustments to our dependencies
-### since we'll want to have Sidekiq Pro (Licensing matters!) and a few other 
+### since we'll want to have Sidekiq Pro (Licensing matters!) and a few other
 ### capabilities which are held back for the hosted service (at least for some time)
 ###
 if ENV["APP_ENV"] == "production-engine"
-  
+
   ### Sidekiq Pro
   source "https://gems.contribsys.com/" do
     gem 'sidekiq-pro'
@@ -22,11 +22,11 @@ if ENV["APP_ENV"] == "production-engine"
   end
 
   # prod ident
-  gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
+  gem 'intrigue-ident', :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
 elsif ENV["APP_ENV"] == "development-engine"
-  
-  # enable regular sidekiq, and link to local gems 
+
+  # enable regular sidekiq, and link to local gems
   gem 'sidekiq'
 
   ###
@@ -38,11 +38,11 @@ elsif ENV["APP_ENV"] == "development-engine"
   gem 'ruclei',                        :path => "~/intrigue/ruclei"
 
 else # every other environment, including production-oss
-  
+
   # no sidekiq pro, so fall back to oss sidekiq
   gem 'sidekiq'
 
-  # prod gems 
+  # prod gems
   gem 'intrigue-ident',         :git => 'https://github.com/intrigueio/intrigue-ident.git', :branch => "main"
 
 end
@@ -74,14 +74,16 @@ gem 'sequel'
 gem 'sqlite3'
 gem 'pg'
 
-# Async DNS 
+# Async DNS
 gem 'async-dns'
 
 # Tasks
-gem 'json', '>= 2.3.0'
-gem 'aws-sdk-sqs'             #,        '~> 3'
-gem 'aws-sdk-s3'              #,         '~> 3'
+gem 'aws-sdk-ec2'
+gem 'aws-sdk-iam'
 gem 'aws-sdk-route53'
+gem 'aws-sdk-s3'
+gem 'aws-sdk-sqs'
+gem 'json', '>= 2.3.0'
 gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
 gem 'cloudflare',             :git => 'https://github.com/intrigueio/cloudflare.git'
 gem 'dnsbl-client',           :git => 'https://github.com/intrigueio/dnsbl-client.git'
@@ -92,17 +94,21 @@ gem 'google-api-client'
 gem 'googleauth'
 gem 'google-cloud-storage'
 gem 'googleajax'              # search_google
+gem 'google_search_results'
 gem 'ip_ranger',              :git => "https://github.com/intrigueio/ip_ranger"
 gem 'ipaddr'
 gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'net-dns'                 # dns_cache_snoop
-gem 'net-http2'               # http2 client support
+gem 'net-http2'               
+gem 'http-2'               # http2 client support
 gem 'neutrino_api',           :git => 'https://github.com/intrigueio/NeutrinoAPI-Ruby.git'
 gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
+gem 'openssl'
 gem 'rex'
 gem 'rex-sslscan',            :git => 'https://github.com/intrigueio/rex-sslscan.git'
 gem 'ruby-nmap',              :git => 'https://github.com/pentestify/ruby-nmap.git'
 gem 'rubyzip'
+gem 'ruby_smb'
 gem 'shodan'                  # search_shodan
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
@@ -127,13 +133,15 @@ gem 'fog-aws'
 # production process management
 gem 'god'
 
-# Development 
-gem 'foreman'
-gem 'pry'                     # Debugging
-gem 'pry-byebug'              # Debugging
-gem 'yard'
-gem "sentry-raven"            # Error tracking (disabled by default)
-gem 'rake'                    # Testing
-gem 'rspec'                   # Testing
-gem 'rack-test'               # Testing
-
+# Development
+group :development, :test do
+  gem 'gem-licenses'
+  gem 'foreman'
+  gem 'pry'                     # Debugging
+  gem 'pry-byebug'              # Debugging
+  gem 'yard'
+  gem "sentry-raven"            # Error tracking (disabled by default)
+  gem 'rake'                    # Testing
+  gem 'rspec'                   # Testing
+  gem 'rack-test'               # Testing
+end

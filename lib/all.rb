@@ -6,8 +6,8 @@
 require_relative 'intrigue-tasks'
 
 ###
-### TODO ... load in default workflows here 
-### 
+### TODO ... load in default workflows here
+###
 
 # Client libraries
 require_relative 'client'
@@ -112,7 +112,7 @@ end
 ###
 begin
   require 'intrigue-ident-private'
-rescue LoadError => e 
+rescue LoadError => e
   # unable to load gem, presumably unavailable
 end
 
@@ -121,7 +121,7 @@ end
 ###
 begin
   require 'intrigue-core-private'
-rescue LoadError => e 
+rescue LoadError => e
   # unable to load gem, presumably unavailable
 end
 
@@ -130,6 +130,6 @@ end
 ###
 begin
   require 'ruclei'
-rescue LoadError => e 
+rescue LoadError => e
   # unable to load gem, presumably unavailable
 end

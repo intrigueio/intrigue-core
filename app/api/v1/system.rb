@@ -4,7 +4,7 @@ class CoreApp < Sinatra::Base
   get "/api/v1/health/?" do
 
     content_type 'application/json'
-    
+
     halt_unless_authenticated!
 
     sidekiq_stats = Sidekiq::Stats.new
@@ -12,7 +12,7 @@ class CoreApp < Sinatra::Base
         { :name => "#{p.name}", :entities => "#{p.entities.count}" } }
 
     output = {
-      :version => IntrigueApp.version,
+      :version => CoreApp.version,
       :projects => project_listing,
       :tasks => {
         :processed => sidekiq_stats.processed,
@@ -35,7 +35,7 @@ class CoreApp < Sinatra::Base
     content_type 'application/json'
 
     halt_unless_authenticated!
-    
+
     entity_metadata = Intrigue::EntityFactory.entity_types.map{ |e| e.metadata }.sort_by{|m| m[:name] }
   wrapped_api_response(nil, entity_metadata)
   end

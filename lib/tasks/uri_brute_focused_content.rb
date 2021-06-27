@@ -140,9 +140,9 @@ class UriBruteFocusedContent < BaseTask
         body_regex: /<title>Manage Filters/i, status: "confirmed" },
       #{ issue_type: "jira_2fa_bypass", path: "/login.action?nosso", severity: 3,
       #  body_regex: //i, status: "confirmed" },
-      { issue_type: "jira_iconuriservlet_ssrf_cve_2017_9506", 
+      { issue_type: "jira_iconuriservlet_ssrf_cve_2017_9506",
         path: "/plugins/servlet/oauth/users/icon-uri?consumerUri=https://ipinfo.io/json", severity: 2,
-        body_regex: /ipinfo.io\/missingauth/i, status: "confirmed" } 
+        body_regex: /ipinfo.io\/missingauth/i, status: "confirmed" }
     ]
 
     #
@@ -154,7 +154,7 @@ class UriBruteFocusedContent < BaseTask
       { issue_type: "jupyter_exposed_ui_detection", path: "/terminals/1", severity: 1, body_regex: /terminals\/websocket\/1/i, status: "confirmed" }
     ]
 
-    laravel_list = [             
+    laravel_list = [
       # TODO ... move this to laravel-only.
       # https://github.com/laravel/laravel/blob/master/.env.example
       { issue_type: "laravel_env_file", path: "/.env", severity: 1, body_regex: /^APP_(NAME|ENV|KEY|DEBUG|URL)=/, status: "confirmed" }
@@ -258,46 +258,46 @@ class UriBruteFocusedContent < BaseTask
       { issue_type: "spring_info_leak", path: "/threaddump", severity: 4, body_regex: /threads/i, status: "confirmed" },
       { issue_type: "spring_info_leak", path: "/trace", severity: 4, body_regex: nil, status: "potential" },
       # add /actuator infront of all
-      { issue_type: "spring_info_leak", path: "actuator/auditevents", severity: 4, body_regex: /events/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/autoconfig", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/beans", severity: 4, body_regex: /beans/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/caches", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/conditions", severity: 4, body_regex: /contexts/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/configprops", severity: 4, body_regex: /contexts/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/dump", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/env", severity: 4, body_regex: /JAVA_VERSION/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/flyway", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/health", severity: 4, body_regex: /status/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/heapdump", severity: 4, body_regex: /contexts/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/httptrace", severity: 4, body_regex: /traces/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/info", severity: 4, body_regex: /app/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/integrationgraph", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/jolokia", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/logfile", severity: 4, body_regex: /INFO/, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/loggers", severity: 4, body_regex: /levels/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/liquidbase", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/metrics", severity: 4, body_regex: /names/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/mappings", severity: 4, body_regex: /contexts/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/prometheus", severity: 4, body_regex: /HELP/, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/scheduledtasks", severity: 4, body_regex: /cron/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/sessions", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/shutdown", severity: 4, body_regex: nil, status: "potential" },
-      { issue_type: "spring_info_leak", path: "actuator/threaddump", severity: 4, body_regex: /threads/i, status: "confirmed" },
-      { issue_type: "spring_info_leak", path: "actuator/trace", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/auditevents", severity: 4, body_regex: /events/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/autoconfig", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/beans", severity: 4, body_regex: /beans/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/caches", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/conditions", severity: 4, body_regex: /contexts/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/configprops", severity: 4, body_regex: /contexts/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/dump", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/env", severity: 4, body_regex: /JAVA_VERSION/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/flyway", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/health", severity: 4, body_regex: /status/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/heapdump", severity: 4, body_regex: /contexts/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/httptrace", severity: 4, body_regex: /traces/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/info", severity: 4, body_regex: /app/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/integrationgraph", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/jolokia", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/logfile", severity: 4, body_regex: /INFO/, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/loggers", severity: 4, body_regex: /levels/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/liquidbase", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/metrics", severity: 4, body_regex: /names/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/mappings", severity: 4, body_regex: /contexts/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/prometheus", severity: 4, body_regex: /HELP/, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/scheduledtasks", severity: 4, body_regex: /cron/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/sessions", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/shutdown", severity: 4, body_regex: nil, status: "potential" },
+      { issue_type: "spring_info_leak", path: "/actuator/threaddump", severity: 4, body_regex: /threads/i, status: "confirmed" },
+      { issue_type: "spring_info_leak", path: "/actuator/trace", severity: 4, body_regex: nil, status: "potential" },
     ] # more: https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Insecure%20Management%20Interface/Intruder/springboot_actuator.txt
 
     tomcat_list = [
       { issue_type: "tomcat_info_leak", path: '/status', severity: 4, body_regex: /<p> Free memory:/ },
-      { issue_type: "tomcat_config", path: '/web-console', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/admin-console', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/manager/html', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/tomcat/manager/html', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/host-manager/html', severity: 4, body_regex: nil },
-      { issue_type: "tomcat_config", path: '/server-manager/html', severity: 4, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console', severity: 2, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/web-console/Invoker', severity: 1, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console/HtmlAdaptor', severity: 2, body_regex: nil },
-      { issue_type: "vulnerable_tomcat_jmx_console", path: '/invoker/JMXInvokerServlet', severity: 1, body_regex: nil}
+      #{ issue_type: "tomcat_config", path: '/web-console', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/admin-console', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/tomcat/manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/host-manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "tomcat_config", path: '/server-manager/html', severity: 4, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console', severity: 2, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/web-console/Invoker', severity: 1, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/jmx-console/HtmlAdaptor', severity: 2, body_regex: nil },
+      #{ issue_type: "vulnerable_tomcat_jmx_console", path: '/invoker/JMXInvokerServlet', severity: 1, body_regex: nil}
       # http://[host]:8090/invoker/EJBInvokerServlet
       # https://[host]:8453//invoker/EJBInvokerServlet
       #{ path: '/invoker/EJBInvokerServlet', severity: 4,  body_regex: nil}
@@ -361,9 +361,9 @@ class UriBruteFocusedContent < BaseTask
     #  first handle our specific here (more likely to be interesting)
     apache_list.each { |x| work_q.push x } if is_product?(fingerprint,"HTTP Server")  # Apache
     asp_net_list.each { |x| work_q.push x } if (is_product?(fingerprint,"ASP.NET") || is_product?(fingerprint,"ASP.NET MVC") )
-    bamboo_list.each { |x| work_q.push x } if is_product?(fingerprint,"Bamboo") 
-    coldfusion_list.each { |x| work_q.push x } if is_product?(fingerprint,"Coldfusion") 
-    confluence_list.each { |x| work_q.push x } if is_product?(fingerprint,"Confluence") 
+    bamboo_list.each { |x| work_q.push x } if is_product?(fingerprint,"Bamboo")
+    coldfusion_list.each { |x| work_q.push x } if is_product?(fingerprint,"Coldfusion")
+    confluence_list.each { |x| work_q.push x } if is_product?(fingerprint,"Confluence")
     iis_list.each { |x| work_q.push x } if is_product?(fingerprint,"Internet Information Services")
     #globalprotect_list.each { |x| work_q.push x } if is_product?(fingerprint,"GlobalProtect")
     jenkins_list.each { |x| work_q.push x } if is_product?(fingerprint,"Jenkins")

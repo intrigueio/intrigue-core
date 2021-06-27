@@ -1,0 +1,668 @@
+{
+	"categories": {
+	  	"development": [
+			{
+			"name": "bitbucket.org",
+			"dork": "site:bitbucket.org",
+			"confidence": 2
+			},
+			{
+			"name": "ci.appveyor.com",
+			"dork": "site:ci.appveyor.com",
+			"confidence": 2
+			},
+			{
+			"name": "code.google.com",
+			"dork": "site:code.google.com",
+			"confidence": 2
+			},
+			{
+			"name": "codecov.io",
+			"dork": "site:codecov.io",
+			"confidence": 2
+			},
+			{
+			"name": "codepad.co",
+			"dork": "site:codepad.co",
+			"confidence": 2
+			},
+			{
+			"name": "codepad.org",
+			"dork": "site:codepad.org",
+			"confidence": 2
+			},
+			{
+			"name": "codepen.io",
+			"dork": "site:codepen.io",
+			"confidence": 2
+			},
+			{
+			"name": "codeshare.io",
+			"dork": "site:codeshare.io",
+			"confidence": 2
+			},
+			{
+			"name": "dev.azure.com",
+			"dork": "site:dev.azure.com",
+			"confidence": 2
+			},
+			{
+			"name": "developercommunity.visualstudio.com",
+			"dork": "site:developercommunity.visualstudio.com",
+			"confidence": 2
+			},
+			{
+			"name": "discuss.circleci.com",
+			"dork": "site:discuss.circleci.com",
+			"confidence": 2
+			},
+			{
+			"name": "discuss.elastic.co",
+			"dork": "site:discuss.elastic.co",
+			"confidence": 2
+			},
+			{
+			"name": "dotnetfiddle.net",
+			"dork": "site:dotnetfiddle.net",
+			"confidence": 2
+			},
+			{
+			"name": "forum.yiiframework.com",
+			"dork": "site:forum.yiiframework.com",
+			"confidence": 2
+			},
+			{
+			"name": "framagit.org",
+			"dork": "site:framagit.org",
+			"confidence": 2
+			},
+			{
+			"name": "git.io",
+			"dork": "site:git.io",
+			"confidence": 1
+			},
+			{
+			"name": "github.com",
+			"dork": "site:github.com",
+			"confidence": 1
+			},
+			{
+			"name": "github.io",
+			"dork": "site:github.io",
+			"confidence": 1
+			},
+			{
+			"name": "githubusercontent.com",
+			"dork": "site:githubusercontent.com",
+			"confidence": 1
+			},
+			{
+			"name": "gitlab.com",
+			"dork": "site:gitlab.com",
+			"confidence": 1
+			},
+			{
+			"name": "hub.docker.com",
+			"dork": "site:hub.docker.com",
+			"confidence": 2
+			},
+			{
+			"name": "ideone.com",
+			"dork": "site:ideone.com",
+			"confidence": 2
+			},
+			{
+			"name": "issues.jenkins.io",
+			"dork": "site:issues.jenkins.io",
+			"confidence": 2
+			},
+			{
+			"name": "jetbrains.com",
+			"dork": "site:jetbrains.com",
+			"confidence": 2
+			},
+			{
+			"name": "jsbin.com",
+			"dork": "site:jsbin.com",
+			"confidence": 2
+			},
+			{
+			"name": "jsfiddle.net",
+			"dork": "site:jsfiddle.net",
+			"confidence": 2
+			},
+			{
+			"name": "jsonformatter.org",
+			"dork": "site:jsonformatter.org",
+			"confidence": 2
+			},
+			{
+			"name": "ideone.com",
+			"dork": "site:ideone.com",
+			"confidence": 2
+			},
+			{
+			"name": "issues.jenkins.io",
+			"dork": "site:issues.jenkins.io",
+			"confidence": 2
+			},
+			{
+			"name": "marketplace.visualstudio.com",
+			"dork": "site:marketplace.visualstudio.com",
+			"confidence": 2
+			},
+			{
+			"name": "mvnrepository.com",
+			"dork": "site:mvnrepository.com",
+			"confidence": 2
+			},
+			{
+			"name": "mybinder.org",
+			"dork": "site:mybinder.org",
+			"confidence": 2
+			},
+			{
+			"name": "runkit.com",
+			"dork": "site:runkit.com",
+			"confidence": 2
+			},
+			{
+			"name": "npmjs.com",
+			"dork": "site:npmjs.com",
+			"confidence": 2
+			},
+			{
+			"name": "opensourceprojects.eu",
+			"dork": "site:opensourceprojects.eu",
+			"confidence": 2
+			},
+			{
+			"name": "paste2.org",
+			"dork": "site:paste2.org",
+			"confidence": 2
+			},
+			{
+			"name": "pastelink.net",
+			"dork": "site:pastelink.net",
+			"confidence": 2
+			},
+			{
+			"name": "pub.dev",
+			"dork": "site:pub.dev",
+			"confidence": 2
+			},
+			{
+			"name": "rdrr.io",
+			"dork": "site:rdrr.io",
+			"confidence": 2
+			},
+			{
+			"name": "readme.io",
+			"dork": "site:readme.io",
+			"confidence": 2
+			},
+			{
+			"name": "readthedocs.org",
+			"dork": "site:readthedocs.org",
+			"confidence": 2
+			},
+			{
+			"name": "regex101.com",
+			"dork": "site:regex101.com",
+			"confidence": 2
+			},
+			{
+			"name": "regexlib.com",
+			"dork": "site:regexlib.com",
+			"confidence": 2
+			},
+			{
+			"name": "regexpal.com",
+			"dork": "site:regexpal.com",
+			"confidence": 2
+			},
+			{
+			"name": "repl.it",
+			"dork": "site:repl.it",
+			"confidence": 2
+			},
+			{
+			"name": "rextester.com",
+			"dork": "site:rextester.com",
+			"confidence": 2
+			},
+			{
+			"name": "searchcode.com",
+			"dork": "site:searchcode.com",
+			"confidence": 2
+			},
+			{
+			"name": "sharecode.io",
+			"dork": "site:sharecode.io",
+			"confidence": 2
+			},
+			{
+			"name": "stackoverrun.com",
+			"dork": "site:stackoverrun.com",
+			"confidence": 2
+			},
+			{
+			"name": "stackoverflow.com",
+			"dork": "site:stackoverflow.com",
+			"confidence": 2
+			},
+			{
+			"name": "subversion.assembla.com",
+			"dork": "site:subversion.assembla.com",
+			"confidence": 2
+			},
+			{
+			"name": "registry.terraform.io",
+			"dork": "site:registry.terraform.io",
+			"confidence": 2
+			},
+			{
+			"name": "travis-ci.com",
+			"dork": "site:travis-ci.com",
+			"confidence": 2
+			}
+
+	  	],
+		"social": [ 
+			{
+			"name": "youtube.com",
+			"dork": "site:youtube.com"
+			},
+			{
+			"name": "youtu.be",
+			"dork": "site:youtu.be"
+			},
+			{
+			"name": "y2u.be",
+			"dork": "site:y2u.be"
+			},
+			{
+			"name": "wordpress.com",
+			"dork": "site:wordpress.com"
+			},
+			{
+			"name": "vimeo.com",
+			"dork": "site:vimeo.com"
+			},
+			{
+			"name": "viber.com",
+			"dork": "site:viber.com"
+			},
+			{
+			"name": "twitter.com",
+			"dork": "site:twitter.com"
+			},
+			{
+			"name": "twitch.tv",
+			"dork": "site:twitch.tv"
+			},
+			{
+			"name": "tumblr.com",
+			"dork": "site:tumblr.com"
+			},
+			{
+			"name": "tiktok.com",
+			"dork": "site:tiktok.com"
+			},
+			{
+			"name": "threadreaderapp.com",
+			"dork": "site:threadreaderapp.com"
+			},
+			{
+			"name": "substack.com",
+			"dork": "site:substack.com"
+			},
+			{
+			"name": "streamable.com",
+			"dork": "site:streamable.com"
+			},
+			{
+			"name": "story.snapchat.com",
+			"dork": "site:story.snapchat.com"
+			},
+			{
+			"name": "snapchat.com",
+			"dork": "site:snapchat.com"
+			},
+			{
+			"name": "9gag.com",
+			"dork": "site:9gag.com"
+			},
+			{
+			"name": "about.me",
+			"dork": "site:about.me"
+			},
+			{
+			"name": "badoo.com",
+			"dork": "site:badoo.com"
+			},
+			{
+			"name": "blogspot.com",
+			"dork": "site:blogspot.com"
+			},
+			{
+			"name": "dailymotion.com",
+			"dork": "site:dailymotion.com"
+			},
+			{
+			"name": "discord.com",
+			"dork": "site:discord.com"
+			},
+			{
+			"name": "disqus.com",
+			"dork": "site:disqus.com"
+			},
+			{
+			"name": "facebook.com",
+			"dork": "site:facebook.com"
+			},
+			{
+			"name": "fb.me",
+			"dork": "site:fb.me"
+			},	
+			{
+			"name": "flipboard.com",
+			"dork": "site:flipboard.com"
+			},
+			{
+			"name": "foursquare.com",
+			"dork": "site:foursquare.com"
+			},
+			{
+			"name": "groups.google.com",
+			"dork": "site:groups.google.com"
+			},
+			{
+			"name": "instagram.com",
+			"dork": "site:instagram.com"
+			},
+			{
+			"name": "myspace.com",
+			"dork": "site:myspace.com"
+			},
+			{
+			"name": "papaly.com",
+			"dork": "site:papaly.com"
+			},
+			{
+			"name": "quora.com",
+			"dork": "site:fb.watch"
+			},
+			{
+			"name": "reddit.com",
+			"dork": "site:reddit.com"
+			}
+	  ],	
+	  "forms": [ 
+		{
+		"name": "123formbuilder.com",
+		"dork": "site:123formbuilder.com"
+		},
+		{
+		"name": "formdesk.com",
+		"dork": "site:formdesk.com"
+		},
+		{
+		"name": "form.jotform.com",
+		"dork": "site:form.jotform.com"
+		}, 
+		{
+		"name": "formlets.com",
+		"dork": "site:formlets.com"
+		},
+		{
+		"name": "forms.gle",
+		"dork": "site:forms.gle"
+		},
+		{
+		"name": "forms.office.com",
+		"dork": "site:forms.office.com"
+		},
+		{
+		"name": "formsite.com",
+		"dork": "site:formsite.com"
+		},
+		{
+		"name": "formstack.com/forms",
+		"dork": "site:formstack.com/forms"
+		},
+		{
+		"name": "jotform.com",
+		"dork": "site:jotform.com"
+		},
+		{
+		"name": "qualtrics.com",
+		"dork": "site:qualtrics.com"
+		},
+		{
+		"name": "surveymonkey.com",
+		"dork": "site:surveymonkey.com"
+		}		
+	  ],
+	  "storage":[
+		{
+		"name": "1drv.ms",
+		"dork": "site:1drv.ms"
+		},
+		{
+		"name": "box.net/shared",
+		"dork": "site:box.net/shared"
+		},
+		{
+		"name": "dropbox.com/s",
+		"dork": "site:dropbox.com/s"
+		},
+		{
+		"name": "drive.google.com",
+		"dork": "site:drive.google.com"
+		},
+		{
+		"name": "gofile.io",
+		"dork": "site:gofile.io"
+		},
+		{
+		"name": "mega.nz",
+		"dork": "site:mega.nz"
+		},
+		{
+		"name": "wesendit.com/dl",
+		"dork": "site:wesendit.com/dl"
+		},
+		{
+		"name": "wetransfer.com",
+		"dork": "site:wetransfer.com"
+		},
+		{
+		"name": "yadi.sk",
+		"dork": "site:yadi.sk"
+		},
+		{
+		"name": "zippyshare.com",
+		"dork": "site:zippyshare.com"
+		}
+	  ],
+	  "cloud":
+	  [
+		{
+		"name": "amazonaws.com",
+		"dork": "site:amazonaws.com"
+		},
+		{
+		"name": "apiary.io",
+		"dork": "site:apiary.io"
+		},
+		{
+		"name": "appdomain.cloud",
+		"dork": "site:appdomain.cloud"
+		},
+		{
+		"name": "appspot.com",
+		"dork": "site:appspot.com"
+		},
+		{
+		"name": "azure-api.net",
+		"dork": "site:azure-api.net"
+		},
+		{
+		"name": "azurecontainer.io",
+		"dork": "site:azurecontainer.io"
+		},
+		{
+		"name": "azureedge.net",
+		"dork": "site:azureedge.net"
+		},
+		{
+		"name": "azurefd.net",
+		"dork": "site:azurefd.net"
+		},
+		{
+		"name": "azurewebsites.net",
+		"dork": "site:azurewebsites.net"
+		},
+		{
+		"name": "b-cdn.net",
+		"dork": "site:b-cdn.net"
+		},
+		{
+		"name": "b2clogin.com",
+		"dork": "site:b2clogin.com"
+		},
+		{
+		"name": "backblazeb2.com",
+		"dork": "site:backblazeb2.com"
+		},
+		{
+		"name": "blackbaud.com",
+		"dork": "site:blackbaud.com"
+		},
+		{
+		"name": "cloudapp.net",
+		"dork": "site:cloudapp.net"
+		},
+		{
+		"name": "cloudapp.azure.com",
+		"dork": "site:cloudapp.azure.com"
+		},
+		{
+		"name": "cloudfront.net",
+		"dork": "site:cloudfront.net"
+		},
+		{
+		"name": "cloud.google.com",
+		"dork": "site:cloud.google.com"
+		},
+		{
+		"name": "cloud.ovh.net",
+		"dork": "site:cloud.ovh.net"
+		},
+		{
+		"name": "core.windows.net",
+		"dork": "site:core.windows.net"
+		},
+		{
+		"name": "digitaloceanspaces.com",
+		"dork": "site:digitaloceanspaces.com"
+		},
+		{
+		"name": "edgekey.net",
+		"dork": "site:edgekey.net"
+		},
+		{
+		"name": "edgesuite.net",
+		"dork": "site:edgesuite.net"
+		},
+		{
+		"name": "elasticbeanstalk.com",
+		"dork": "site:elasticbeanstalk.com"
+		},
+		{
+		"name": "firebaseapp.com",
+		"dork": "site:firebaseapp.com"
+		},
+		{
+		"name": "firebaseio.com",
+		"dork": "site:firebaseio.com"
+		},
+		{
+		"name": "force.com",
+		"dork": "site:force.com"
+		},
+		{
+		"name": "googleapis.com",
+		"dork": "site:googleapis.com"
+		},
+		{
+		"name": "googleusercontent.com",
+		"dork": "site:googleusercontent.com"
+		},
+		{
+		"name": "herokuapp.com",
+		"dork": "site:herokuapp.com"
+		},
+		{
+		"name": "hubspot.net",
+		"dork": "site:hubspot.net"
+		},
+		{
+		"name": "ibmcloud.com",
+		"dork": "site:ibmcloud.com"
+		},
+		{
+		"name": "linodeobjects.com",
+		"dork": "site:linodeobjects.com"
+		},
+		{
+		"name": "login.microsoftonline.com",
+		"dork": "site:login.microsoftonline.com"
+		},
+		{
+		"name": "ondemand.com",
+		"dork": "site:ondemand.com"
+		},
+		{
+		"name": "oraclecloud.com",
+		"dork": "site:oraclecloud.com"
+		},
+		{
+		"name": "squarespace.com",
+		"dork": "site:squarespace.com"
+		},
+		{
+		"name": "webflow.com",
+		"dork": "site:webflow.com"
+		},
+		{
+		"name": "website-files.com",
+		"dork": "site:website-files.com"
+		},
+		{
+		"name": "wufoo.com",
+		"dork": "site:wufoo.com"
+		},
+		{
+		"name": "zendesk.com",
+		"dork": "site:zendesk.com"
+		},
+		{
+		"name": "zoho.com",
+		"dork": "site:zoho.com"
+		}
+	  ],
+	"project management":
+	[
+		{
+		"name": "atlassian.net",
+		"dork": "site:atlassian.net"
+		},
+		{
+		"name": "trello.com",
+		"dork": "site:trello.com"
+		}
+	]
+	}
+  }

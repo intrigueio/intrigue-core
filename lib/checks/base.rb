@@ -25,8 +25,12 @@ class BaseCheck < BaseTask
 
     # create linked issue here if we got a truthy value ... make sure to append
     # the output of run to the creatd issue for proof 
-    if out 
-      _create_linked_issue self.class.metadata[:name], {proof: out}
+    if out
+      if out.is_a?(Hash) && out.key?(:status)
+        _create_linked_issue self.class.metadata[:name], {status: out[:status], proof: out.except(:status)}
+      else
+        _create_linked_issue self.class.metadata[:name], {proof: out}
+      end
     end
   end
 

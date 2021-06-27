@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md bg-dark navbar-dark p-1">
-    
+
     <a class="navbar-brand" href="/">
       <img src="/img/logo-white.png" width="32px" height="32px" alt="intrigue">
     </a>
@@ -7,7 +7,7 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navvynav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <div class="collapse navbar-collapse" id="navvynav">
 
       <ul class="navbar-nav">
@@ -17,18 +17,18 @@
       </li>
 
 
-      <% if @project_name %> 
+      <% if @project_name %>
 
       <li class="nav-item">
         <b><a class="nav-link" href="/<%=h @project_name %>/start">[<%= h @project_name %>]</a></b>
-      </li>  
+      </li>
 
       <li class="nav-item dropdown">
         <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           <span><img width-20 height=20 src="/img/icons/start-white.png"></span>&nbsp;Start
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/start/workflow">Start A Workflow</a></li>  
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/start/workflow">Start A Workflow</a></li>
           <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/start/task">Run Single Task</a></li>
           <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/start/task/upload">Upload Entities</a></li>
         </ul>
@@ -55,9 +55,9 @@
           <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/applications">Apps</a></li>
           <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/certificates">App Certificates</a></li>
           <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/ciphers">App Ciphers</a></li>
-          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/cves">App Vulns (CVE)</a></li>
-          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/javascripts">App Javascript</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/screenshots">App Screenshots</a></li>
           <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/fingerprints">App Technology</a></li>
+          <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/analysis/cves">App Vulns (CVE)</a></li>
         </ul>
       </li>
 
@@ -92,7 +92,7 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
           <% if @project_name %>
-            <li><a class="dropdown-item" href="#"><b>Project</b></a></li>  
+            <li><a class="dropdown-item" href="#"><b>Project</b></a></li>
             <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/config">Project Config</a></li>
             <li><a class="dropdown-item nav-link" href="/<%=h @project_name %>/seeds">Seeds</a></li>
           <% end %>
@@ -105,19 +105,21 @@
       </li>
       </ul>
 
-      <!-- right side navbar --> 
+      <!-- right side navbar -->
       <ul class="navbar-nav">
       <li class="nav-item dropdown">
         <a class="dropdown-toggle nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           <span><img width-20 height=20 src="/img/icons/help-white.png"></span>&nbsp;Help
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item nav-link" target='_blank' href="https://core.intrigue.io/up-and-running/">Getting Started</a></li>
+          <li><a class="dropdown-item nav-link" target='_blank' href="https://help.intrigue.io/reference/intrigue-core-api-endpoints">API Reference</a></li>
           <li><a class="dropdown-item nav-link" href="/help/entities">Entity Definitions</a></li>
           <li><a class="dropdown-item nav-link" href="/help/issues">Issue Definitions</a></li>
           <li><a class="dropdown-item nav-link" href="/help/tasks">Task Definitions</a></li>
         </ul>
       </li>
       </ul>
-      
+
   </div>
 </nav>

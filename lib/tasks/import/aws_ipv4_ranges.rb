@@ -29,7 +29,7 @@ class ImportAwsIpv4Ranges < BaseTask
   def run
     super
 
-    region =  _get_entity_name || "all"
+    region =  _get_entity_name
     service = _get_option("service") || "EC2"
     limit = _get_option("limit").to_i || 10000
 
@@ -49,9 +49,9 @@ class ImportAwsIpv4Ranges < BaseTask
       _log " -> Creating #{prefix}"
 
       _create_entity("NetBlock", {
-         "name" => "#{prefix}", 
-         "aws_region" => region, 
-         "aws_service" => service, 
+         "name" => "#{prefix}",
+         "aws_region" => region,
+         "aws_service" => service,
          "scoped" => true
       })
     end

@@ -12,14 +12,19 @@ class IpAddress < Intrigue::Core::Model::Entity
   end
 
   def validate_entity
-    return name.match(ipv4_regex) || name.match(ipv6_regex)
+    return name.match(ipv4_regex) || name.match(ipv6_regex) &&
+      !name.match(/^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*\:)*?:?0*1$/)
   end
 
   def detail_string
     out = ""
 
+    if details["network.name"]
+      out << "#{details["network.name"]} | "
+    end
+
     if details["geolocation"] && details["geolocation"]["country_code"]
-      out << "#{details["geolocation"]["city"]} #{details["geolocation"]["country_code"]} | " 
+      out << "#{details["geolocation"]["city"]} #{details["geolocation"]["country_code"]} | "
     end
 
     if details["ports"] && details["ports"].count > 0
@@ -29,7 +34,7 @@ class IpAddress < Intrigue::Core::Model::Entity
     if details["resolutions"]
       out << " PTR: #{details["resolutions"].each.map{|h| h["response_data"] }.join(" | ")}"
     end
-    
+
   out
   end
 
@@ -40,18 +45,18 @@ class IpAddress < Intrigue::Core::Model::Entity
   ###
   ### SCOPING
   ###
-  def scoped?(conditions={}) 
-    return true if scoped
-    return true if self.allow_list || self.project.allow_list_entity?(self) 
+  def scoped?(conditions={})
+    return scoped unless scoped.nil?
+    return true if self.allow_list || self.project.allow_list_entity?(self)
     return false if self.deny_list || self.project.deny_list_entity?(self)
 
-    # while it might be nice to scope out stuff on third paries, we still need 
+    # while it might be nice to scope out stuff on third parties, we still need
     # to keep it in to scan, so we'll need to check scope at that level
 
   # if we didnt match the above and we were asked, default to true as we'll
   #  we'll want to scope things in before we have a full set of aliases
   true
-  end 
+  end
 
 end
 end

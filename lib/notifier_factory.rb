@@ -30,7 +30,7 @@ class NotifierFactory
   def self.default
     # select all with the default attribute
     notifiers = Intrigue::Core::System::Config.config["intrigue_notifiers"]
-    return unless notifiers # check for nil configtai
+    return [] unless notifiers # check for nil configtai
 
     enabled_configs = notifiers.select{ |k,v| v["enabled"] && v["default"] }
     # create notifiers for them

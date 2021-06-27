@@ -33,7 +33,7 @@ class SearchShodan < BaseTask
 
     # check to make sure we got a response.
     unless response && response["data"]
-      _log_error "ERROR: #{response["error"]}"
+      _log_error "ERROR: #{response}"
       return false
     end
 
@@ -68,8 +68,9 @@ class SearchShodan < BaseTask
 
       if response_honeyscore == "1.0"
         _create_linked_issue("honeypot_detected",{
-         source:"shodan.io" ,
-         references: ["https://honeyscore.shodan.io/"] })
+        proof: response,
+        source:"shodan.io" ,
+        references: ["https://honeyscore.shodan.io/"] })
       else
         return false
       end

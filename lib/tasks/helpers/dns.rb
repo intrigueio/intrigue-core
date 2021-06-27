@@ -5,16 +5,17 @@ module Dns
   include Intrigue::Task::Generic
   include Intrigue::Core::System::DnsHelpers # parse_tld, parse_domain_name
 
-  # method is used across the dns/domain/ip enrich methods 
+  # method is used across the dns/domain/ip enrich methods
   # to create aliases
-  def create_dns_aliases(results, entity_obj, unscoped=false)
+  def create_dns_aliases(results, entity_obj=nil, unscoped=false)
 
     results.each do |result|
+
       #skip any resolution to ourselves
-      next if entity_obj.name == result["name"] 
-      
+      next if entity_obj && entity_obj.name == result["name"]
+
       _log "Creating entity for... #{result}"
-    
+
       # create the domain, always unscoped
       domain_name = parse_domain_name(result["name"])
       create_dns_entity_from_string(domain_name, entity_obj, true)
@@ -42,12 +43,12 @@ module Dns
     if s.is_ip_address?
       e = _create_entity("IpAddress", entity_details, alias_entity)
     else
-      
-      # clean it up and create 
+
+      # clean it up and create
       entity_details["name"] = "#{s}".strip.gsub(/^\*\./,"").gsub(/\.$/,"")
       if parse_domain_name(entity_details["name"]) == entity_details["name"]
         e = _create_entity "Domain", entity_details, alias_entity
-      else 
+      else
         e = _create_entity "DnsRecord", entity_details, alias_entity
       end
 
@@ -85,7 +86,7 @@ module Dns
 
     all_discovered_wildcards = all_discovered_wildcards.flatten.uniq
 
-    # all discovered wildcards 
+    # all discovered wildcards
     return [] if all_discovered_wildcards.empty?
 
     # If that resolved, we know that we're in a wildcard situation.
@@ -149,7 +150,7 @@ module Dns
 
   # convenience method to just send back name
   # returns the ip if resolved
-  # will return nil if it doesnt resolve 
+  # will return nil if it doesnt resolve
   def resolve_name(lookup_name, lookup_types=nil)
     resolve_names(lookup_name,lookup_types).first
   end
@@ -166,23 +167,22 @@ module Dns
 
 
   ###
-  ### Main DNS resolution function, uses Async EventMachine based resolution, and 
-  ### falls back to non async if it fails 
+  ### Main DNS resolution function, uses Async EventMachine based resolution, and
+  ### falls back to non async if it fails
   ###
   def resolve(lookup_name, lookup_types=nil)
-    
+
     resources = []
 
-
-    ### 
-    ### First nameserver port is our local async DNS ... in case that's not up, 
-    ### fall back to any configured resolvers in teh global config 
+    ###
+    ### First nameserver port is our local async DNS ... in case that's not up,
+    ### fall back to any configured resolvers in teh global config
     ###
     additional_nameserver_config = (Intrigue::Core::System::Config.config["resolvers"] || "")
     additional_nameservers = additional_nameserver_config.split(",")
     nameserver_list = [['127.0.0.1', 8081]].concat(additional_nameservers.map{|x| [x,53] })
-    
-    # now set this in the config 
+
+    # now set this in the config
     config = {
       search: [],
       ndots: 1,
@@ -191,15 +191,15 @@ module Dns
 
     # Handle ip lookup (PTR) first
     if lookup_name.is_ip_address?
-      
+
       # TODO... this should return multiple
-      begin   
+      begin
 
         entry = Resolv::DNS.new(config).getname lookup_name
 
         unless entry && entry.length > 0
           _log_error "No response!"
-          return [] 
+          return []
         end
 
         out = [{
@@ -207,56 +207,56 @@ module Dns
           "lookup_details" => [{
             "request_record" => lookup_name,
             "response_record_type" => "PTR",
-            "response_record_data" => entry 
+            "response_record_data" => entry
           }]
         }]
 
-      rescue Errno::EHOSTUNREACH => e 
+      rescue Errno::EHOSTUNREACH => e
         _log_error "Hit exception: #{e}."
-      rescue Resolv::ResolvError => e  
+      rescue Resolv::ResolvError => e
         _log_error "Hit exception: #{e}."
       rescue Errno::ENETUNREACH => e
         _log_error "Hit exception: #{e}. Are you sure you're connected?"
       end
 
-    # Then everything else 
+    # Then everything else
     else
 
-      begin 
-        # default types to check 
+      begin
+        # default types to check
         lookup_types = [
-          Resolv::DNS::Resource::IN::AAAA, 
+          Resolv::DNS::Resource::IN::AAAA,
           Resolv::DNS::Resource::IN::A,
           Resolv::DNS::Resource::IN::CNAME] unless lookup_types
 
-        # lookup each type, with a bit of backoff if it doesnt work 
+        # lookup each type, with a bit of backoff if it doesnt work
         lookup_types.each do |t|
-          
+
           tries = 0
           max_tries = 3
-          response = nil 
+          response = nil
 
           until response || tries > max_tries
-            begin 
+
+            begin
               resolver = Resolv::DNS.open(config)
               resolver.timeouts = 3
               response = resolver.getresources(lookup_name, t)
-              resources.concat(response) 
-            rescue Errno::ECONNREFUSED => e 
-              tries += 1 
-              sleep tries * 3 
+              resources.concat(response)
+            rescue Errno::ECONNREFUSED => e
+              tries += 1
+              sleep tries * 3
 
-              # Try without our async resolver 
+              # Try without our async resolver
               _log "Trying to resolve w/o async on #{lookup_name}"
               resolver = Resolv::DNS.open(config.except(:nameserver_port))
               resolver.timeouts = 3
               response = resolver.getresources(lookup_name, t)
-              resources.concat(response) 
-
+              resources.concat(response)
             end
           end
 
-          unless response 
+          unless response
             _log_error "WARNING! Skipping DNS resolution #{t} #{lookup_name}, unable to connect after multiple attempts"
           end
 
@@ -281,8 +281,8 @@ module Dns
           record_data = r.name.to_s if record_type == "NS"
           record_data = { "cpu" => r.cpu.to_s, "os" => r.os.to_s } if record_type == "HINFO"
           record_data = {
-              "mname" => r.mname.to_s, 
-              "rname"=> r.rname.to_s, 
+              "mname" => r.mname.to_s,
+              "rname"=> r.rname.to_s,
               "serial" => r.serial } if record_type == "SOA"
 
           # sanitize and return
@@ -292,19 +292,19 @@ module Dns
             "lookup_details" => [{
               "request_record" => lookup_name.sanitize_unicode,
               "response_record_type" => record_type,
-              "response_record_data" => record_data.sanitize_unicode 
+              "response_record_data" => record_data.sanitize_unicode
             }]
           }
         end
 
-      rescue Errno::EHOSTUNREACH => e 
+      rescue Errno::EHOSTUNREACH => e
         _log_error "Hit exception: #{e}."
-      rescue Resolv::ResolvError => e 
+      rescue Resolv::ResolvError => e
         _log_error "Hit exception: #{e}."
       rescue Errno::ENETUNREACH => e
         _log_error "Hit exception: #{e}. Are you sure you're connected?"
       end
-    end 
+    end
 
   out || []
   end
@@ -321,7 +321,7 @@ module Dns
         ns_records << record["response_record_data"]
       end
     end
-    
+
   ns_records
   end
 
@@ -364,6 +364,24 @@ module Dns
   mx_records
   end
 
+  def collect_caa_records(lookup_name)
+    _log "Collecting CAA records"
+    response = resolve(lookup_name, [Resolv::DNS::Resource::IN::CAA])
+    return [] unless response && !response.empty?
+    caa_records = []
+    response.each do |r|
+      r["lookup_details"].each do |record|
+        next unless record["response_record_type"] == "CAA"
+        caa_records << {
+          "flag" => record["response_record_data"]["flag"],
+          "tag" => record["response_record_data"]["tag"],
+          "host" => "#{record["response_record_data"]["value"]}" }
+      end
+    end
+
+  caa_records
+  end
+
   def collect_spf_details(lookup_name)
     _log "Collecting SPF records"
     response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
@@ -377,14 +395,14 @@ module Dns
         spf_records << record["response_record_data"]
       end
     end
-    
+
   spf_records
   end
 
   def collect_txt_records(lookup_name)
     _log "Collecting TXT records"
     txt_records = []
-    5.times do 
+    5.times do
       response = resolve(lookup_name, [Resolv::DNS::Resource::IN::TXT])
       return [] unless response && !response.empty?
 
@@ -411,7 +429,7 @@ module Dns
       # Clean up the response and make it serializable
       xtype = result["lookup_details"].first["response_record_type"].to_s.sanitize_unicode
       lookup_details = result["lookup_details"].first["response_record_data"]
-      
+
       xdata = result["lookup_details"].first["response_record_data"].to_s.sanitize_unicode
 
       dns_entries << { "response_data" => xdata, "response_type" => xtype }
@@ -420,10 +438,10 @@ module Dns
     # create issues for resolutions to localhost
     dns_entries.uniq.each do |o|
       if o["response_data"] == "127.0.0.1"
-        _create_linked_issue("resolves_to_localhost", {details: o})
+        _create_linked_issue("resolves_to_localhost", {proof: o, details: o})
       end
     end
-  
+
   dns_entries.uniq
   end
 
@@ -434,7 +452,7 @@ module Dns
 
     # we're already a tld, or we are one step down.... create as a domain
     if domain_name
-      
+
       # since we are creating an identical domain, send up the details
       e = _create_entity "Domain", {
         #"unscoped" => true,
@@ -444,21 +462,21 @@ module Dns
         "mx_records" => _get_entity_detail("mx_records"),
         "txt_records" => _get_entity_detail("txt_records"),
         "spf_record" => _get_entity_detail("spf_record")}
-    else 
+    else
       _log_error "Unable to create a domain from: #{lookup_name}"
     end
 
   end
 
-  # this method is used to test a string 
-  # for whether it it matches the pattern of an 
+  # this method is used to test a string
+  # for whether it it matches the pattern of an
   # RFC1918 (internal) address
   def match_rfc1918_address?(range_or_ip)
-    return true if ( 
-      range_or_ip.match(/^172\.16\.\d\.\d/) || 
-      range_or_ip.match(/^192\.168\.\d\.\d/) || 
+    return true if (
+      range_or_ip.match(/^172\.16\.\d\.\d/) ||
+      range_or_ip.match(/^192\.168\.\d\.\d/) ||
       range_or_ip.match(/^10\.\d\.\d\.\d/) )
-  false 
+  false
   end
 
 end

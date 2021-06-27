@@ -46,7 +46,7 @@ module Model
         logfile = "#{$intrigue_basedir}/log/scan_#{self.id}.log"
         if File.exist? logfile
           out = File.open(logfile,"r").read
-        else 
+        else
           out = "Missing Logfile: #{logfile}"
         end
       elsif location == "none"
@@ -120,7 +120,7 @@ module Model
     end
 
     def export_json
-      export_hash.merge("generated_at" => "#{Time.now.utc}").to_json
+      export_hash.merge("generated_at" => "#{Time.now.utc.iso8601}").to_json
     end
 
     def export_csv

@@ -26,13 +26,8 @@ class DnsTransferZone < BaseTask
     domain_name = _get_entity_name
 
     # Get the nameservers
-    authoritative_nameservers = []
-    Resolv::DNS.open do |dns|
-      resources = dns.getresources(domain_name, Resolv::DNS::Resource::IN::NS)
-      resources.each do |r|
-        dns.each_resource(r.name, Resolv::DNS::Resource::IN::A){ |x| authoritative_nameservers << x.address.to_s }
-      end
-    end
+    nameserver_names = resolve(domain_name, [Resolv::DNS::Resource::IN::NS]).map{|x| x["name"] }
+    authoritative_nameservers = nameserver_names.map{|x| resolve(x).map{|x| x["name"] } }.flatten.uniq
 
     # For each authoritive nameserver
     authoritative_nameservers.each do |nameserver|
@@ -42,13 +37,29 @@ class DnsTransferZone < BaseTask
 
         # Do the actual zone transfer
         zt = Dnsruby::ZoneTransfer.new
-        zt.connect_timeout = 60
+        zt.connect_timeout = 5
         zt.transfer_type = Dnsruby::Types.AXFR
         zt.server = nameserver
-        zone = zt.transfer(domain_name)
-        
+
+        zone = nil
+        begin
+          _log "Beginning transfer!"
+          Timeout.timeout(120) do
+            zone = zt.transfer(domain_name)
+          end
+        rescue Errno::ENETUNREACH => e
+          _log_error "Unable to connect"
+        rescue Timeout::Error => e
+          _log_error "Timed out!"
+        end
+
+        if zone.nil?
+          _log "Unable to transfer, bailing out!"
+          return
+        end
+
         description = "Zone transfer on #{domain_name} using #{nameserver} resulted in leak of #{zone.count} records. AXFR offers no authentication, so any client can ask a DNS server for a copy of the entire zone. which gives them a lot of potential attack vectors over #{domain_name}",
-        
+
         _create_linked_issue("dns_zone_transfer", {
           status: "confirmed",
           detailed_description: description,
@@ -58,8 +69,12 @@ class DnsTransferZone < BaseTask
 
         # Create records for each item in the zone
         zone.each do |z|
+
           if z.type.to_s == "SOA"
-            _create_entity "Domain", { "name" => z.name.to_s, "record_type" => z.type.to_s, "record_content" => "#{z.to_s}" }
+            _create_entity "Domain", {
+              "name" => z.name.to_s,
+              "record_type" => z.type.to_s,
+              "record_content" => "#{z.to_s}" }
           else
 
             # Check to see what type this record's content is.

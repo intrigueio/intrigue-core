@@ -14,6 +14,11 @@ class CoreApp < Sinatra::Base
     erb :'analysis/applications'
   end
 
+  get '/:project/analysis/screenshots' do
+    @applications = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
+    erb :'analysis/screenshots'
+  end
+
   get '/:project/analysis/certificates' do
     @certificates = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::SslCertificate").sort_by{|x| x.name }
     erb :'analysis/certificates'

@@ -1,5 +1,5 @@
-class IntrigueApp
+class CoreApp
   def self.version
-    "0.8.1"
+    "0.9.0-edge"
   end
 end

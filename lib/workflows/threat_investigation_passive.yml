@@ -7,7 +7,7 @@ maintainer: jcran
 flow: recursive
 description: Performa a light threat investigation on all provided IoCs
 definition:
-  DnsRecord: 
+  DnsRecord:
   - task: threat/search_apility
   - task: threat/search_blcheck_list
   - task: threat/search_cleanbrowsing_dns
@@ -33,7 +33,7 @@ definition:
   - task: threat/search_yandex_dns
   - task: threat/search_alienvault_otx
   - task: search_binaryedge_torrents
-  IpAddress: 
+  IpAddress:
   - task: threat/search_apility
   - task: threat/search_blcheck_list
   - task: threat/search_cleanbrowsing_dns
@@ -47,6 +47,5 @@ definition:
   - task: threat/search_alienvault_otx
   - task: search_binaryedge_torrents
   - task: naabu_scan
-  Uri: 
-  - task: uri_screenshot
+  Uri:
   - task: jarm_hash_calculator

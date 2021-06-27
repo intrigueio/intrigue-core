@@ -3,11 +3,6 @@ module Core
 module System
   module MatchExceptions
 
-    def standard_name_exceptions
-      sne_file = "#{$intrigue_basedir}/data/standard_name_exceptions.list" 
-    File.open(sne_file).readlines.map{ |x| /^.*\.#{x.strip}(:[0-9]*)?$/ }
-    end
-
     def standard_ip_exceptions
 
       # incapsula: /107\.154\.*/
@@ -16,7 +11,7 @@ module System
       #  /^23\..*$/,
       #  /^2600:1400.*$/,
       #  /^2600:1409.*$/,
-      
+
       # RFC1918
       #/^172\.16\..*$/||
       #/^192\.168\..*$/||
@@ -43,23 +38,23 @@ module System
       out = false
 
       if type_string == "IpAddress"
-        
+
         (standard_ip_exceptions - skip_exceptions).each do |exception|
           return exception if exception.match(entity_name)
         end
 
-      else
+      elsif type_string == "Domain"
 
-        (standard_name_exceptions - skip_exceptions).each do |exception|
-          return exception if exception =~ entity_name 
+        ($standard_domain_exceptions - skip_exceptions).each do |exception|
+          return exception if exception == entity_name
         end
-        
+
       end
 
     out
     end
   end
-  
+
 end
 end
 end

@@ -1,7 +1,7 @@
 module Intrigue
   module Entity
   class UniqueKeyword < Intrigue::Core::Model::Entity
-  
+
     def self.metadata
       {
         name: "UniqueKeyword",
@@ -10,19 +10,19 @@ module Intrigue
         example: "Intrigue.io"
       }
     end
-  
+
     def validate_entity
-      name.match /^([\,\w\d\ \-\(\)\\\/]+)$/
+      name.match /^([\@\.\,\w\d\ \-\(\)\\\/]+)$/
     end
 
     def scoped?
-      return true if scoped
+      return scoped unless scoped.nil?
       return true if self.allow_list
       return false if self.deny_list
-    
+
     true
     end
-  
+
 end
 end
 end

@@ -168,15 +168,38 @@ module Generic
   end
 
   def _get_task_config(key)
-    begin
 
+    # if in prod, check platform api => CURRENTLY DISABLED. 
+    # if ENV["APP_ENV"] == "production-engine"
+    #   # go to platform api and obtain credentials
+    #   url = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["uri"]
+    #   access_key = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["value"]
+
+    #   res = http_request :get,"#{url}?access_key=#{access_key}&key=#{key}"
+    #   if res.response_code == 200
+    #     return res.body_utf8
+    #   end
+
+    # end
+
+    # if exposed as ENV variable, use that
+    if ENV[key]
+      return ENV[key]
+    end
+
+    # use the config.json file
+    begin
       Intrigue::Core::System::Config.load_config
       error_message = "Please enter your #{key} setting in 'Configure -> Task Configuration'"
       config = Intrigue::Core::System::Config.config["intrigue_global_module_config"]
-      value = config[key]["value"]
+      if config.key?(key)
+        value = config[key]["value"]
 
-      unless value && value != ""
-        raise MissingTaskConfigurationError.new error_message
+        unless value && value != ""
+          raise MissingTaskConfigurationError.new error_message
+        end
+      else
+        raise MissingTaskConfigurationError.new "No configuration with name #{key} found."
       end
 
     end

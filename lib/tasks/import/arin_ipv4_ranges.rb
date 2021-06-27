@@ -15,9 +15,11 @@ class ImportArinIpv4Ranges < BaseTask
       :passive => true,
       :allowed_types => ["*"],
       :example_entities => [
-        {"type" => "String", "details" => {"name" => "ALLOCATED"}}
+        {"type" => "String", "details" => {"name" => "__IGNORE__"}}
       ],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "filter", :regex => "alpha_numeric", :default => "ALLOCATED" },
+      ],
       :created_types => ["NetBlock"]
     }
   end
@@ -25,7 +27,7 @@ class ImportArinIpv4Ranges < BaseTask
   ## Default method, subclasses must override this
   def run
     super
-    filter = _get_entity_name || nil
+    filter = _get_option("filter") || "ALLOCATED"
     _allocated_ipv4_ranges(filter).each do |range|
       _create_entity("NetBlock", {
         "name" => "#{range}",

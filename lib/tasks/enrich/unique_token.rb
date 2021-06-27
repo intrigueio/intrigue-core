@@ -2,13 +2,13 @@ module Intrigue
   module Task
   module Enrich
   class UniqueToken < Intrigue::Task::BaseTask
-  
+
     def self.metadata
       {
         :name => "enrich/unique_token",
         :pretty_name => "Enrich Unique Token",
         :authors => ["jcran"],
-        :description => "Fills in details for a token (aalytics id or api key)",
+        :description => "Fills in details for a token (analytics id or api key)",
         :references => [],
         :type => "enrichment",
         :passive => false,
@@ -24,15 +24,25 @@ module Intrigue
         :created_types => []
       }
     end
-  
+
     ## Default method, subclasses must override this
     def run
       _log "Enriching... unique token: #{_get_entity_name}"
 
       # create a linked issue if this token is known to be sensitive
-      _create_linked_issue("leaked_token") if _get_entity_detail("sensitive")
+
+      # this is not yet ready for prime time ...
+      #
+      # we should do additional testing here to ensure that the key is valid / not revoked etc
+      #
+      #_create_linked_issue("leaked_token", {
+      #  proof: "Matched #{_get_entity_detail("provider")} regex and considered sensitive. " +
+      #  " Visit the associated entity page to see all places where this token was located. "
+      #}) if _get_entity_detail("sensitive")
+
+
     end
-  
+
   end
   end
   end

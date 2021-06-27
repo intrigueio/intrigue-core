@@ -111,7 +111,7 @@ class Uri < Intrigue::Task::BaseTask
       ident_fingerprint).collect{ |x| x["issues"] }.flatten.compact.uniq
       _log "Issues to be created: #{issues_to_be_created}"
       (issues_to_be_created || []).each do |c|
-        _create_linked_issue c
+        _create_linked_issue c, {proof: uri}
     end
 
     # if we ever match something we know the user won't
@@ -176,6 +176,15 @@ class Uri < Intrigue::Task::BaseTask
     # we can check the existing response, so send that
     _log "Checking if Authenticated"
     contains_auth = check_auth(ident_content)
+
+    _log "Checking if Authenticated (basic auth)"
+    contains_auth_basic = check_auth_by_type(ident_content, "Authentication - HTTP")
+
+    _log "Checking if Authenticated (ntlm auth)"
+    contains_auth_ntlm = check_auth_by_type(ident_content, "Authentication - NTLM")
+
+    _log "Checking if Authenticated (forms auth)"
+    contains_auth_forms = check_auth_by_type(ident_content, "Authentication - Forms")
 
     # we can check the existing response, so send that
     _log "Checking if 2FA Identified"
@@ -317,6 +326,9 @@ class Uri < Intrigue::Task::BaseTask
     new_details = {
       "alt_names" => alt_names,
       "auth.any" => contains_auth,
+      "auth.basic" => contains_auth_basic,
+      "auth.forms" => contains_auth_forms,
+      "auth.ntlm" => contains_auth_ntlm,
       "auth.2fa" => contains_auth_2fa,
       "code" => response.code,
       "cookies" => set_cookie,
@@ -447,7 +459,18 @@ class Uri < Intrigue::Task::BaseTask
   # checks to see if we had an auth config return true
   def check_auth(configuration)
     configuration.each do |c|
-      if "#{c["name"]}".match(/^Auth\ \-.*$/) && "#{c["value"]}".to_bool
+      if "#{c["name"]}".match(/^Authentication\ \-.*$/) && "#{c["value"]}".to_bool
+        return true
+      end
+    end
+  false
+  end
+
+
+  # checks to see if we had an auth config return true
+  def check_auth_by_type(configuration, auth_type)
+    configuration.each do |c|
+      if "#{c["name"]}" == auth_type && "#{c["value"]}".to_bool
         return true
       end
     end
@@ -457,7 +480,8 @@ class Uri < Intrigue::Task::BaseTask
   # checks to see if we had an auth config return true
   def check_auth_2fa(fingerprint)
     fingerprint.each do |fp|
-      if (fp["tags"]||[]).map(&:upcase).include?(["IAM","SSO","MFA","2FA"])
+      # check the intersection of these
+      if ( (fp["tags"]||[]).map(&:upcase) & ["IAM","SSO","MFA","2FA"] ).any?
         return true
       end
     end

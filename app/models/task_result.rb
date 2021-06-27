@@ -40,7 +40,7 @@ module Model
         "retry" => retries,
         "args" => [id]
       })
-      
+
       self.job_id = sjid
       save_changes
 
@@ -109,7 +109,7 @@ module Model
 
     def to_v1_api_hash(full=false)
       if full
-        export_hash 
+        export_hash
       else # just the light version
         {
           "id" => self.id,
@@ -148,11 +148,11 @@ module Model
     end
 
     def export_json
-      export_hash.merge("generated_at" => "#{Time.now.utc}").to_json
+      export_hash.merge("generated_at" => "#{Time.now.utc.iso8601}").to_json
     end
 
   end
-  
+
 end
 end
 end

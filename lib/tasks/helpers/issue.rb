@@ -40,20 +40,23 @@ module Issue
 
     _log_good "Creating linked issue of type: #{issue_type}"
 
-    issue_model_details = {  
+    # always pull out source, since this lets the caller have many issues
+    # of the same type, tied to a single entity (think... suspicious_commit)
+    issue_model_details = {
       entity_id: linked_entity.id,
       task_result_id: @task_result.id,
-      project_id: @project.id, 
+      project_id: @project.id,
       scoped: linked_entity.scoped,
+      source: instance_specifics[:source] || instance_specifics['source'] || "intrigue"
     }
 
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(
     issue_type, issue_model_details, _encode_hash(instance_specifics))
-    
-    # Notify 
+
+    # Notify
     _notify("LI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 2
 
-  issue 
+  issue
   end
 
   ###
@@ -65,57 +68,57 @@ module Issue
     return unless mx_records.count > 0
 
     if !dmarc_record
-      _create_linked_issue "missing_dmarc_policy", { mx_records: mx_records, dmarc_record: dmarc_record }
+      _create_linked_issue "missing_dmarc_policy", {proof: dmarc_record, mx_records: mx_records, dmarc_record: dmarc_record }
     end
 
   end
-  
+
   ###
   ### Application oriented issues
   ###
 
   ###
-  ### Generic finding coming from ident. 
+  ### Generic finding coming from ident.
   ###
   def _create_content_issue(uri, check)
-    _create_linked_issue("content_issue", { uri: uri, check: check })
+    _create_linked_issue("content_issue", {proof: check, uri: uri, check: check })
   end
 
   def _create_wide_scoped_cookie_issue(uri, cookie, severity=5)
     hostname = URI(uri).hostname
     return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
-    
-    addtl_details = { cookie: cookie }
+
+    addtl_details = { proof: cookie, cookie: cookie }
     _create_linked_issue("insecure_cookie_widescoped", addtl_details)
   end
 
 
   def _create_missing_cookie_attribute_http_only_issue(uri, cookie, severity=5)
-    
-    # skip this for anything other than hostnames 
+
+    # skip this for anything other than hostnames
     hostname = URI(uri).hostname
     return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
-    
-    addtl_details = { cookie: cookie }
+
+    addtl_details = { proof: cookie, cookie: cookie }
     _create_linked_issue("insecure_cookie_httponly_attribute", addtl_details)
   end
 
   def _create_missing_cookie_attribute_secure_issue(uri, cookie, severity=5)
-    
-    # skip this for anything other than hostnames 
+
+    # skip this for anything other than hostnames
     hostname = URI(uri).hostname
     return if hostname.match(ipv4_regex) || hostname.match(ipv6_regex)
-    
-    addtl_details = { cookie: cookie }
+
+    addtl_details = { proof: cookie, cookie: cookie }
     _create_linked_issue("insecure_cookie_secure_attribute", addtl_details)
   end
 
   def _create_weak_cipher_issue(uri, accepted_connections)
-    _create_linked_issue("weak_ssl_ciphers_enabled",{ accepted: accepted_connections})
+    _create_linked_issue("weak_ssl_ciphers_enabled",{ proof: accepted_connections, accepted: accepted_connections})
   end
 
   def _create_deprecated_protocol_issue(uri, accepted_connections)
-    _create_linked_issue("deprecated_ssl_protocol_detected",{ accepted: accepted_connections})
+    _create_linked_issue("deprecated_ssl_protocol_detected",{ proof: accepted_connections, accepted: accepted_connections})
   end
 
   def _check_request_hosts_for_suspicious_request(uri, request_hosts)
@@ -128,7 +131,8 @@ module Issue
           request_hosts.include?("0.0.0.0") ||
           !request_hosts.select{|x| x.match(/^127\.\d\.\d\.\d$/) }.empty?)
 
-        _create_linked_issue("suspicious_web_resource_requested",{ 
+        _create_linked_issue("suspicious_web_resource_requested",{
+          proof: request_hosts,
           requests: request_hosts,
           reason: "Localhost or otherwise unroutable IP address"
         })
@@ -140,10 +144,10 @@ module Issue
   def _check_request_hosts_for_exernally_hosted_resources(uri, request_hosts, min_host_count=50)
 
     if  ( request_hosts.uniq.count >= min_host_count)
-      addtl_details = { min_host_count: min_host_count, request_hosts: request_hosts }
+      addtl_details = { proof: uri, min_host_count: min_host_count, request_hosts: request_hosts }
       _create_linked_issue("gratuitous_external_resources_requested", addtl_details)
     end
-    
+
   end
 
   def _check_requests_for_mixed_content(uri, requests)
@@ -151,16 +155,16 @@ module Issue
 
       resource_url = req["url"]
 
-      # skip data 
+      # skip data
       return if uri.match(/^data:.*$/)
 
-      # skip this for anything other than hostnames 
-      begin 
+      # skip this for anything other than hostnames
+      begin
         hostname = URI(resource_url).hostname
         return unless hostname
-      rescue URI::InvalidURIError => e 
+      rescue URI::InvalidURIError => e
         @task_result.logger.log_error "Unable to parse URI: #{resource_url}"
-        return 
+        return
       end
 
       # avoid doubling up
@@ -168,6 +172,7 @@ module Issue
 
       if resource_url.match(/^http:\/\/.*$/)
         _create_linked_issue("insecure_content_loaded", {
+          proof: uri,
           uri: uri,
           insecure_resource_url: resource_url,
           request: req
@@ -181,18 +186,11 @@ module Issue
   ### Network and Host oriented issues
   ###
 
-  # RFC1918 DNS
-  def _internal_system_exposed_via_dns(name)
-    _create_linked_issue("internal_system_exposed_via_dns", {
-      resolutions: "#{@entity.aliases.map{|x| x.name}}",
-      exposed_ports: @entity.details["ports"]
-    })
-  end
-
   # Development or Staging
   def _exposed_server_identified(regex, name=nil)
     exposed_name = name || @entity.name
     _create_linked_issue("development_system_identified", {
+      proof: exposed_name,
       matched_regex: "#{regex}",
       resolutions: "#{@entity.aliases.map{|x| x.name}}",
       exposed_ports: @entity.details["ports"]
@@ -202,6 +200,7 @@ module Issue
   def _create_weak_service_issue(ip_address, port, proto, tcp)
     transport = tcp ? "TCP" : "UDP"
     _create_linked_issue("weak_service_identified", {
+      proof: port,
       ip_address: ip_address,
       port: port,
       proto: proto,
