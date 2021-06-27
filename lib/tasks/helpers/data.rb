@@ -127,12 +127,11 @@ module Data
   end
 
   def fingerprintable_udp_ports
-    [53, 161]
+    [53, 161].sort.uniq
   end
 
   def fingerprintable_tcp_ports
-    ports = [21,22,23,25,110,3306].concat(scannable_web_ports)
-  ports
+    [21, 22, 23, 25, 110, 2181, 3299, 3306, 3389, 4786, 7001, 8649, 9100, 11211].concat(scannable_web_ports).sort.uniq
   end
 
   def scannable_web_ports
@@ -140,7 +139,7 @@ module Data
       80,81,82,83,84,85,88,443,888,3000,6443,7443,
       8000,8080,8081,8087,8088,8089,8090,8095,
       8098,8161,8180,8443,8880,8888,9443,10000
-    ]
+    ].sort.uniq
   end
 
   def scannable_udp_ports
@@ -193,11 +192,12 @@ module Data
     tcp_ports << "4444,"            # java rmi
     tcp_ports << "1723,"            # pptp
     tcp_ports << "1883,"
-    tcp_ports << "2181,"
+    tcp_ports << "2181,"            # zookeeper
     tcp_ports << "2222,"
     tcp_ports << "2375,"            # docker
     tcp_ports << "2376,"            # docker
     tcp_ports << "2888,"
+    tcp_ports << "3299,"            # SAPRouter
     tcp_ports << "3306,"            # mysql
     tcp_ports << "3389,"            # RDP
     tcp_ports << "3888,"
@@ -233,6 +233,7 @@ module Data
     tcp_ports << "8278,"
     tcp_ports << "8291,"
     tcp_ports << "8443,"
+    tcp_ports << "8649,"            # ganglia
     tcp_ports << "8686,"            # JMX
     tcp_ports << "8883,"
     tcp_ports << "9000,"            # Oracle WebLogic Server
@@ -242,6 +243,7 @@ module Data
     tcp_ports << "9012,"            # JMX
     tcp_ports << "9091,9092,"
     tcp_ports << "9094,"
+    tcp_ports << "9100,"            # jetdirect
     tcp_ports << "9200,9201,"         # elasticsearch
     tcp_ports << "9300,9301,"         # elasticsearch
     tcp_ports << "9443,"
@@ -250,6 +252,7 @@ module Data
     tcp_ports << "10443,"
     tcp_ports << "11099,"            # java rmi
     tcp_ports << "11111,"            # jboss
+    tcp_ports << "11211,"            # memcached
     tcp_ports << "11443,"
     tcp_ports << "11994,"
     tcp_ports << "12443,"
