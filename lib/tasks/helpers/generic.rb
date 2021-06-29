@@ -169,18 +169,18 @@ module Generic
 
   def _get_task_config(key)
 
-    # if in prod, check platform api
-    if ENV["APP_ENV"] == "production-engine"
-      # go to platform api and obtain credentials
-      url = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["uri"]
-      access_key = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["value"]
+    # if in prod, check platform api => CURRENTLY DISABLED. 
+    # if ENV["APP_ENV"] == "production-engine"
+    #   # go to platform api and obtain credentials
+    #   url = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["uri"]
+    #   access_key = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["value"]
 
-      res = http_request :get,"#{url}?access_key=#{access_key}&key=#{key}"
-      if res.response_code == 200
-        return res.body_utf8
-      end
+    #   res = http_request :get,"#{url}?access_key=#{access_key}&key=#{key}"
+    #   if res.response_code == 200
+    #     return res.body_utf8
+    #   end
 
-    end
+    # end
 
     # if exposed as ENV variable, use that
     if ENV[key]
