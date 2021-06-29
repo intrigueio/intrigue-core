@@ -25,9 +25,6 @@ module Intrigue
 
         repo_uri = _get_entity_name
 
-        # if github try initializing gh client using task_config
-        # if gitlab try initializing gitlab client using
-        # do we care about codecommit?
         access_token = retrieve_gh_access_token if _get_option('use_authentication')
 
         output = run_gitleaks(repo_uri, access_token)
@@ -91,17 +88,12 @@ module Intrigue
         _log_error 'Unable to delete gitleaks output.'
       end
 
-      ### move to git helper methods
       def retrieve_gh_access_token
-        begin
-          access_token = _get_task_config('github_access_token')
-        rescue MissingTaskConfigurationError
-          _log 'Github Access Token is not set in task_config. Defaulting to unauthenticated.'
-          return nil
-        end
-
-        access_token
+        client = initialize_gh_client
+        _get_task_config('github_access_token') if client
+        # return access key since github client is valid meaning api key works
       end
+
 
     end
   end

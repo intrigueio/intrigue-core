@@ -1,97 +1,45 @@
 module Intrigue
-module Task
-class SearchGithubCode < BaseTask
-  include Intrigue::Task::Web
-
-  def self.metadata
-    {
-      :name => "search_github_code",
-      :pretty_name => "Search Github Code",
-      :authors => ["jcran"],
-      :description => "Uses the Github API to search repositories for keywords",
-      :references => [],
-      :type => "discovery",
-      :passive => true,
-      :allowed_types => [ 
-        "Domain", 
-        "DnsRecord", 
-        "GithubAccount", 
-        "GithubRepository", 
-        "Organization",
-        "String", 
-        "UniqueKeyword", 
-        "UniqueToken"
-      ],
-      :example_entities => [
-        {"type" => "GithubAccount", "details" => {"name" => "intrigueio"}}],
-      :allowed_options => [
-        {:name => "keywords", :regex => "alpha_numeric", :default => "" },
-        {:name => "max_item_count", :regex => "integer", :default => 100 },
-      ],
-      :created_types => ["GithubSearchResult"]
-    }
-  end
-
-  ## Default method, subclasses must override this
-  def run
-    super
-
-    entity_name = _get_entity_name
-    entity_type = _get_entity_type_string
-    keywords = _get_option "keywords"
-
-    keywords.split(",").each do |keyword|
-      
-      # Search users
-      if entity_type == "GithubAccount"
-        search_uri = "https://api.github.com/search/code?q=#{keyword} user:#{entity_name}"
-      elsif entity_type == "GithubRepository"
-        search_uri = "https://api.github.com/search/code?q=#{keyword} repo:#{entity_name}"
-      elsif ( entity_type == "Domain"      || 
-              entity_type == "DnsRecord"   || 
-              entity_type == "String"      || 
-              entity_type == "UniqueToken" || 
-              entity_type == "UniqueKeyword" )
-        search_uri = "https://api.github.com/search/code?q=#{entity_name}"
-      end
-
-      response = _get_json_response(search_uri)
-      items = response["items"]
-      return unless items
-
-      max_item_count = [items.count,_get_option("max_item_count")].min
-
-      _log "Processing #{max_item_count} results"
-
-      # only do 10 items max
-      items[0..max_item_count].each do |result|
-        
-        #_log "Processing #{result}"
-        _create_entity "GithubSearchResult", {
-          "name" => result["path"],
-          "uri" => result["html_url"],
-          "github" => result
+  module Task
+    class SearchGithubCode < BaseTask
+      def self.metadata
+        {
+          name: 'search_github_code',
+          pretty_name: 'Search Github Code',
+          authors: ['maxim'],
+          description: 'balbalablabala',
+          references: ['000000'],
+          type: 'discovery',
+          passive: false,
+          allowed_types: ['String'],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }], # what if we have multiple keywords? lets ignore this for now
+          allowed_options: [
+            { name: 'keywords', regex: 'alpha_numeric_list', default: '' },
+          ], # use authentication?
+          created_types: ['GithubRepository']
         }
       end
+
+      ## Default method, subclasses must override this
+      def run
+        super
+
+        gh_client = initialize_gh_client
+        gh_client.auto_paginate = true
+
+        keywords = _get_option('keywords').delete(' ').split(',')
+        all_results = keywords.map { |keyword| authenticated_call(gh_client, keyword) }
+        all_results.flatten!
+
+        p all_results
+      end
+
+
+      def authenticated_call(client, key)
+        results = client.search_code(key, { 'per_page': 100 })['items']
+        results.map { |r| r['html_url'] } unless results.nil? || results.empty?
+      end
+
+
     end
   end
-
-  def _get_json_response(uri)
-
-    begin
-      response = JSON.parse(http_get_body(uri))
-    rescue JSON::ParserError
-      _log "Error retrieving results"
-      return []
-    end
-
-    # TODO deal with pagination here
-
-    _log "API responded with #{response["total_count"] || 0} items!"
-
-  response
-  end
-
-end
-end
 end

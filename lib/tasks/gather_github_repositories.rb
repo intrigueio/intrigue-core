@@ -15,7 +15,7 @@ module Intrigue
           allowed_types: ['String'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [
-            { name: 'account', regex: 'alpha_numeric', default: '' }
+            { name: 'account', regex: 'alpha_numeric', default: '' } # maybe support array of accounts so we can call run task from search_unique_keywords_across_github?
           ],
           created_types: ['GithubRepository']
         }
@@ -151,28 +151,6 @@ module Intrigue
         }
       end
 
-      def initialize_gh_client
-        begin
-          access_token = _get_task_config('github_access_token')
-        rescue MissingTaskConfigurationError
-          _log 'Github Access Token is not set in task_config.'
-          _log 'Please note this severely limits the results due to rate limiting along with only being able to gather public repositories.'
-          return nil
-        end
-
-        verify_gh_access_token(access_token) # returns client if valid else nil
-      end
-
-      def verify_gh_access_token(token)
-        client = Octokit::Client.new(access_token: token)
-        begin
-          client.user
-        rescue Octokit::Unauthorized, Octokit::TooManyRequests
-          _log_error 'Github Access Token invalid either due to invalid credentials or rate limiting reached; defaulting to unauthenticated.'
-          return nil
-        end
-        client
-      end
     end
   end
 end
