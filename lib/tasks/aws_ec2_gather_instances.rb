@@ -35,10 +35,10 @@ module Intrigue
           instances.first # force to authenticate to ensure creds are valid
         rescue Aws::EC2::Errors::AuthFailure
           _log_error 'Invalid AWS Keys.'
-          nil
+          return nil
         rescue Aws::EC2::Errors::UnauthorizedOperation
           _log_error 'API Key lacks permission to list instances.'
-          nil
+          return nil
         rescue Seahorse::Client::NetworkingError
           _log_error "Unable to connect to the AWS EC2 API, this is most likely because #{aws_region} is an invalid region."
           return nil

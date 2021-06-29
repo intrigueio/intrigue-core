@@ -165,7 +165,7 @@
     },
     "cloudclassifier_api_key": {
       "value": "",
-      "uri": "https://cloudclassifier.intrigue.io",
+      "uri": "",
       "editable": "true",
       "comment": ""
     },
