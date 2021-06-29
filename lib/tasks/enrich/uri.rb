@@ -323,18 +323,20 @@ class Uri < Intrigue::Task::BaseTask
         # require "pry"; binding.pry
 
     #get max redirect count from config.
-    max_redirect_count = Intrigue::Core::System::Config.config["redirect_issue_count"]
+    max_redirect_count = 10 unless Intrigue::Core::System::Config.config["redirect_issue_count"]
 
     redirect_complete_chain = []
     redirect_total_count = 0
 
     #iterate through responses
     ident_responses.each do |r|
+      next unless r
       redirect_complete_chain.append(r[:redirect_chain]) unless r[:redirect_chain].empty?
       redirect_total_count += r[:redirect_count]
 
       #raise an issue when a response redirected more than the max redirect count.
-      if(r[:redirect_count] > max_redirect_count)
+
+      if(r[:redirect_count] > 10 unless max_redirect_count)
         _create_execessive_redirects_issue(hostname, r[:redirect_chain], r[:redirect_count])
       end
     end
