@@ -229,7 +229,7 @@ class CoreApp < Sinatra::Base
       workflow_name_string = "#{@params["workflow"]}".strip
       if wf = Intrigue::WorkflowFactory.create_workflow_by_name(workflow_name_string)
         workflow_name = wf.name
-        workflow_depth = wf.default_depth
+        workflow_depth = wf.depth
       else
         workflow_name = nil
         workflow_depth = 1
