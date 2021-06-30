@@ -52,7 +52,7 @@ module Ident
       next unless fp && fp["tags"]
       fp["tags"].each do |t|
         tags << fp["tags"]
-        if  t.match(/^Admin Panel$/i) || t.match(/^Login Panel$/i)
+        if  t.match(/^Admin Panel$/i)
           issues_to_create << ["exposed_admin_panel_unauthenticated", fp]
         elsif t.match(/^DatabaseService/i) || t.match(/^Database$/i)
           issues_to_create << ["exposed_database_service", fp]

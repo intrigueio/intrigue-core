@@ -7,10 +7,6 @@ require 'cgi'
 require 'uri'
 require 'shellwords' # shell escapin'
 
-# Improved Json memory efficiency
-require 'yajl'
-require 'yajl/json_gem'
-
 ###
 # Sidekiq - load in sidekiq pro if available
 ###
