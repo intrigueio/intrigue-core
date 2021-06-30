@@ -74,9 +74,6 @@ class SearchDehashed < BaseTask
 
         _create_linked_issue("leaked_account",{
           proof: result,
-          type:"leaked_account",
-          detailed_description: "Email:#{result["email"]}\n username: #{result["username"]}\n password: *******#{result["password"][-4...-1]}\n
-          # Hashed Password:#{result["hashed_password"]}\n IP Address: #{result["ip_address"]}\n phone:#{result["phone"]} Source #{result["obtained_from"]}",
           source: result["obtained_from"],
           details: result
         })

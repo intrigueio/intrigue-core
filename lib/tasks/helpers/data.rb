@@ -105,12 +105,14 @@ module Data
       "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "incapsula.com",
       "jiveon.com",
+      "kavasa.in",
       "lithium.com",
       "pantheon.io",
       "sucuri.net",
       "swagcache.com",
       "wpengine.com",
-      "yottaa.net"
+      "yottaa.net",
+      "zohohost.com"
     ]
   end
 
@@ -126,11 +128,12 @@ module Data
   end
 
   def fingerprintable_udp_ports
-    [53, 161]
+    [53, 161].sort.uniq
   end
 
   def fingerprintable_tcp_ports
-    [21,22,23,25,53,110,143,3306,5672,6379,9200,9201,27017,27018].concat(scannable_web_ports)
+    [21, 22, 23, 25, 110, 2181, 3299, 3306, 3389, 4786, 5672,
+      6379, 7001, 8649, 9100, 9200, 9201, 11211, 27017, 27018].concat(scannable_web_ports).sort.uniq
   end
 
   def scannable_web_ports
@@ -191,11 +194,12 @@ module Data
     tcp_ports << "4444,"            # java rmi
     tcp_ports << "1723,"            # pptp
     tcp_ports << "1883,"
-    tcp_ports << "2181,"
+    tcp_ports << "2181,"            # zookeeper
     tcp_ports << "2222,"
     tcp_ports << "2375,"            # docker
     tcp_ports << "2376,"            # docker
     tcp_ports << "2888,"
+    tcp_ports << "3299,"            # SAPRouter
     tcp_ports << "3306,"            # mysql
     tcp_ports << "3389,"            # RDP
     tcp_ports << "3888,"
@@ -232,6 +236,7 @@ module Data
     tcp_ports << "8278,"
     tcp_ports << "8291,"
     tcp_ports << "8443,"
+    tcp_ports << "8649,"            # ganglia
     tcp_ports << "8686,"            # JMX
     tcp_ports << "8883,"
     tcp_ports << "9000,"            # Oracle WebLogic Server
@@ -241,6 +246,7 @@ module Data
     tcp_ports << "9012,"            # JMX
     tcp_ports << "9091,9092,"
     tcp_ports << "9094,"
+    tcp_ports << "9100,"            # jetdirect
     tcp_ports << "9200,9201,"         # elasticsearch
     tcp_ports << "9300,9301,"         # elasticsearch
     tcp_ports << "9443,"
@@ -249,6 +255,7 @@ module Data
     tcp_ports << "10443,"
     tcp_ports << "11099,"            # java rmi
     tcp_ports << "11111,"            # jboss
+    tcp_ports << "11211,"            # memcached
     tcp_ports << "11443,"
     tcp_ports << "11994,"
     tcp_ports << "12443,"

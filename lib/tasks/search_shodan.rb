@@ -33,7 +33,7 @@ class SearchShodan < BaseTask
 
     # check to make sure we got a response.
     unless response && response["data"]
-      _log_error "ERROR: #{response["error"]}"
+      _log_error "ERROR: #{response}"
       return false
     end
 

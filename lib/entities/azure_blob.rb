@@ -1,19 +1,18 @@
 module Intrigue
 module Entity
-class AwsS3Bucket < Intrigue::Core::Model::Entity
+class AzureBlob < Intrigue::Core::Model::Entity
 
   def self.metadata
     {
-      name: "AwsS3Bucket",
-      description: "An S3 Bucket",
+      name: 'AzureBlob',
+      description: 'An Azure Blob',
       user_creatable: true,
-      example: "bucket-name"
+      example: 'https://example.blob.core.windows.net'
     }
   end
 
   def validate_entity
-    s3_regex = /(?=^.{3,63}$)(?!^(\d+\.)+\d+$)(^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$)/
-    name.match(s3_regex)
+     name.match(/\.blob\.core\.windows\.net/)
   end
 
   def detail_string
@@ -21,7 +20,7 @@ class AwsS3Bucket < Intrigue::Core::Model::Entity
   end
 
   def enrichment_tasks
-    ['enrich/aws_s3_bucket']
+    ["enrich/azure_blob"]
   end
 
   def scoped?(conditions={})
