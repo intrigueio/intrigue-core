@@ -3,6 +3,8 @@ module Task
 module Enrich
 class Uri < Intrigue::Task::BaseTask
 
+  include Intrigue::Task::RedirectChain
+
   def self.metadata
     {
       :name => "enrich/uri",
@@ -320,28 +322,9 @@ class Uri < Intrigue::Task::BaseTask
 
     # get the hashed dom structure
     dom_sha1 = Digest::SHA1.hexdigest(html_dom_to_string(response.body_utf8))
-        # require "pry"; binding.pry
 
-    #get max redirect count from config.
-    max_redirect_count = 10 unless Intrigue::Core::System::Config.config["redirect_issue_count"]
+    redirects = find_and_log_excessive_redirects(ident_responses)
 
-    redirect_complete_chain = []
-    redirect_total_count = 0
-
-    #iterate through responses
-    ident_responses.each do |r|
-      next unless r
-      redirect_complete_chain.append(r[:redirect_chain]) unless r[:redirect_chain].empty?
-      redirect_total_count += r[:redirect_count]
-
-      #raise an issue when a response redirected more than the max redirect count.
-
-      if(r[:redirect_count] > 10 unless max_redirect_count)
-        _create_execessive_redirects_issue(hostname, r[:redirect_chain], r[:redirect_count])
-      end
-    end
-
-    # p redirect_complete_chain
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
@@ -363,7 +346,7 @@ class Uri < Intrigue::Task::BaseTask
       "generator" => generator_string,
       "headers" => headers,
       "hidden_response_data" => response.body_utf8,
-      "redirect_chain" => redirect_complete_chain.flatten.uniq || [],
+      "redirect_chain" => redirects[:chain].flatten.uniq || [],
       "response_data_hash" => response_data_hash,
       "dom_sha1" => dom_sha1,
       "title" => title,
@@ -374,7 +357,7 @@ class Uri < Intrigue::Task::BaseTask
       "extended_full_responses" => ident_responses.uniq,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
       "extended_response_body" => response.body_utf8,
-      "Redirect count" => redirect_total_count
+      "redirect_count" => redirects[:count]
     }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
