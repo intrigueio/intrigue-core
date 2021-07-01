@@ -11,7 +11,7 @@ module Intrigue
           ],
           severity: 2,
           category: "vulnerability",
-          status: "confirmed",
+          status: "potential",
           description: "Incorrect Session Validation in Apache Airflow Webserver versions prior to 1.10.14 with default config allows a malicious airflow user on site A where they log in normally, to access unauthorized Airflow Webserver on Site B through the session from Site A. This does not affect users who have changed the default value for `[webserver] secret_key` config.",
           affected_software: [
             { vendor: "Apache", product: "Airflow" }
@@ -30,7 +30,7 @@ module Intrigue
     class ApacheAirflowCve202017526 < BaseCheck
       def self.check_metadata
         {
-          allowed_types: ["NetworkService"]
+          allowed_types: ["Uri"]
         }
       end
 
@@ -38,10 +38,13 @@ module Intrigue
 
       def check
 
+        # first, ensure we're fingerprinted
+        require_enrichment
+
         # get version for product
         version = get_version_for_vendor_product(@entity, "Apache", "Airflow")
         return false unless version
-
+       
         # compare the version we got to the vulnerable version
         is_vulnerable = compare_versions_by_operator(version, "1.10.14" , "<")
 

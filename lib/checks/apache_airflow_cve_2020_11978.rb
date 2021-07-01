@@ -55,20 +55,6 @@ module Intrigue
           requests:
             - raw:
                 - |
-                  GET /api/experimental/test HTTP/1.1
-                  Host: {{Hostname}}
-                  Connection: close
-                  Accept-Encoding: gzip, deflate
-                  Accept: */*
-          
-                - |
-                  GET /api/experimental/dags/example_trigger_target_dag/paused/false HTTP/1.1
-                  Host: {{Hostname}}
-                  Connection: close
-                  Accept-Encoding: gzip, deflate
-                  Accept: */*
-          
-                - |
                   POST /api/experimental/dags/example_trigger_target_dag/dag_runs HTTP/1.1
                   Host: {{Hostname}}
                   Connection: close
