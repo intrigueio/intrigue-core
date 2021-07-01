@@ -143,7 +143,9 @@ sudo apt-get -y --no-install-recommends install make \
   postgresql-client-12 \
   postgresql-server-dev-12 \
   postgresql-12-repack \
-  libpq-dev
+  libpq-dev \
+  xdotool \
+  rdesktop
 
 # NOTE! for whatever reason, this has to be with apt vs apt-get 
 sudo apt -y install chromium-browser
