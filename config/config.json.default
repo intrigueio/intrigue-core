@@ -517,5 +517,6 @@
       "editable": "true",
       "comment": ""
     }
-  }
+  },
+  "redirect_issue_trigger_count": 10
 }
