@@ -10,6 +10,13 @@ module VulnCheck
   out
   end
 
+  def has_tag?(fingerprint, tag)
+    return false unless fingerprint
+    out = fingerprint.any?{|v| "#{v['tags']}".include?(tag) if v['tags']}
+    _log_good "Matched tag: #{tag} !" if out
+    out
+  end
+
   # function to compare version_a with version_b according to given operator.
   # will try to parse both parameters with versionomy. if parsing fails, it will compare them as string literals.
   def compare_versions_by_operator(version_a, version_b, operator)
