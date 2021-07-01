@@ -22,7 +22,7 @@ module Intrigue
       def run
         super
         # Get entity name
-        entity_name = _get_entity_name
+        ssl_certificate = _get_entity_name
 
         # Make sure the key is set
         api_key = _get_task_config('spyse_api_key')
@@ -30,58 +30,52 @@ module Intrigue
         headers = { 'Accept' => 'application/json', 'Authorization' => "Bearer #{api_key}" }
 
         # Set the headers
-        url = "https://api.spyse.com/v4/data/certificate/#{entity_name}"
+        url = "https://api.spyse.com/v4/data/certificate/#{ssl_certificate}"
 
         # make the request
         response = http_get_body(url, nil, headers)
         json = JSON.parse(response)
-
-        json["data"]["items"].each do |result|
-          ## Create issues
-          # Create an issue if many domains founded registered with same Certificate
-          if (result['parsed']['names']).count > 1
-            _create_linked_issue('wildcard_certificate', {
-              proof: result['parsed']['names'],
-              references: ['https://spyse.com/'],
-              source:'Spyse',
-              details: result['parsed']
-            })
-          end
-          # Create an issue for expired certificate
-          if result['parsed']['validity']
-            if Date.parse("#{result['parsed']['validity']['end']}") < Date.today
-              _create_linked_issue('invalid_certificate_expired', {
-                proof: result['parsed']['validity'],
-                references: ['https://spyse.com/'],
-                source:'Spyse',
-                details: result['parsed']['validity']
+        #list_of_domains_sharing_same_certificate = []
+        ## Create entities
+        if json['data']['items']
+          json['data']['items'].each do |result|
+            # Check whether it is a wildcard certificate or not
+            if (result['parsed']['names']).count > 1
+              # Extract list of domains sharing the same certificate
+              list_of_domains_sharing_same_certificate = result['parsed']['names']
+              # Extarct certificate experation date
+              #end_date = result['parsed']['validity']['end']
+              # Extract issuer name
+              #issuer = result['parsed']['issuer']['organizatio']
+              # Extract certificate algorithm
+              #algorithm = result['parsed']['signature_algorithm']['name']
+              # Extract certificate serial number
+              #serial = result['parsed']['serial_number']
+              # Create entity with spyse data
+              _create_entity('SslCertificate', {
+                'name' => ssl_certificate,
+                #'not_after' => end_date,
+                #'serial' => serial,
+                #'issuer' => issuer,
+                #'algorithm' => algorithm,
+                'list_of_domains_sharing_same_certificate' => list_of_domains_sharing_same_certificate
               })
-            elsif (Date.today-Date.parse("#{result['parsed']['validity']['end']}")) < 30
-              _create_linked_issue('invalid_certificate_almost_expired', {
-                proof: result['parsed']['validity'],
-                references: ['https://spyse.com/'],
-                source:'Spyse',
-                details: result['parsed']['validity']
-              })
-            else
-              _log 'Valid certificate date!'
             end
-          end
 
-          ## Create entities
-          # Create DnsRecord from domains registered with same certificate
-          if result['parsed']['names']
-            result['parsed']['names'].each do |domain|
-              _create_entity('DnsRecord', { 'name' => domain })
+            # Create DnsRecord from domains registered with same certificate
+            if result['parsed']['names']
+              result['parsed']['names'].each do |domain|
+                _create_entity('DnsRecord', { 'name' => domain })
+              end
+            end
+            # Create organizations related to the certificate
+            if result['parsed']['subject']['organization']
+              result['parsed']['subject']['organization'].each do |organization|
+                _create_entity('Organization', { 'name' => organization })
+              end
             end
           end
-          # Create organizations related to the certificate
-          if result['parsed']['subject']['organization']
-            result['parsed']['subject']['organization'].each do |organization|
-              _create_entity('Organization', { 'name' => organization })
-            end
-          end
-        end
+        end 
       end
     end
   end

@@ -23,7 +23,8 @@ class SslCertificate < Intrigue::Task::BaseTask
             "subject" => "example",
             "issuer" => "example cert issuer",
             "algorithm" => "SHA256",
-            "hidden_text" => "blah blah blah"
+            "hidden_text" => "blah blah blah",
+            "list_of_domains_sharing_same_certificate" => "[example1.com, example2.com]"
           }
         }
       ],
@@ -79,6 +80,13 @@ class SslCertificate < Intrigue::Task::BaseTask
       _create_linked_issue "invalid_certificate_algorithm", {
         proof: "Configured Alorigthm is: #{algo}, included in: #{invalid_algos}" }
     end
+
+    list_of_domains_sharing_same_certificate = _get_entity_detail("list_of_domains_sharing_same_certificate")
+    # Create in case of wildcard certificate
+    if list_of_domains_sharing_same_certificate != nil  
+      _create_linked_issue "wildcard_certificate", {
+        proof: list_of_domains_sharing_same_certificate }
+    end 
 
   end
 
