@@ -325,7 +325,6 @@ class Uri < Intrigue::Task::BaseTask
 
     redirects = find_and_log_excessive_redirects(ident_responses)
 
-    # p redirect_complete_chain
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
@@ -358,7 +357,7 @@ class Uri < Intrigue::Task::BaseTask
       "extended_full_responses" => ident_responses.uniq,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
       "extended_response_body" => response.body_utf8,
-      "Redirect count" => redirects[:count]
+      "redirect_count" => redirects[:count]
     }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
