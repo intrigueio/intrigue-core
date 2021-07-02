@@ -73,7 +73,7 @@ class CoreApp < Sinatra::Base
     content_type 'application/json'
     @entity = Intrigue::Core::Model::Entity.scope_by_project(@project_name).first(:id => params[:id].to_i)
     attachment "#{@project_name}_#{@entity.id}.json"
-    @entity.export_json
+    @entity.export_json(true)
   end
 
 
