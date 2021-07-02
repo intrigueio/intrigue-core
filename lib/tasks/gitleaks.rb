@@ -9,8 +9,8 @@ module Intrigue
           description: 'Gitleaks is a SAST tool for detecting hardcoded secrets like passwords, api keys, and tokens in git repos.',
           references: ['https://github.com/zricethezav/gitleaks#readme'],
           type: 'discovery',
-          passive: false,
-          allowed_types: ['URI', 'GithubRepository'],
+          passive: true,
+          allowed_types: ['Uri', 'GithubRepository'],
           example_entities: [{ 'type' => 'URI', 'details' => { 'name' => 'https://github.com/my-insecure/repo' } }],
           allowed_options: [
             { name: 'use_authentication', regex: 'boolean', default: true },
@@ -24,6 +24,8 @@ module Intrigue
       def run
         super
 
+        # grab github username and get all their repos
+
         repo_uri = _get_entity_name
         custom_keywords = _get_option('custom_keywords').delete(' ').split(',')
         custom_config = create_gitleaks_custom_config(custom_keywords) unless custom_keywords.empty?
@@ -34,7 +36,7 @@ module Intrigue
         return if issues.nil?
 
         _log_good "Found #{issues.size} suspicious commits."
-        issues.each {|i| create_suspicious_commit_issue(i) } 
+        create_suspicious_commit_issue(issues)
 
       end
 

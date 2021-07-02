@@ -7,7 +7,7 @@ class GithubRepository < Intrigue::Core::Model::Entity
       name: "GithubRepository",
       description: "A Github Repository",
       user_creatable: true,
-      example: "intrigueio/intrigue-core"
+      example: "https://github.com/intrigueio/intrigue-core"
     }
   end
 
