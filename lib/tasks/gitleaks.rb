@@ -10,13 +10,13 @@ module Intrigue
           references: ['https://github.com/zricethezav/gitleaks#readme'],
           type: 'discovery',
           passive: false,
-          allowed_types: ['Uri'],
-          example_entities: [{ 'type' => 'Uri', 'details' => { 'name' => 'https://github.com/my-insecure/repo' } }],
+          allowed_types: ['URI', 'GithubRepository'],
+          example_entities: [{ 'type' => 'URI', 'details' => { 'name' => 'https://github.com/my-insecure/repo' } }],
           allowed_options: [
             { name: 'use_authentication', regex: 'boolean', default: true },
             { name: 'custom_keywords', regex: 'alpha_numeric_list', default: '' }
-          ], # use authentication?
-          created_types: ['GithubRepository']
+          ],
+          created_types: []
         }
       end
 
@@ -34,7 +34,7 @@ module Intrigue
         return if issues.nil?
 
         _log_good "Found #{issues.size} suspicious commits."
-        create_issue(issues)
+        issues.each {|i| create_suspicious_commit_issue(i) } 
 
       end
 

@@ -15,7 +15,7 @@ module Intrigue
           allowed_types: ['String'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [
-            { name: 'account', regex: 'alpha_numeric', default: '' } # maybe support array of accounts so we can call run task from search_unique_keywords_across_github?
+            { name: 'account', regex: 'alpha_numeric', default: '' }
           ],
           created_types: ['GithubRepository']
         }
@@ -145,7 +145,7 @@ module Intrigue
 
       def create_repo_entity(repo)
         _create_entity 'GithubRepository', {
-          'name' => repo,
+          'name' => "https://github.com/#{repo}",
           'repository_name' => repo,
           'uri' => "https://github.com/#{repo}"
         }
