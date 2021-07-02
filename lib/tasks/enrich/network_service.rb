@@ -80,6 +80,13 @@ class NetworkService < Intrigue::Task::BaseTask
     enrich_snmp if port == 161 && proto.upcase == "UDP"
 
     ###
+    ### Kick off rdp screenshot if port
+    ###
+    if port == 3389
+      start_task('task', @project, nil, 'rdp_screenshot', @entity, 1, nil)
+    end
+
+    ###
     ### Hide Some services based on their attributes
     ###
 
