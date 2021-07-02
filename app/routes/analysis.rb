@@ -15,7 +15,7 @@ class CoreApp < Sinatra::Base
   end
 
   get '/:project/analysis/screenshots' do
-    @applications = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => "Intrigue::Entity::Uri").order(:name)
+    @applications = Intrigue::Core::Model::Entity.scope_by_project(@project_name).where(:type => ["Intrigue::Entity::Uri","Intrigue::Entity::NetworkService"]).order(:name)
     erb :'analysis/screenshots'
   end
 
