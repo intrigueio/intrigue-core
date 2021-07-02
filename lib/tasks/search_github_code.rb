@@ -5,9 +5,9 @@ module Intrigue
         {
           name: 'search_github_code',
           pretty_name: 'Search Github Code',
-          authors: ['maxim'],
-          description: 'balbalablabala',
-          references: ['000000'],
+          authors: ['jcran', 'maxim'],
+          description: 'Uses the Github API to search across all repositories and finds those which contain the unique keyword specified.',
+          references: ['https://docs.github.com/en/rest/reference/search#search-code'],
           type: 'discovery',
           passive: false,
           allowed_types: ['String', 'UniqueKeyword'],
