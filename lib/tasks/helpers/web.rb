@@ -275,7 +275,12 @@ module Task
 
       # merge in credentials, must be in format :user => 'username', :password => 'password'
       if credentials
-        options[:userpwd] = "#{credentials[:user]}:#{credentials[:password]}"
+      # TODO DM - THIS WILL BE REDONE, BAD CODE.
+        if credentials[:user].nil?
+          options[:userpwd] = "#{credentials["user"]}:#{credentials["password"]}"
+        else
+          options[:userpwd] = "#{credentials[:user]}:#{credentials[:password]}"
+        end
       end
 
       # create a request
