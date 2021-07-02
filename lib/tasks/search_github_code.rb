@@ -10,11 +10,9 @@ module Intrigue
           references: ['000000'],
           type: 'discovery',
           passive: false,
-          allowed_types: ['String'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }], # what if we have multiple keywords? lets ignore this for now
-          allowed_options: [
-            { name: 'keywords', regex: 'alpha_numeric_list', default: '' },
-          ], # use authentication?
+          allowed_types: ['String', 'UniqueKeyword'],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => 'intrigue.io' } }],
+          allowed_options: [],
           created_types: []
         }
       end
@@ -22,29 +20,22 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
+        keyword = _get_entity_name
 
         gh_client = retrieve_gh_client
         return if gh_client.nil?
 
         gh_client.auto_paginate = true
 
-        keywords = _get_option('keywords').delete(' ').split(',')
-        return if keywords.empty?
+        repo_urls = search_code(gh_client, keyword).compact.uniq
+        return if repo_urls.nil?
 
-        usernames = keywords.map { |keyword| search_code(gh_client, keyword) }.compact.flatten.uniq
-        return if usernames.empty?
+        _log_good "Found #{repo_urls.size} repositories which may contain possible leaks."
 
-        repo_urls = usernames.map { |u| retrieve_repositories(gh_client, u) }.flatten
-
-        _log_good "Retrieved #{repo_urls.size} repositories which may contain possible leaks."
-        gitleaks_config = create_gitleaks_custom_config(keywords)
-
+        gitleaks_config = create_gitleaks_custom_config([keyword]) # pass in array to helper as it expects one
         results = threaded_gitleaks(repo_urls, gitleaks_config)
-        return if results.empty?
 
-        results.each {|result| create_suspicious_commit_issue(result) }
-        # create issue with results
-
+        results.each { |result| create_suspicious_commit_issue(result) } unless results.empty?
       end
 
       def threaded_gitleaks(repos, gitleaks_config)
@@ -70,11 +61,10 @@ module Intrigue
           end
         end
         t
-        # rate limit occurs when 403 forbidden code returns
       end
 
       # use github api to find all repositories containing specific keyword
-      # return the usernames of all the repository owners
+      # return all the repos belonging to the usernames found
       def search_code(client, key)
         begin
           results = client.search_code(key, { 'per_page': 100 })['items']
@@ -84,7 +74,8 @@ module Intrigue
         end
 
         users = results.map { |r| r['repository']['owner']['login'] } unless results.empty?
-        users
+        repo_urls = users.map { |u| retrieve_repositories(client, u) }.flatten unless users.empty?
+        repo_urls
       end
 
       def retrieve_repositories(client, name)
@@ -95,8 +86,8 @@ module Intrigue
           return nil
         end
 
-        non_forked = repositories.select { |r| r['fork'] == false }
-        repository_urls = non_forked.map { |r| r['html_url'] } unless repositories.empty?
+        non_forked = repositories.select { |r| r['fork'] == false } # ignore forked repos
+        repository_urls = non_forked.map { |r| r['html_url'] } unless non_forked.empty? # extract repo urls
 
         repository_urls
       end

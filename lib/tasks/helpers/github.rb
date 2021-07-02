@@ -1,6 +1,7 @@
 module Intrigue
   module Task
     module Github
+
       def initialize_gh_client
         begin
           access_token = _get_task_config('github_access_token')
@@ -33,6 +34,41 @@ module Intrigue
         temp_rule_file
       end
 
+      def parse_gitleaks_output(output_file)
+        # parse output
+        json_output = _return_gitleaks_json(output_file)
+        return nil if json_output.nil?
+
+        results = json_output.map do |i|
+          { 'commit_uri' => i['leakURL'], 'finding_type' => i['rule'], 'date' => i['date'] }
+        end
+
+        results
+      end
+
+      def run_gitleaks(repo, access_token, config_file)
+        access_token = '' if access_token.nil? # set to empty string as gitleaks will ignore it
+        config_file = "#{$intrigue_basedir}/data/gitleaks.config" if config_file.nil?
+
+        temp_file = "/tmp/#{SecureRandom.uuid}.gitleaks"
+        _log "Running gitleaks on #{repo}"
+
+        _unsafe_system("gitleaks -r #{repo} --report=#{temp_file} --access-token=#{access_token} --config-path=#{config_file}")
+
+        output = parse_gitleaks_output(temp_file)
+        _remove_gitleaks_temp_files
+
+        output
+      end
+
+      def create_suspicious_commit_issue(issue_h)
+        _create_linked_issue('suspicious_commit', {
+                               proof: issue_h
+                             })
+      end
+
+      private
+
       def _replace_rule_template(keyword)
         rule = <<-RULE
         [[rules]]
@@ -47,48 +83,12 @@ module Intrigue
         rule.gsub!(re, replace_items)
       end
 
-      def run_gitleaks(repo, access_token, config_file)
-        access_token = '' if access_token.nil? # set to empty string as gitleaks will ignore it
-        config_file = "#{$intrigue_basedir}/data/gitleaks.config" if config_file.nil?
-
-        temp_file = "/tmp/#{SecureRandom.uuid}.gitleaks"
-        _log "Running gitleaks on #{repo}"
-
-        _unsafe_system("gitleaks -r #{repo} --report=#{temp_file} --access-token=#{access_token} --config-path=#{config_file}")
-
-        output = parse_gitleaks_output(temp_file)
-        remove_gitleaks_temp_files
-
-        output
-      end
-
-      def parse_gitleaks_output(output_file)
-        # parse output
-        json_output = _return_gitleaks_json(output_file)
-        return nil if json_output.nil?
-
-        results = json_output.map do |i|
-          { 'commit_uri' => i['leakURL'], 'finding_type' => i['rule'], 'date' => i['date'] }
-        end
-
-        results
-      end
-
-      def remove_gitleaks_temp_files
-        temporary_files = Dir['/tmp/*.gitleaks']
-        begin
-          temporary_files.each { |temp| File.delete(temp) }
-        rescue Errno::ENOENT
-          _log_error 'Unable to delete gitleaks output.'
-        end
-      end
-
       def _return_gitleaks_json(output_file)
         begin
           parsed_output = JSON.parse(File.open(output_file).read)
           _log 'No suspicious issues were detected by gitleaks.' if parsed_output.nil?
         rescue Errno::ENOENT
-          _log_error 'gitleaks failed to run; possible reasons: private repository without setting an access token or non-existent repository.'
+          _log_error 'gitleaks tasked failed to run; most likely due to insufficient access or non-existent repository.'
           nil
         rescue JSON::ParserError
           _log_error 'Unable to parse gitleaks output.'
@@ -98,10 +98,13 @@ module Intrigue
         parsed_output
       end
 
-      def create_suspicious_commit_issue(issue_h)
-        _create_linked_issue('suspicious_commit', {
-                               proof: issue_h
-                             })
+      def _remove_gitleaks_temp_files
+        temporary_files = Dir['/tmp/*.gitleaks']
+        begin
+          temporary_files.each { |temp| File.delete(temp) }
+        rescue Errno::ENOENT
+          _log_error 'Unable to delete gitleaks output.'
+        end
       end
 
     end
