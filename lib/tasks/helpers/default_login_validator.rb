@@ -24,10 +24,20 @@ module Intrigue
         _log_debug 'Adding general default credentials to worker queue'
         default_creds.each do |default_cred|
           _log_debug default_cred
-          work_q << default_cred
+          work_q << normalize_hash(default_cred)
         end
 
-        work_q
+        # release memory
+        default_creds.clear
+
+        work_q.uniq
+      end
+
+      def normalize_hash(login_hash)
+        {
+          user: login_hash['user'],
+          password: login_hash['password']
+        }
       end
 
       def get_default_login_creds_from_file
