@@ -21,8 +21,7 @@ module Intrigue
           ],
           created_types: ['Uri'],
           credentials: [
-            { user: 'admin', password: 'password' },
-            { user: 'root', password: 'password' }
+            { user: 'admin', password: 'password' }
           ]
         }
       end
@@ -46,13 +45,16 @@ module Intrigue
         end
 
         # Create our queue of work from the known creds for the product
-        create_workers(thread_count, uri, self.class.metadata[:credentials], method(:validator))
+        get_workers(thread_count, uri, self.class.metadata[:credentials], method(:validator))
       end
 
+      # custom validator, each default login task will have its own.
+      # some tasks might require a more complex approach.
       def validator(response)
-        return response.code.to_i.between?(199, 300)
+        !response.body_utf8.matches(/id="authFrm"/i) && !response.body_utf8.matches(%r{Incorrect name/password}i) && response.code.to_i.between?(
+          199, 300
+        )
       end
-
     end
   end
 end

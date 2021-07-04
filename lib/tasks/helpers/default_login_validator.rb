@@ -1,12 +1,18 @@
 module Intrigue
   module Task
     module DefaultLoginValidator
-    #   include Intrigue::Task::Issue
+      #   include Intrigue::Task::Issue
       include Intrigue::Task::Web
 
-      def create_workers(thread_count, uri, class_creds, validator)
+      def get_workers(thread_count, uri, class_creds, validator)
+        work_q = build_work_queue(class_creds)
+
+        build_workers(thread_count, work_q, uri, validator)
+      end
+
+      def build_work_queue(class_creds)
         work_q = Queue.new
-        _log_debug 'Getting class default creds'
+        _log_debug 'Adding task default credentials to worker queue'
         class_creds.each do |creds|
           _log_debug creds
           work_q << creds
@@ -14,13 +20,24 @@ module Intrigue
 
         # always get default creds
         default_creds = get_default_login_creds_from_file
-        _log_debug 'Getting general default creds'
+
+        _log_debug 'Adding general default credentials to worker queue'
         default_creds.each do |default_cred|
           _log_debug default_cred
           work_q << default_cred
         end
 
-        build_workers(thread_count, work_q, uri, validator)
+        work_q
+      end
+
+      def get_default_login_creds_from_file
+        _log 'Using default list from data/brute_force/default_login_creds.json'
+        begin
+          JSON.parse(File.read("#{$intrigue_basedir}/data/brute_force/default_login_creds.json"))
+        rescue StandardError => e
+          _log_error "Couldn't load #{$intrigue_basedir}/data/brute_force/default_login_creds.json"
+          []
+        end
       end
 
       def build_workers(thread_count, work_q, uri, validator)
@@ -35,24 +52,14 @@ module Intrigue
         workers.map(&:join); 'ok'
       end
 
-      def get_default_login_creds_from_file
-        _log 'Using default list from data/brute_force/default_login_creds.json'
-        begin
-          JSON.parse(File.read("#{$intrigue_basedir}/data/brute_force/default_login_creds.json"))
-        rescue StandardError => e
-          _log_error "Couldn't load #{$intrigue_basedir}/data/brute_force/default_login_creds.json"
-          []
-        end
-      end
-
-      def validate_and_log_login_attempt(request_uri, credentials, validator = nil)
-        #  _create_execessive_redirects_issue(hostname, r[:], r[:])
+      def validate_and_log_login_attempt(request_uri, credentials, validator)
+        #  TODO - create issue?
 
         _log "Attempting #{request_uri}"
         response = http_request :get, request_uri, credentials
 
         return false unless response
-        # if response.code.to_i.between?(199, 300)
+
         if validator.call(response)
           _log_good "Login successful! Creating a page for #{request_uri}"
           _create_entity 'Uri',
@@ -66,6 +73,7 @@ module Intrigue
           _log "Failed login #{request_uri} based on code: #{response.code}"
           return false
         end
+
         true
       end
     end
