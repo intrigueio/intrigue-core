@@ -6,16 +6,16 @@ module Intrigue
 
       def get_workers(thread_count, uri, class_creds, validator)
         work_q = build_work_queue(class_creds)
-
         build_workers(thread_count, work_q, uri, validator)
       end
 
       def build_work_queue(class_creds)
-        work_q = Queue.new
+
+        helper_hash_array = []
         _log_debug 'Adding task default credentials to worker queue'
         class_creds.each do |creds|
           _log_debug creds
-          work_q << creds
+          helper_hash_array << creds
         end
 
         # always get default creds
@@ -24,13 +24,21 @@ module Intrigue
         _log_debug 'Adding general default credentials to worker queue'
         default_creds.each do |default_cred|
           _log_debug default_cred
-          work_q << normalize_hash(default_cred)
+          helper_hash_array << normalize_hash(default_cred)
         end
-
         # release memory
         default_creds.clear
 
-        work_q.uniq
+        work_q = Queue.new
+        # TODO - too many iterations.
+        helper_hash_array.uniq.each do |unique_values|
+          work_q << unique_values
+        end
+
+        # release memory
+        helper_hash_array.clear
+
+        work_q
       end
 
       def normalize_hash(login_hash)
