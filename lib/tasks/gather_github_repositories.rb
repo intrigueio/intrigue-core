@@ -27,6 +27,7 @@ module Intrigue
 
         gh_client = initialize_gh_client
         account = _get_option('account')
+        # maybe check if account exists here so entity can be created for it?
 
         repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
 
@@ -48,7 +49,7 @@ module Intrigue
 
       def client_api_request(client, name)
         begin
-            return client.repos if name.empty?
+            return client.repos if name.empty? # if no github account is provided, return all repos belonging to access token
             return nil unless account_exists?(name)
 
             repositories = if org?(name)
