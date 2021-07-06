@@ -25,7 +25,6 @@ module Intrigue
         super
 
         # grab github username and get all their repos
-
         repo_uri = _get_entity_name
         custom_keywords = _get_option('custom_keywords').delete(' ').split(',')
         custom_config = create_gitleaks_custom_config(custom_keywords) unless custom_keywords.empty?

@@ -63,6 +63,7 @@ module Intrigue
 
       def create_suspicious_commit_issue(issue_h)
         _create_linked_issue('suspicious_commit', {
+                               status: 'potential',
                                proof: issue_h
                              })
       end
