@@ -389,7 +389,7 @@ module Model
 
     def to_v1_api_hash(full=false)
       if full
-        export_hash
+        export_hash(full)
       else
         {
           :id => id,
@@ -442,8 +442,8 @@ module Model
       }
     end
 
-    def export_json
-      export_hash.to_json
+    def export_json(extended=false)
+      export_hash(extended).to_json
     end
 
     def export_csv

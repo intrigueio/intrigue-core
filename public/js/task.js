@@ -167,6 +167,26 @@
     }
   }
 
+
+  function setDefaultEntityValue() {
+    console.log("Shpend is awesome")
+    //get the selected entity type
+    var entity_type = $("#entity_type").val()
+    
+    // get the specific task data and set the allowed entity types
+    var form = $("form")[0]
+    var task_name = form.task_name.value
+
+    var task_json = location.origin + "/tasks/" + encodeURI(task_name) + ".json"
+    $.getJSON(task_json, function(data) {
+      $.each(data["example_entities"], function(id,value) {
+        if (value["type"] == entity_type) {
+          $("#attrib_name").val(value["details"]["default"])
+        }
+      });
+    })
+
+  }
   /* -------------------------------------------------------------------------- */
 
   // Update the form on load
@@ -174,5 +194,7 @@
 
   // Update the form on task change
   $("#task_name").on("change", prepTaskRunner);
+  $("#entity_type").on("change", setDefaultEntityValue);
+  
 
   }(jQuery));
