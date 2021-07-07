@@ -76,7 +76,7 @@ tasks_folder = File.expand_path('../tasks/vuln', __FILE__) # get absolute direct
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load vuln check tasks
-tasks_folder = File.expand_path('../tasks/vuln/brute_force', __FILE__) # get absolute directory
+tasks_folder = File.expand_path('../tasks/vuln/bruteforce', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load all checks

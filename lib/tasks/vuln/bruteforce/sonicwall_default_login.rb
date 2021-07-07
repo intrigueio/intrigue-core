@@ -2,12 +2,12 @@ module Intrigue
   module Task
     class SonicWallDefaultLogin < BaseTask
       include Intrigue::Task::Web
-      include Intrigue::Task::DefaultLoginValidator
+      include Intrigue::Task::BruteForceLoginHelper
 
       def self.metadata
         {
-          name: 'vuln/brute_force/sonicwall_login_vuln',
-          pretty_name: 'Vuln Check - Sonicwall Default Login Credentials',
+          name: 'vuln/bruteforce/sonicwall_login_vuln',
+          pretty_name: 'Bruteforce - Sonicwall Default Login Credentials',
           authors: [''],
           description: 'Bruteforce Sonicwall Default Login Credentials',
           type: 'Vuln',
@@ -19,33 +19,37 @@ module Intrigue
           allowed_options: [
             { name: 'threads', regex: 'integer', default: 10 }
           ],
-          created_types: ['Uri'],
-          credentials: [
-            { user: 'admin', password: 'password' }
-          ]
+          created_types: ['Uri']
         }
       end
 
       def run
         super
+        require_enrichment
+
         fingerprint = _get_entity_detail('fingerprint')
 
         return false unless vendor?(fingerprint, 'SonicWall') && tag?(fingerprint, 'Login Panel')
 
-        # Get options
-        uri = _get_entity_name
-        thread_count = _get_option('threads')
+        credentials = [
+          {
+            user: 'admin',
+            password: 'password'
+          }
+        ]
 
-        response = http_request :get, uri.to_s
+        task_information = {
+          http_method: :get,
+          uri: _get_entity_name,
+          headers: {},
+          data: nil,
+          follow_redirects: true,
+          timeout: 10,
+          thread_count: _get_option('threads')
+        }
 
-        # check for sanity
-        unless response
-          _log_error 'Unable to connect!'
-          return false
-        end
-
-        # Create our queue of work from the known creds for the product
-        get_workers(thread_count, uri, self.class.metadata[:credentials], method(:validator))
+        # brute with force.
+        bruteforce_login(task_information, credentials, method(:validator))
       end
 
       # custom validator, each default login task will have its own.
