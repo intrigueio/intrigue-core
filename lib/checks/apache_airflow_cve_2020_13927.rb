@@ -5,7 +5,7 @@ module Intrigue
         {
           added: "2021-06-30",
           name: "apache_airflow_cve_2020_13927",
-          pretty_name: "Unauthenticated Airflow Experimental REST API (CVE-2020-13927)",
+          pretty_name: "Apache Airflow Unauthenticated Access to Experimental REST API (CVE-2020-13927)",
           severity: 1,
           category: "vulnerability",
           status: "confirmed",
