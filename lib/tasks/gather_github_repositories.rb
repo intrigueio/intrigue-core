@@ -8,12 +8,13 @@ module Intrigue
           name: 'gather_github_repositories',
           pretty_name: 'Gather Github Repositories',
           authors: ['maxim'],
-          description: 'Gathers repositories belonging to a Github account (personal/organization). This task uses either authenticated or unauthenticated techniques based on whether a Github Access Token is provided. Please note that the unauthenticated technique is rate limited at 60 requests per hour, while the authenticated technique allows for 5,000 requests per hour. <br><br>Task Options:<br><ul><li><b>account</b> - (default value: empty) - Gather a specific account\'s repositories. This value is required for when attempting to retrieve the repositories without providing a Github Access Token. If a Github Access Token is provided, this can be used to retrieve Github Repositories of another account without being limited to 60 requests per hour. However leave this value blank if you are attempting to retrieve the repositories associated with the provided Github Access Token as this will not retrieve private repositories due to how Github\'s API works.</li></ul>',
+          description: 'Gathers repositories belonging to a Github account (personal/organization). This task uses either authenticated or unauthenticated techniques based on whether a Github Access Token is provided. Please note that the unauthenticated technique is rate limited at 60 requests per hour, while the authenticated technique allows for 5,000 requests per hour. <br><br>Allowed Task Entities:<br><ul><li><b>String</b> - (default value: __IGNORE__) - <b>Requires Valid Github Access Token</b>. Leave this default if you would like to retrieve all repositories belonging to the access token.</li><li><b>Github Account</b> - (Default value: intrigueio) - If you would like to retrieve repositories for a specific Github account, use this entity. This will use either authenticated or unauthenticated techniques to retrieve repositories belonging to the user specified.</li></ul>',
           references: ['https://docs.github.com/en/rest'],
           type: 'discovery',
           passive: true,
           allowed_types: ['String', 'GithubAccount'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }, { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'intrigueio' } }],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }, 
+                             { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'intrigueio' } }],
           allowed_options: [],
           created_types: ['GithubRepository']
         }
@@ -25,10 +26,7 @@ module Intrigue
 
         gh_client = initialize_gh_client
 
-        account = _get_entity_name if _get_entity_type_string 'GithubAccount'
-
-        # maybe check if account exists here so entity can be created for it?
-
+        account = _get_entity_name if _get_entity_type_string == 'GithubAccount'
         repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
 
         _log 'No repositories discovered.' if repos.nil?
