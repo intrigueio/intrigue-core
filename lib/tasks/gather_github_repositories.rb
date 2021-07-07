@@ -12,11 +12,9 @@ module Intrigue
           references: ['https://docs.github.com/en/rest'],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
-          allowed_options: [
-            { name: 'account', regex: 'alpha_numeric', default: '' }
-          ],
+          allowed_types: ['String', 'GithubAccount'],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }, { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'intrigueio' } }],
+          allowed_options: [],
           created_types: ['GithubRepository']
         }
       end
@@ -26,7 +24,9 @@ module Intrigue
         super
 
         gh_client = initialize_gh_client
-        account = _get_option('account')
+
+        account = _get_entity_name if _get_entity_type_string 'GithubAccount'
+
         # maybe check if account exists here so entity can be created for it?
 
         repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
@@ -49,7 +49,9 @@ module Intrigue
 
       def client_api_request(client, name)
         begin
-            return client.repos if name.empty? # if no github account is provided, return all repos belonging to access token
+            if name.nil?
+              return client.repos
+            end # if no github account is provided, return all repos belonging to access token
             return nil unless account_exists?(name)
 
             repositories = if org?(name)
@@ -151,7 +153,6 @@ module Intrigue
           'uri' => "https://github.com/#{repo}"
         }
       end
-
     end
   end
 end
