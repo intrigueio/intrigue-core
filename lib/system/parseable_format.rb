@@ -160,6 +160,7 @@ module ParseableFormat
           entities << {entity_type: "IpAddress", entity_name: je["ip_str"] }
         end
     end
+    entities
   end
 
   private
