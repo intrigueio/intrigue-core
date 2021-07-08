@@ -157,7 +157,7 @@ module ParseableFormat
     puts 'Parsing shodan json file'
     json_entries.each do |je|
         if je["ip_str"] =~ ipv4_regex
-          entities << {entity_type: "IpAddress", entity_name: je["ip_string"] }
+          entities << {entity_type: "IpAddress", entity_name: je["ip_str"] }
         end
     end
   end
