@@ -33,6 +33,9 @@ module Intrigue
       user_list = _get_option("user_list")
       user_list = user_list.split(",") unless user_list.kind_of? Array
       skip_codes = _get_option("skip_codes")
+      
+      # Create a vhosts array in which we will capture vhosts with a successful response
+      vhosts = []
   
       hostname = URI.parse(uri).hostname
       default_vhosts = [  "www.%s", "dev.%s", "local", "localhost", "status.%s", "status", 
@@ -40,7 +43,7 @@ module Intrigue
                           "uat.%s", "%s", "beta", "beta.%s", "secure", "secure.%s", "mobile", 
                           "mobile.%s", "127.0.0.1", "m.%s", "m", "admin", "admin.%s", "old", 
                           "old.%s", "v1.%s", "v1", "v2.%s", "v2", "v3.%s", "v3", "alpha", 
-                          "alpha.%s"].map{|x| x.gsub("%s", "#{hostname}")}
+                          "alpha.%s", "0.0.0.0"].map{|x| x.gsub("%s", "#{hostname}")}
 
       # Pull our list from a file if it's set
       if user_list.length > 0
@@ -63,8 +66,12 @@ module Intrigue
         response = http_request(:get, uri, nil, headers)
         if response.code != missing_response && !skip_codes.include?(response.code)
           _log_good "Hit! #{uri} with Host: #{b}, response code: #{response.code}" 
+          vhosts << b
         end
       end
+
+      # set the vhosts detail on the entity
+      _set_entity_detail("vhosts", vhosts)
 
     end
   
