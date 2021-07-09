@@ -9,7 +9,7 @@ module Intrigue
           identifiers: [
             { type: 'CVE', name: 'CVE-2021-30120' }
           ],
-          severity: 1,
+          severity: 2,
           category: 'vulnerability',
           status: 'potential',
           description: 'Kaseya VSA through 9.5.7 allows attackers to bypass the 2FA requirement.',

@@ -9,7 +9,7 @@ module Intrigue
           identifiers: [
             { type: 'CVE', name: 'CVE-2021-30119' }
           ],
-          severity: 1,
+          severity: 3,
           category: 'vulnerability',
           status: 'potential',
           description: 'Cross Site Scripting (XSS) exists in Kaseya VSA before 9.5.7.',
