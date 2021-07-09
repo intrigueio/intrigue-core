@@ -49,7 +49,7 @@ module Intrigue
         }
 
         # brute with force.
-        bruteforce_login(task_information, credentials, method(:validator))
+        bruteforce_login_and_create_issue(task_information, credentials, method(:validator))
       end
 
       # custom validator, each default login task will have its own.

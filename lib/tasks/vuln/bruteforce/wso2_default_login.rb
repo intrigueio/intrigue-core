@@ -49,8 +49,9 @@ module Intrigue
           thread_count: _get_option('threads')
         }
 
-        # Create our queue of work from the known creds for the product
-        bruteforce_login(task_information, method(:validator))
+        # brute with force.
+        bruteforce_login_and_create_issue(task_information, method(:validator))
+
       end
 
       # custom validator, each default login task will have its own.
