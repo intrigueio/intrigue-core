@@ -6,7 +6,7 @@ module Intrigue
       end
 
       # fingerprint is an array of fps, product name is a string
-      def is_product?(fingerprint, product_name)ç
+      def is_product?(fingerprint, product_name)
         matches_fingerprint_metadata?(fingerprint, product_name, 'product')
       end
 

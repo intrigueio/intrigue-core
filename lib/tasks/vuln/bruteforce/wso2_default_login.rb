@@ -1,6 +1,6 @@
 module Intrigue
   module Task
-    class WsoTwoDefaultLogin < BaseTask
+    class Wso2DefaultLogin < BaseTask
       include Intrigue::Task::Web
       include Intrigue::Task::BruteForceLoginHelper
 
@@ -30,7 +30,7 @@ module Intrigue
         fingerprint = _get_entity_detail('fingerprint')
 
         return false unless vendor?(fingerprint,
-                                    'WSO2') && is_product?(finerprint, 'Carbon') && tag?(fingerprint, 'Login Panel')
+                                    'WSO2') && is_product?(fingerprint, 'Carbon') && tag?(fingerprint, 'Login Panel')
 
         credentials = [
           {
