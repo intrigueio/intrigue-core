@@ -3,6 +3,8 @@ module Task
 module Enrich
 class Uri < Intrigue::Task::BaseTask
 
+  include Intrigue::Task::RedirectChain
+
   def self.metadata
     {
       :name => "enrich/uri",
@@ -37,9 +39,8 @@ class Uri < Intrigue::Task::BaseTask
     _log "Making initial requests, following redirect"
     # Grab the full response
     response = http_request :get, uri
-    response2 = http_request :get, uri
 
-    unless response && response2 && response.body_utf8
+    unless response && response.body_utf8
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
     end
@@ -322,6 +323,8 @@ class Uri < Intrigue::Task::BaseTask
     # get the hashed dom structure
     dom_sha1 = Digest::SHA1.hexdigest(html_dom_to_string(response.body_utf8))
 
+    redirects = find_and_log_excessive_redirects(ident_responses)
+
     # set up the new details
     new_details = {
       "alt_names" => alt_names,
@@ -343,7 +346,7 @@ class Uri < Intrigue::Task::BaseTask
       "generator" => generator_string,
       "headers" => headers,
       "hidden_response_data" => response.body_utf8,
-      "redirect_chain" => ident_responses.first[:response_urls] || [],
+      "redirect_chain" => redirects[:chain].flatten.uniq || [],
       "response_data_hash" => response_data_hash,
       "dom_sha1" => dom_sha1,
       "title" => title,
@@ -353,7 +356,8 @@ class Uri < Intrigue::Task::BaseTask
       "extended_configuration" => ident_content.uniq,        # new content field
       "extended_full_responses" => ident_responses.uniq,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
-      "extended_response_body" => response.body_utf8
+      "extended_response_body" => response.body_utf8,
+      "redirect_count" => redirects[:count]
     }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail
