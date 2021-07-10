@@ -33,19 +33,14 @@ module Intrigue
 
         workers = (0...task_information[:thread_count]).map do
           Thread.new do
-            while credential = work_q.pop
+            while credential = work_q.pop(true)
               send_request_and_validate task_information, credential, validator, out
             end
-          rescue ThreadError => e
-            _log_error 'Error while bruteforcing login.'
-            _log_debug e
+          rescue ThreadError
           end
         end
 
         workers.map(&:join) # nothing returns after this.
-
-        p 'Got past'
-        # require 'pry'; binding.pry
 
         out
       end
