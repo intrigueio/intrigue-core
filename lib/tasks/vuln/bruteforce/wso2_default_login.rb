@@ -49,9 +49,27 @@ module Intrigue
           thread_count: _get_option('threads')
         }
 
-        # brute with force.
-        bruteforce_login_and_create_issue(task_information, method(:validator))
+        _create_entity 'Uri',
+                       {
+                         'name' => task_information[:uri],
+                         'uri' => task_information[:uri]
+                       }
 
+        # brute with force.
+        brute_force_data = bruteforce_login(task_information, credentials, method(:validator))
+
+        unless brute_force_data[:credentials].empty?
+
+          _log 'Creating issue'
+
+          _create_linked_issue 'default_login_credentials',
+                               {
+                                 proof: {
+                                   "Successful login credentials": brute_force_data[:credentials],
+                                   "Responses": brute_force_data[:responses]
+                                 }
+                               }
+        end
       end
 
       # custom validator, each default login task will have its own.

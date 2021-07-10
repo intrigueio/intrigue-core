@@ -3,28 +3,10 @@ module Intrigue
     module BruteForceLoginHelper
       include Intrigue::Task::Web
 
-      def bruteforce_login_and_create_issue(task_information, credentials, validator)
-        _create_entity 'Uri',
-                       {
-                         'name' => task_information[:uri],
-                         'uri' => task_information[:uri]
-                       }
-
+      def bruteforce_login(task_information, credentials, validator)
         work_q = build_work_queue(credentials)
 
         brute_force_data = execute_workers(task_information, validator, work_q)
-
-        if brute_force_data[:success]
-          _log 'Creating issue'
-          _create_linked_issue task_information[:uri],
-                               {
-                                 proof: {
-                                   "Successful login credentials": brute_force_data[:credentials],
-                                   "Responses": brute_force_data[:responses]
-                                 }
-                               }
-
-        end
       end
 
       def build_work_queue(credentials)
@@ -45,7 +27,6 @@ module Intrigue
 
       def execute_workers(task_information, validator, work_q)
         out = {
-          success: false,
           responses: [],
           credentials: []
         }
@@ -53,23 +34,23 @@ module Intrigue
         workers = (0...task_information[:thread_count]).map do
           Thread.new do
             while credential = work_q.pop
-              response = send_request_and_validate task_information, credential, validator
-
-              next unless response
-
-              out[:success] = true
-              out[:responses] << response
-              out[:credentials] << credential
+              send_request_and_validate task_information, credential, validator, out
             end
-          rescue ThreadError
+          rescue ThreadError => e
+            _log_error 'Error while bruteforcing login.'
+            _log_debug e
           end
-        end; 'ok'
-        workers.map(&:join); 'ok'
+        end
+
+        workers.map(&:join) # nothing returns after this.
+
+        p 'Got past'
+        # require 'pry'; binding.pry
 
         out
       end
 
-      def send_request_and_validate(task_information, credential, validator)
+      def send_request_and_validate(task_information, credential, validator, out)
         _log "Attempting #{task_information[:uri]} with credentials #{credential}"
 
         response = http_request task_information[:http_method],
@@ -80,17 +61,18 @@ module Intrigue
                                 task_information[:follow_redirects],
                                 task_information[:timeout]
 
-        return nil unless response
+        return true unless response
 
         # only return response if validation was successful, else return nil.
         if validator.call(response)
-          _log_good "Login successful using credentials #{credential}! Creating a page for #{task_information[:uri]}"
+          _log_good "Login successful login on #{task_information[:uri]} using credentials: #{credential}!"
 
-          response.body_utf8
+          out[:responses] << response.body_utf8
+          out[:credentials] << credential
         else
-          return nil
-          _log "Failed login on #{task_information[:uri]} using credentials: #{credential}"
+          _log "Login failed on #{task_information[:uri]} using credentials: #{credential}."
         end
+        true
       end
 
       def get_default_login_creds_from_file
@@ -100,6 +82,7 @@ module Intrigue
                      symbolize_names: true)
         rescue StandardError => e
           _log_error "Couldn't load #{$intrigue_basedir}/data/bruteforce/default_login_creds.json"
+          _log_debug e
           []
         end
       end
