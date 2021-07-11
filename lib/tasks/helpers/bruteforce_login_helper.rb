@@ -40,7 +40,7 @@ module Intrigue
           end
         end
 
-        workers.map(&:join) # nothing returns after this.
+        workers.each(&:join)
 
         out
       end
