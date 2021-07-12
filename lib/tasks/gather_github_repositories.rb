@@ -58,7 +58,9 @@ module Intrigue
                            else
                              # when calling client.repos and passing in a name, it will return only public repositories
                              # even if the client is associated with the user's token
-                             # NOTES ON HOW THIS WORK
+                             # since we have a valid access token; we will call client.repos
+                             # also call client.repos with the name of the github account provided
+                             # then extract out all the repos which belong to the github account provided
                              (client.repos + client.repos(name)).uniq
                            end
         rescue Octokit::TooManyRequests, Octokit::AbuseDetected
