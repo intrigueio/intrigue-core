@@ -52,8 +52,8 @@ definition:
   - task: threat/search_opendns
   EmailAddress:
   - task: vuln/saas_google_calendar_check
-  #GithubAccount:
-  #- task: gitrob
+  GithubAccount:
+  - task: gather_github_repositories
   GithubRepository:
     - task: gitleaks
   IpAddress:
