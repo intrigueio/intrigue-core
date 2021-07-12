@@ -12,8 +12,8 @@ module Intrigue
           references: ['https://docs.github.com/en/rest'],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String', 'GithubAccount'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }, 
+          allowed_types: %w[String GithubAccount],
+          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } },
                              { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'intrigueio' } }],
           allowed_options: [],
           created_types: ['GithubRepository']
@@ -42,20 +42,24 @@ module Intrigue
         retrieved_repos = client_api_request(client, name)
         repos = retrieved_repos.map { |r| r['full_name'] } if retrieved_repos
 
+        # filter out all repos belonging to user if github account name provided
+        repos = repos.select { |rn| rn.split('/')[0] == name } if retrieved_repos && name
+
         repos
       end
 
       def client_api_request(client, name)
         begin
-            if name.nil?
-              return client.repos
-            end # if no github account is provided, return all repos belonging to access token
-            return nil unless account_exists?(name)
+            return client.repos if name.nil? # no github account specified; return all repos belonging to token
+            return nil unless account_exists?(name) # github account specified; check if account exists
 
-            repositories = if org?(name)
+            repositories = if org?(name) # if github account is an org; need to make a different API call
                              client.org_repos(name, { 'type' => 'all' })
                            else
-                             client.repos(name)
+                             # when calling client.repos and passing in a name, it will return only public repositories
+                             # even if the client is associated with the user's token
+                             # NOTES ON HOW THIS WORK
+                             (client.repos + client.repos(name)).uniq
                            end
         rescue Octokit::TooManyRequests, Octokit::AbuseDetected
           _log_error 'Rate limiting via authenticated techniques reached.'
