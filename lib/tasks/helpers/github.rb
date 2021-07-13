@@ -61,11 +61,12 @@ module Intrigue
       end
 
       # create suspicious commit
-      def create_suspicious_commit_issue(issue_h, repo_entity=nil)
+      def create_suspicious_commit_issue(issue_h, source_commit)
         _create_linked_issue('suspicious_commit', {
                                status: 'potential',
-                               proof: issue_h
-                             }, repo_entity || @entity)
+                               proof: issue_h,
+                               source: source_commit
+                             })
       end
 
       private

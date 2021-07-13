@@ -11,7 +11,7 @@ module Intrigue
           type: 'discovery',
           passive: true,
           allowed_types: ['Uri', 'GithubRepository'],
-          example_entities: [{ 'type' => 'URI', 'details' => { 'name' => 'https://github.com/my-insecure/repo' } }],
+          example_entities: [{ 'type' => 'URI', 'details' => { 'name' => 'my-account/insecure-repo' } }],
           allowed_options: [
             { name: 'use_authentication', regex: 'boolean', default: true },
             { name: 'custom_keywords', regex: 'alpha_numeric_list', default: '' }
@@ -39,10 +39,9 @@ module Intrigue
 
           # set a unique source so we don't accidentally overwrite each issue
           _log "Working on issue: #{issue['commit_uri']}"
-          issue.merge!({source: issue['commit_uri']})
 
           # create the issue on the repo
-          create_suspicious_commit_issue(issue)
+          create_suspicious_commit_issue(issue, issue['commit_uri'])
         end
 
       end
