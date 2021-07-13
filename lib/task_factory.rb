@@ -63,7 +63,22 @@ module Intrigue
     
         ### XXX - exception handling? Should this return an exception?
         raise "No task with the name: #{name}!"
-      end  
+      end
+      
+      def self.checks_for_vendor_product(vendor,product)
+      checks = []
+      list.each do |t|
+        if t.metadata.key?(:affected_software)
+          t.metadata[:affected_software].each do |taf|
+            if taf[:vendor] == vendor && taf[:product] == product
+              checks << t
+              break
+            end
+          end
+        end
+      end
+      checks.compact.uniq
+      end
   
     end
 end
