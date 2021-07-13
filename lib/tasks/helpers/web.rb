@@ -275,8 +275,8 @@ module Task
 
       # merge in credentials, must be in format :user => 'username', :password => 'password'
       if credentials
-        options[:userpwd] = "#{credentials[:user]}:#{credentials[:password]}"
-      end
+          options[:userpwd] = "#{credentials[:user]}:#{credentials[:password]}"
+      end 
 
       # create a request
       request = Typhoeus::Request.new(uri_string, {
