@@ -16,6 +16,12 @@ module Intrigue
           example_entities: [
             { 'type' => 'Uri', 'details' => { 'name' => 'http://intrigue.io' } }
           ],
+          affected_software: [
+            { 
+              vendor: "WSO2", 
+              product: "Carbon" 
+            }
+          ],
           allowed_options: [
             { name: 'threads', regex: 'integer', default: 10 }
           ],
