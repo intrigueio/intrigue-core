@@ -10,9 +10,11 @@ module Intrigue
           references: ['https://docs.github.com/en/rest/reference/search#search-code'],
           type: 'discovery',
           passive: false,
-          allowed_types: ['String', 'UniqueKeyword'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => 'intrigue.io' } }],
-          allowed_options: [],
+          allowed_types: [ 'UniqueKeyword'],
+          example_entities: [{ 'type' => 'UniqueKeyword', 'details' => { 'name' => 'intrigue.io' } }],
+          allowed_options: [
+            #{ name: "check_leaks", regex: "boolean", default: false },
+          ],
           created_types: []
         }
       end
@@ -25,71 +27,70 @@ module Intrigue
         gh_client = retrieve_gh_client
         return if gh_client.nil?
 
-        gh_client.auto_paginate = true
+        findings = search_code(gh_client, keyword)
 
-        repo_urls = search_code(gh_client, keyword).compact.uniq
-        return if repo_urls.nil?
+        _log_good "Found #{findings.size} repositories which may contain possible leaks."
 
-        _log_good "Found #{repo_urls.size} repositories which may contain possible leaks."
+        # create repositories
+        #repo_q = Queue.new
+        findings.each do |f|
 
-        gitleaks_config = create_gitleaks_custom_config([keyword]) # pass in array to helper as it expects one
-        results = threaded_gitleaks(repo_urls, gitleaks_config)
+          next unless f["repository"] && f['repository']['full_name']
 
-        results.each { |result| create_suspicious_commit_issue(result) } unless results.empty?
-      end
+          full_name = f['repository']['full_name']
+          #repo_q << full_name
 
-      def threaded_gitleaks(repos, gitleaks_config)
-        output = []
-        workers = (0...10).map do
-          results = run_gitleaks_thread(repos, output, _get_task_config('github_access_token'), gitleaks_config)
-          [results]
+          entity_deets = { 'name' => full_name , 'github' => f.to_attrs }
+          _create_entity "GithubRepository", entity_deets
+
         end
-        workers.flatten.map(&:join)
 
-        output
-      end
+        # optionally run gitleaks on found URLs
+        #if get_option "check_leaks"
+        #  gitleaks_config = create_gitleaks_custom_config([keyword]) # pass in array to helper as it expects one
+        #  results = threaded_gitleaks(repo_q, gitleaks_config)
+        #  results.each { |result| create_suspicious_commit_issue(result) } unless results.empty?
+        #end
 
-      def run_gitleaks_thread(input_q, output_q, access_token, config) # change the name of this method
-        t = Thread.new do
-          until input_q.empty?
-            while repo = input_q.shift
-              results = run_gitleaks(repo, access_token, config)
-              next if results.nil?
-
-              output_q << results
-            end
-          end
-        end
-        t
       end
 
       # use github api to find all repositories containing specific keyword
       # return all the repos belonging to the usernames found
       def search_code(client, key)
-        begin
-          results = client.search_code(key, { 'per_page': 100 })['items']
-        rescue Octokit::TooManyRequests, Octokit::AbuseDetected
-          _log_error 'Rate limiting hit; exiting.'
-          return nil
+
+        results = []
+
+        # try up to X times
+        for i in 1..5
+          begin
+
+            _log "Searching for #{key}"
+            results << client.search_code(key)['items']
+            next_url = client.last_response.rels[:next].href
+
+            while next_url
+              sleep 10
+              _log "Getting: #{next_url}"
+              results << client.get(next_url)
+
+              # get the next url
+              break unless client.last_response.rels[:next]
+              next_url = client.last_response.rels[:next].href
+            end
+
+            # we're complete, no need to retry
+            break
+
+          rescue Octokit::TooManyRequests, Octokit::AbuseDetected => e
+            _log_error "#{e}\nRate limiting hit on attempt #{i}; Retrying."
+            sleep 300
+            next
+          end
         end
 
-        users = results.map { |r| r['repository']['owner']['login'] } unless results.empty?
-        repo_urls = users.map { |u| retrieve_repositories(client, u) }.flatten unless users.empty?
-        repo_urls
-      end
-
-      def retrieve_repositories(client, name)
-        begin
-          repositories = client.repos(name) # we dont need to use org_repos since this is only retrieving public repos
-        rescue Octokit::TooManyRequests, Octokit::AbuseDetected
-          _log_error 'Rate limiting via authenticated techniques reached.'
-          return nil
-        end
-
-        non_forked = repositories.select { |r| r['fork'] == false } # ignore forked repos
-        repository_urls = non_forked.map { |r| r['html_url'] } unless non_forked.empty? # extract repo urls
-
-        repository_urls
+        #users = results.flatten.map { |r| r['repository']['owner']['login'] }
+      #repo_urls = users.map { |u| retrieve_repositories(client, u) }.flatten unless users.empty?
+      results.flatten.compact.uniq
       end
 
       def retrieve_gh_client

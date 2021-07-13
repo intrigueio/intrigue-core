@@ -24,17 +24,26 @@ module Intrigue
       def run
         super
 
-        repo_uri = _get_entity_name
+        repo_name = _get_entity_name
         custom_keywords = _get_option('custom_keywords').delete(' ').split(',')
         custom_config = create_gitleaks_custom_config(custom_keywords) unless custom_keywords.empty?
 
         access_token = retrieve_gh_access_token if _get_option('use_authentication')
 
-        issues = run_gitleaks(repo_uri, access_token, custom_config)
+        issues = run_gitleaks(repo_name, access_token, custom_config)
         return if issues.nil?
 
+        # create issues
         _log_good "Found #{issues.size} suspicious commits."
-        create_suspicious_commit_issue(issues)
+        issues.each do |issue|
+
+          # set a unique source so we don't accidentally overwrite each issue
+          _log "Working on issue: #{issue['commit_uri']}"
+          issue.merge!({source: issue['commit_uri']})
+
+          # create the issue on the repo
+          create_suspicious_commit_issue(issue)
+        end
 
       end
 

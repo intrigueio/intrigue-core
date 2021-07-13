@@ -14,17 +14,7 @@ module Intrigue
         verify_gh_access_token(access_token) # returns client if valid else nil
       end
 
-      def verify_gh_access_token(token)
-        client = Octokit::Client.new(access_token: token)
-        begin
-          client.user
-        rescue Octokit::Unauthorized, Octokit::TooManyRequests
-          _log_error 'Github Access Token invalid either due to invalid credentials or rate limiting reached; defaulting to unauthenticated.'
-          return nil
-        end
-        client
-      end
-
+      #
       def create_gitleaks_custom_config(keywords)
         temp_rule_file = "/tmp/#{SecureRandom.uuid}-rules.gitleaks"
 
@@ -34,7 +24,69 @@ module Intrigue
         temp_rule_file
       end
 
-      def parse_gitleaks_output(output_file)
+      ### Single threaded version
+      def run_gitleaks(repo, access_token, config_file)
+
+        access_token = '' if access_token.nil? # set to empty string as gitleaks will ignore it
+        config_file = "#{$intrigue_basedir}/data/gitleaks.config" if config_file.nil?
+
+        temp_file = "/tmp/#{SecureRandom.uuid}.gitleaks"
+        _log "Running gitleaks on #{repo}"
+
+        # append the url prefix
+        unless repo =~ /^https/
+          repo = "https://github.com/#{repo}"
+        end
+
+        _unsafe_system("gitleaks -r #{repo} --report=#{temp_file} --access-token=#{access_token} --config-path=#{config_file}")
+
+        output = _parse_gitleaks_output(temp_file)
+        _remove_gitleaks_temp_files
+
+      output
+      end
+
+
+      # creates a single thread which is running gitleaks against the queue
+      #  ... Use this helper if you want a multi-threaded run
+      def threaded_gitleaks(repos_q, gitleaks_config, thread_count=3)
+        output = []
+        workers = (0...thread_count).map do
+          results = _run_gitleaks_thread(repos_q, output, _get_task_config('github_access_token'), gitleaks_config)
+          [results]
+        end
+        workers.flatten.map(&:join)
+
+        output
+      end
+
+      # create suspicious commit
+      def create_suspicious_commit_issue(issue_h, repo_entity=nil)
+        _create_linked_issue('suspicious_commit', {
+                               status: 'potential',
+                               proof: issue_h
+                             }, repo_entity || @entity)
+      end
+
+      private
+
+
+      def verify_gh_access_token(token)
+        client = Octokit::Client.new(access_token: token, per_page: 100)
+        begin
+          client.user
+        rescue Octokit::Unauthorized, Octokit::TooManyRequests
+          _log_error 'Github Access Token invalid either due to invalid credentials or rate limiting reached; defaulting to unauthenticated.'
+          return nil
+        end
+
+        # diable auto pagination
+        client.auto_paginate = false
+
+        client
+      end
+
+      def _parse_gitleaks_output(output_file)
         # parse output
         json_output = _return_gitleaks_json(output_file)
         return nil if json_output.nil?
@@ -46,29 +98,20 @@ module Intrigue
         results
       end
 
-      def run_gitleaks(repo, access_token, config_file)
-        access_token = '' if access_token.nil? # set to empty string as gitleaks will ignore it
-        config_file = "#{$intrigue_basedir}/data/gitleaks.config" if config_file.nil?
+      # creates a single thread which is running gitleaks against the queue
+      def _run_gitleaks_thread(input_q, output_q, access_token, config) # change the name of this method
+        t = Thread.new do
+          until input_q.empty?
+            while repo = input_q.shift
+              results = run_gitleaks(repo, access_token, config)
+              next if results.nil?
 
-        temp_file = "/tmp/#{SecureRandom.uuid}.gitleaks"
-        _log "Running gitleaks on #{repo}"
-
-        _unsafe_system("gitleaks -r #{repo} --report=#{temp_file} --access-token=#{access_token} --config-path=#{config_file}")
-
-        output = parse_gitleaks_output(temp_file)
-        _remove_gitleaks_temp_files
-
-        output
+              output_q << results
+            end
+          end
+        end
+        t
       end
-
-      def create_suspicious_commit_issue(issue_h)
-        _create_linked_issue('suspicious_commit', {
-                               status: 'potential',
-                               proof: issue_h
-                             })
-      end
-
-      private
 
       def _replace_rule_template(keyword)
         rule = <<-RULE
