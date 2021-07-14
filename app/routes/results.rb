@@ -276,7 +276,6 @@ class CoreApp < Sinatra::Base
           task_result.log "User-created entity, manually creating and enriching!"
           entity.enrich(task_result)
         end
-
       end
 
       redirect "/#{@project_name}/results"
