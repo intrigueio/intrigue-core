@@ -17,9 +17,9 @@ module Intrigue
             { 'type' => 'Uri', 'details' => { 'name' => 'http://intrigue.io' } }
           ],
           affected_software: [
-            { 
-              vendor: "SonicWall", 
-              product: "Network Security Appliance" 
+            {
+              vendor: 'SonicWall',
+              product: 'Network Security Appliance'
             }
           ],
           allowed_options: [
