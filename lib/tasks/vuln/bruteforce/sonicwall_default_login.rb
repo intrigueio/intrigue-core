@@ -48,12 +48,6 @@ module Intrigue
           thread_count: _get_option('threads')
         }
 
-        _create_entity 'Uri',
-                       {
-                         'name' => task_information[:uri],
-                         'uri' => task_information[:uri]
-                       }
-
         # brute with force.
         brute_force_data = bruteforce_login(task_information, credentials, method(:validator))
 
