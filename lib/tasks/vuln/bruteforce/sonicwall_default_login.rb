@@ -33,6 +33,7 @@ module Intrigue
         super
         require_enrichment
 
+        _log 'Got into the nice Sonicwall login bruteforce'
         fingerprint = _get_entity_detail('fingerprint')
 
         return false unless vendor?(fingerprint, 'SonicWall') && tag?(fingerprint, 'Login Panel')
@@ -53,12 +54,6 @@ module Intrigue
           timeout: 10,
           thread_count: _get_option('threads')
         }
-
-        _create_entity 'Uri',
-                       {
-                         'name' => task_information[:uri],
-                         'uri' => task_information[:uri]
-                       }
 
         # brute with force.
         brute_force_data = bruteforce_login(task_information, credentials, method(:validator))
