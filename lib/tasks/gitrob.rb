@@ -7,7 +7,7 @@ class Gitrob < BaseTask
       :name => "gitrob",
       :pretty_name => "Gitrob",
       :authors => ["michenriksen", "jcran"],
-      :description => "Uses the excellent Gitrob by Michael Henriksen to search a given Github Account for committed secrets",
+      :description => "Uses Gitrob to search a given GithubAccount's repositories for secrets",
       :type => "discovery",
       :references => ["https://github.com/michenriksen/gitrob"],
       :passive => true,
@@ -29,7 +29,7 @@ class Gitrob < BaseTask
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting Gitrob on #{github_account}, saving to #{temp_file}!"
-    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 10 --threads 20 -in-mem-clone #{github_account}"
+    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 10 --threads 10 -in-mem-clone #{github_account}"
     # gitrob tends to hang so we set a timeout of 10 minutes (600 seconds)
     # the gitrob fork we use requires two files in the current working directory, hence setting working dir to ~/bin/data/gitrob
     _log "Running Command:"

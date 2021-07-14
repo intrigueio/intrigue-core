@@ -344,6 +344,9 @@ GEM
     nio4r (2.5.7)
     nokogiri (1.11.7-x86_64-darwin)
       racc (~> 1.4)
+    octokit (4.21.0)
+      faraday (>= 0.9)
+      sawyer (~> 0.8.0, >= 0.5.3)
     open3 (0.1.1)
     openssl (2.2.0)
     openssl-ccm (1.2.2)
@@ -429,6 +432,9 @@ GEM
       windows_error
     rubyntlm (0.6.3)
     rubyzip (2.3.0)
+    sawyer (0.8.2)
+      addressable (>= 2.3.5)
+      faraday (> 0.8, < 2.0)
     sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
     sequel (5.45.0)
@@ -538,6 +544,7 @@ DEPENDENCIES
   net-http2
   neutrino_api!
   nokogiri
+  octokit (~> 4.0)
   open3
   opencorporates!
   openssl
