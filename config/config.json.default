@@ -265,6 +265,12 @@
       "editable": "true",
       "comment": ""
     },
+    "gitlab_access_token": {
+      "value": "",
+      "uri": "https://gitlab.com/-/profile/personal_access_tokens",
+      "editable": "true",
+      "comment": ""
+    },
     "greynoise_api_key": {
       "value": "",
       "uri": "https://docs.greynoise.io/#greynoise-api",

@@ -12,7 +12,8 @@ module Intrigue
 
       def validate_entity
         # same regex as account name however project name can start with a dot or underscore but not a dash
-        name.match(/^[^\-|_|\.][\w\-?\.?]{1,255}\/[^\-][\w\-?\.?]{1,255}$/)
+        # gitlab groups support support subgroups
+        name.match(/^[^\-|_|\.][\w\-?\.?]{1,255}\/[^\-][\w\-?\.?\/?]{2,255}$/)
       end
 
       def scoped?
