@@ -58,7 +58,8 @@ module Intrigue
         }
 
         # brute with force.
-        brute_force_data = bruteforce_login_post(task_information, credentials, method(:validator))
+        brute_force_data = bruteforce_login(task_information, credentials, method(:validator),
+                                            method(:build_post_request_body))
 
         unless brute_force_data[:credentials].empty?
 
@@ -74,6 +75,12 @@ module Intrigue
         end
       end
 
+      # custom validator, each default login task will have its own.
+      # some tasks might require a more complex approach.
+      def validator(response)
+        response.code.to_i != 0 && !response.headers['Location'].match(/loginStatus=false/i)
+      end
+
       def build_post_request_body(task_information, credential)
         headers = { "FETCH-CSRF-TOKEN": '1',
                     "Origin": task_information[:uri_data][:base_uri],
@@ -81,116 +88,23 @@ module Intrigue
 
         response = http_request :post, task_information[:uri_data][:token_uri], nil, headers
 
-        return nil unless response
+        return false unless response
 
         token = response.body_utf8.match(/X-CSRF-Token:([\w\d\-]+)/i)[1]
 
         unless token
           _log_debug 'Unable to retrieve CRFT token'
-          return nil
+          return false
         end
 
         _log_debug "Token: #{token}"
 
-        {
-          'username' => credential[:user],
-          'password' => credential[:password],
-          'X-CSRF-Token' => token
-        }
-      end
+        task_information[:data]['username'] = credential[:user]
+        task_information[:data]['password'] = credential[:password]
+        task_information[:data]['X-CSRF-Token'] = token
 
-      def bruteforce_login_post(task_information, credentials, validator)
-        work_q = build_work_queue_post(credentials)
-
-        brute_force_data = execute_workers_post(task_information, validator, work_q)
-      end
-
-      def build_work_queue_post(credentials)
-        # always get default creds
-        _log_debug 'Getting default credentials'
-
-        credentials |= get_default_login_creds_from_file
-
-        work_q = Queue.new
-
-        while credential = credentials.pop
-          _log_debug "Adding credential to work queue: #{credential}"
-          work_q << credential
-        end
-
-        work_q
-      end
-
-      def execute_workers_post(task_information, validator, work_q)
-        out = {
-          responses: [],
-          credentials: []
-        }
-
-        workers = (0...task_information[:thread_count]).map do
-          Thread.new do
-            while credential = work_q.pop(true)
-
-              task_information[:data] = build_post_request_body task_information, credential
-
-              next unless task_information[:data]
-
-              _log_debug task_information[:data]
-
-              send_request_and_validate_post task_information, credential, validator, out
-            end
-          rescue ThreadError
-          end
-        end
-
-        workers.each(&:join)
-
-        out
-      end
-
-      def send_request_and_validate_post(task_information, credential, validator, out)
-        _log "Attempting #{task_information[:uri]} with credentials #{credential}"
-
-        response = http_request task_information[:http_method],
-                                task_information[:uri],
-                                nil,
-                                task_information[:headers],
-                                task_information[:data],
-                                task_information[:follow_redirects],
-                                task_information[:timeout]
-
-        return true unless response
-
-        # only return response if validation was successful, else return nil.
-        if validator.call(response)
-          _log_good "Login successful login on #{task_information[:uri]} using credentials: #{credential}!"
-
-          out[:responses] << response.body_utf8
-          out[:credentials] << credential
-        else
-          _log "Login failed on #{task_information[:uri]} using credentials: #{credential}."
-        end
         true
       end
-
-      def get_default_login_creds_from_file
-        _log 'Using default list from data/bruteforce/default_login_creds.json'
-        begin
-          JSON.parse(File.read("#{$intrigue_basedir}/data/bruteforce/default_login_creds.json"),
-                     symbolize_names: true)
-        rescue StandardError => e
-          _log_error "Couldn't load #{$intrigue_basedir}/data/bruteforce/default_login_creds.json"
-          _log_debug e
-          []
-        end
-      end
-
-      # custom validator, each default login task will have its own.
-      # some tasks might require a more complex approach.
-      def validator(response)
-        response.code.to_i != 0 && !response.headers['Location'].match(/loginStatus=false/i)
-      end
-
     end
   end
 end
