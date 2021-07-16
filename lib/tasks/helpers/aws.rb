@@ -53,7 +53,7 @@ module Intrigue
         ## Path Style -> being deprecated soon; adding in for legacy support
         # https://s3.amazonaws.com/bucketname
         # s3.amazonaws.com/bucketname
-        path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/(.+)\/(?:.+)?/
+        path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/([\w\.\-]+)/
 
         case bucket_url
         when virtual_style_regex
