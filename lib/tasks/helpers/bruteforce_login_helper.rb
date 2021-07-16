@@ -3,10 +3,10 @@ module Intrigue
     module BruteForceLoginHelper
       include Intrigue::Task::Web
 
-      def bruteforce_login(task_information, credentials, validator)
+      def bruteforce_login(task_information, credentials, validator, post_data_creator = nil)
         work_q = build_work_queue(credentials)
 
-        brute_force_data = execute_workers(task_information, validator, work_q)
+        brute_force_data = execute_workers(task_information, validator, work_q, post_data_creator)
       end
 
       def build_work_queue(credentials)
@@ -25,7 +25,7 @@ module Intrigue
         work_q
       end
 
-      def execute_workers(task_information, validator, work_q)
+      def execute_workers(task_information, validator, work_q, post_data_creator = nil)
         out = {
           responses: [],
           credentials: []
@@ -34,7 +34,14 @@ module Intrigue
         workers = (0...task_information[:thread_count]).map do
           Thread.new do
             while credential = work_q.pop(true)
-              send_request_and_validate task_information, credential, validator, out
+
+              if !post_data_creator.nil?
+
+                next unless post_data_creator.call(task_information, credential)
+
+              end
+                send_request_and_validate task_information, credential, validator, out
+                
             end
           rescue ThreadError
           end
