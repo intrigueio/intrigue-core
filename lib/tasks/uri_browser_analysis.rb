@@ -77,9 +77,8 @@ module Intrigue
         _log "Checking for S3 Buckets"
 
         request_urls = browser_data_hash["extended_browser_request_urls"]
-        require 'pry'; binding.pry
         request_urls.each do |s|
-          next unless extract_bucket_name_from_uri(request_urls.first)
+          next unless extract_bucket_name_from_uri(s)
 
           _log "Found S3 bucket: #{s}"
           _create_entity 'AwsS3Bucket', {
