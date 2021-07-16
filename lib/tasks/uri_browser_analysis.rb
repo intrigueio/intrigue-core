@@ -77,8 +77,9 @@ module Intrigue
         _log "Checking for S3 Buckets"
 
         request_urls = browser_data_hash["extended_browser_request_urls"]
+        require 'pry'; binding.pry
         request_urls.each do |s|
-          next unless extract_bucket_name_from_uri(s)
+          next unless extract_bucket_name_from_uri(request_urls.first)
 
           _log "Found S3 bucket: #{s}"
           _create_entity 'AwsS3Bucket', {
@@ -89,18 +90,18 @@ module Intrigue
         end
 
         # then check our page (unrequested urls?)
-        if page_capture = browser_data_hash["extended_browser_page_capture"]
-          URI.extract(page_capture).each do |s|
-            next unless extract_bucket_name_from_uri(s)
+        # if page_capture = browser_data_hash["extended_browser_page_capture"]
+        #   URI.extract(page_capture).each do |s|
+        #     next unless extract_bucket_name_from_uri(s)
 
-            _log "Found S3 bucket: #{s}"
-            _create_entity 'AwsS3Bucket', {
-              'name' => extract_bucket_name_from_uri(s),
-              'bucket_name' => extract_bucket_name_from_uri(s),
-              'bucket_uri' => "#{extract_bucket_name_from_uri(s)}.s3.amazonaws.com" # convert to virtual path style
-            }
-          end
-        end
+        #     _log "Found S3 bucket: #{s}"
+        #     _create_entity 'AwsS3Bucket', {
+        #       'name' => extract_bucket_name_from_uri(s),
+        #       'bucket_name' => extract_bucket_name_from_uri(s),
+        #       'bucket_uri' => "#{extract_bucket_name_from_uri(s)}.s3.amazonaws.com" # convert to virtual path style
+        #     }
+        #   end
+        # end
       end
 
       ###
