@@ -470,7 +470,7 @@ class Uri < Intrigue::Task::BaseTask
   # checks to see if we had an auth config return true
   def check_auth_by_type(configuration, auth_type)
     configuration.each do |c|
-      if "#{c["name"]}" == auth_type && "#{c["value"]}".to_bool
+      if "#{c["name"]}" == auth_type && "#{c["result"]}".to_bool
         return true
       end
     end

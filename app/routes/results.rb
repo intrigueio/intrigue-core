@@ -186,7 +186,7 @@ class CoreApp < Sinatra::Base
       puts "Got file of type: #{file_type}"
 
       # barf if we got a bad file
-      unless file_type =~ /^text/ || file_type == "application/octet-stream"
+      unless file_type =~ /^text/ || file_type == "application/octet-stream" || file_type == "application/json"
         session[:flash] = "Bad file data, ensure we're a text file and valid format: #{file_type}"
         redirect FRONT_PAGE
       end
@@ -211,8 +211,8 @@ class CoreApp < Sinatra::Base
       elsif file_format == "binary_edge_jsonl"
         entities = binary_edge_jsonl_to_entities(entity_file)
       ### Shodan.io (CSV)
-      elsif file_format == "shodan_csv"
-        entities = shodan_csv_to_entities(filename)
+      elsif file_format == "shodan_json"
+        entities = shodan_json_to_entities(entity_file)
       else
         session[:flash] = "Unkown File Format #{file_format}, failing"
         redirect FRONT_PAGE
