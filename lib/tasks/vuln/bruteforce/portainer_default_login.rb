@@ -1,16 +1,17 @@
 module Intrigue
   module Task
-    class AerohiveDefaultLogin < BaseTask
+    class PortainerDefaultLogin < BaseTask
       include Intrigue::Task::Web
       include Intrigue::Task::BruteForceLoginHelper
       require 'uri'
+      require 'json'
 
       def self.metadata
         {
-          name: 'vuln/bruteforce/aerohive_hivemanager_login_vuln',
-          pretty_name: 'Bruteforce - Aerohive HiveManager Default Login Credentials',
+          name: 'vuln/bruteforce/portainer_login_vuln',
+          pretty_name: 'Bruteforce - Portainer Default Login Credentials',
           authors: [''],
-          description: 'Bruteforce Aerohive HiveManager Default Login Credentials',
+          description: 'Bruteforce Portainer Default Login Credentials',
           type: 'Vuln',
           passive: false,
           allowed_types: ['Uri'],
@@ -31,24 +32,26 @@ module Intrigue
         fingerprint = _get_entity_detail('fingerprint')
 
         return false unless vendor?(fingerprint,
-                                    'Aerohive') && is_product?(fingerprint,
-                                                               'HiveManager') && tag?(fingerprint, 'Login Panel')
+                                    'Portainer') && is_product?(fingerprint,
+                                                                'Portainer') && tag?(fingerprint, 'Login Panel')
 
+        # there is not default password for Portainer                                                        
         credentials = [
           {
             user: 'admin',
-            password: 'aerohive'
+            password: 'admin'
           }
         ]
 
         uri = URI(_get_entity_name)
-        base_uri = "#{uri.scheme}://#{uri.host}"
+        base_uri = "#{uri.scheme}://#{uri.host}:9000"
+
         task_information = {
           http_method: :post,
-          uri: "#{base_uri}/hm/authenticate.action",
-          headers: { 'Content-Type' => 'application/x-www-form-urlencoded', #this might require a JSESSIONID, not sure how to fetch that.
+          uri: "#{base_uri}/api/auth",
+          headers: { 'Content-Type' => 'application/json',
                      'Origin' => base_uri.to_s,
-                     'Referer' => "#{base_uri}/hm/login.action" },
+                     'Referer' => "#{base_uri}/" },
           data: {
           },
           follow_redirects: false,
@@ -77,12 +80,15 @@ module Intrigue
       # custom validator, each default login task will have its own.
       # some tasks might require a more complex approach.
       def validator(response)
-        !response.body_utf8.match(/The login information you entered does not match an account on record. Please try again./i)
+        !response.body_utf8.match(/"message":"Invalid credentials"/i)
       end
 
       def build_post_request_body(task_information, credential)
-        task_information[:data]['userName'] = credential[:user]
-        task_information[:data]['password'] = credential[:password]
+
+        task_information[:data] = {
+          'username': credential[:user],
+          'password': credential[:password],
+        }.to_json
 
         true
       end
