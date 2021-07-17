@@ -1,16 +1,16 @@
 module Intrigue
   module Task
-    class Wso2DefaultLogin < BaseTask
+    class Wso2CarbonDefaultLogin < BaseTask
       include Intrigue::Task::Web
       include Intrigue::Task::BruteForceLoginHelper
       require 'uri'
 
       def self.metadata
         {
-          name: 'vuln/bruteforce/wso2_login_vuln',
-          pretty_name: 'Bruteforce - WSO2 Default Login Credentials',
+          name: 'vuln/bruteforce/wso2_carbon_login_vuln',
+          pretty_name: 'Bruteforce - WSO2 Carbon Default Login Credentials',
           authors: [''],
-          description: 'Bruteforce WSO2 Default Login Credentials',
+          description: 'Bruteforce WSO2 Carbon Default Login Credentials',
           type: 'Vuln',
           passive: false,
           allowed_types: ['Uri'],
