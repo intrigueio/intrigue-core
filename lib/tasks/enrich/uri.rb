@@ -39,6 +39,13 @@ class Uri < Intrigue::Task::BaseTask
     response = http_request :get, uri
     response2 = http_request :get, uri
 
+    if [response.code, response2.code].all? { |code| code == '0' }
+      _log_error "Unable to reach #{uri}, bailing"
+      @entity.hidden = true
+      @entity.save_changes
+      return # no point in doing additional logic
+    end
+
     unless response && response2 && response.body_utf8
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
