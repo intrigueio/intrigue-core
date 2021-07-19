@@ -77,29 +77,28 @@ module Intrigue
 
             request_urls = browser_data_hash['extended_browser_request_urls']
             request_urls.each do |s|
-              next unless extract_bucket_name_from_uri(s)
+              next unless extract_bucket_name_from_string(s)
 
               _log "Found S3 bucket: #{s}"
               _create_entity 'AwsS3Bucket', {
-                'name' => extract_bucket_name_from_uri(s),
-                'bucket_name' => extract_bucket_name_from_uri(s),
-                'bucket_uri' => "#{extract_bucket_name_from_uri(s)}.s3.amazonaws.com" # convert to virtual path style
+                'name' => extract_bucket_name_from_string(s),
+                'bucket_name' => extract_bucket_name_from_string(s),
+                'bucket_uri' => "#{extract_bucket_name_from_string(s)}.s3.amazonaws.com" # convert to virtual path style
               }
             end
 
-            # then check our page (unrequested urls?)
-            # if page_capture = browser_data_hash["extended_browser_page_capture"]
-            #   URI.extract(page_capture).each do |s|
-            #     next unless extract_bucket_name_from_uri(s)
+            if page_capture = browser_data_hash['extended_browser_page_capture']
+              page_capture.scan(/.+\.amazonaws\.com.+/).each do |s|
+                next unless extract_bucket_name_from_string(s)
 
-            #     _log "Found S3 bucket: #{s}"
-            #     _create_entity 'AwsS3Bucket', {
-            #       'name' => extract_bucket_name_from_uri(s),
-            #       'bucket_name' => extract_bucket_name_from_uri(s),
-            #       'bucket_uri' => "#{extract_bucket_name_from_uri(s)}.s3.amazonaws.com" # convert to virtual path style
-            #     }
-            #   end
-            # end
+                _log "Found S3 bucket: #{s}"
+                _create_entity 'AwsS3Bucket', {
+                  'name' => extract_bucket_name_from_string(s),
+                  'bucket_name' => extract_bucket_name_from_string(s),
+                  'bucket_uri' => "#{extract_bucket_name_from_string(s)}.s3.amazonaws.com" # convert to virtual path style
+                }
+              end
+            end
           end
 
           ###
