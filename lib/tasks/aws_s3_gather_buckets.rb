@@ -10,7 +10,7 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String'],
+          allowed_types: ['String', 'AwsCredential'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [],
           created_types: ['AwsS3Bucket']
@@ -22,9 +22,13 @@ module Intrigue
         super
 
         # Get the AWS Credentials
-        aws_access_key = _get_task_config('aws_access_key_id')
-        aws_secret_key = _get_task_config('aws_secret_access_key')
-
+        if _get_entity_type_string == "AwsCredential"
+          aws_access_key = _get_entity_sensitive_detail 'aws_access_key_id'
+          aws_secret_key = _get_entity_sensitive_detail 'aws_secret_access_key'
+        else
+          aws_access_key = _get_task_config('aws_access_key_id')
+          aws_secret_key = _get_task_config('aws_secret_access_key')
+        end
         # when querying account for buckets; region doesn't make a difference so we use us-east-1 by default
         s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key)
 

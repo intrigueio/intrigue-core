@@ -11,9 +11,8 @@ module Intrigue
     end
   
     def validate_entity
-      name.match(/.*\*\*\*$/) &&
-      details["hidden_access_id"] &&
-      details["hidden_secret_key"]
+      sensitive_details["aws_access_key_id"] &&
+      sensitive_details["aws_secret_access_key"]
     end
   
     def scoped?

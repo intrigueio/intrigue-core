@@ -92,7 +92,7 @@ module Bootstrap
 
               # Create & scope the entity
               created_entity = Intrigue::EntityManager.create_first_entity(
-                project_name, entity["type"], entity["details"]["name"], entity["details"])
+                project_name, entity["type"], entity["details"]["name"], entity["details"], entity["sensitive_details"])
 
               # just in case we tried to create an invalid entity, skip
               next unless created_entity
@@ -131,7 +131,8 @@ module Bootstrap
     entity_hash = {
       "type" => entity_type,
       "name" => entity_name,
-      "details" => { "name" => entity_name, "whitelist" => true }
+      "details" => { "name" => entity_name, "whitelist" => true },
+      "sensitive_details" => {}
     }
 
   entity_hash
@@ -148,6 +149,10 @@ module Bootstrap
     # merge details from bootstrap seed entity
     if entity_hash.key?("details")
       parsed_entity_hash["details"] = parsed_entity_hash["details"].merge(entity_hash["details"])
+    end
+
+    if entity_hash.key?("sensitive_details")
+      parsed_entity_hash["sensitive_details"] = parsed_entity_hash["sensitive_details"].merge(entity_hash["sensitive_details"])
     end
 
   parsed_entity_hash

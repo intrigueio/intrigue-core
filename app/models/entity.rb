@@ -262,11 +262,30 @@ module Model
       details[key]
     end
 
+    def get_sensitive_detail(key)
+      return nil unless self.sensitive_details
+      sensitive_details[key]
+    end
+
     def set_detail(key, value)
       begin
         $db.transaction do
           refresh
           self.set(:details => details.merge({key => value}.sanitize_unicode))
+          save
+        end
+      rescue Sequel::NoExistingObject => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      rescue Sequel::DatabaseError => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      end
+    end
+
+    def set_sensitive_detail(key, value)
+      begin
+        $db.transaction do
+          refresh
+          self.set(:sensitive_details => sensitive_details.merge({key => value}.sanitize_unicode))
           save
         end
       rescue Sequel::NoExistingObject => e
@@ -290,6 +309,20 @@ module Model
         $db.transaction do
           refresh
           self.set(:details => new_details.sanitize_unicode)
+          save_changes
+        end
+      rescue Sequel::NoExistingObject => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      rescue Sequel::DatabaseError => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      end
+    end
+
+    def set_sensitive_details(new_details)
+      begin
+        $db.transaction do
+          refresh
+          self.set(:sensitive_details => new_details.sanitize_unicode)
           save_changes
         end
       rescue Sequel::NoExistingObject => e

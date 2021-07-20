@@ -145,6 +145,14 @@ module Generic
     @entity.set_detail(detail_name, detail_value)
   end
 
+  def _get_entity_sensitive_detail(detail_name)
+    @entity.get_sensitive_detail(detail_name)
+  end
+
+  def _set_entity_sensitive_detail(detail_name, detail_value)
+    @entity.set_sensitive_detail(detail_name, detail_value)
+  end
+
   def _get_and_set_entity_details(hash)
     @entity.get_and_set_details hash
   end
