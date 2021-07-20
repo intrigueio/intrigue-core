@@ -24,6 +24,15 @@ module Intrigue
         temp_rule_file
       end
 
+      # called in two tasks - thus warranting it a helper
+      def create_github_repo_entity(repo_full_name)
+        _create_entity 'GithubRepository', {
+          'name' => "https://github.com/#{repo_full_name}",
+          'repository_name' => repo_full_name,
+          'owner' => repo_full_name.split('/').first,
+        }
+      end
+
       ### Single threaded version
       def run_gitleaks(repo, access_token, config_file)
 
@@ -33,17 +42,11 @@ module Intrigue
         temp_file = "/tmp/#{SecureRandom.uuid}.gitleaks"
         _log "Running gitleaks on #{repo}"
 
-        # append the url prefix
-        unless repo =~ /^https/
-          repo = "https://github.com/#{repo}"
-        end
-
         _unsafe_system("gitleaks -r #{repo} --report=#{temp_file} --access-token=#{access_token} --config-path=#{config_file}")
 
         output = _parse_gitleaks_output(temp_file)
-        _remove_gitleaks_temp_files
 
-      output
+        output
       end
 
 
@@ -70,7 +73,6 @@ module Intrigue
       end
 
       private
-
 
       def verify_gh_access_token(token)
         client = Octokit::Client.new(access_token: token, per_page: 100)
@@ -121,7 +123,7 @@ module Intrigue
           regex = '''REPLACE_REGEX_HERE'''
         RULE
 
-        replace_items = { 'REPLACE_DESCRIPTION_HERE' => "Custom Rule: #{keyword}",
+        replace_items = { 'REPLACE_DESCRIPTION_HERE' => "Custom Keyword: #{keyword}",
                           'REPLACE_REGEX_HERE' => Regexp.new(keyword).inspect[1...-1] }
 
         re = Regexp.new(replace_items.keys.map { |x| Regexp.escape(x) }.join('|'))
@@ -143,7 +145,7 @@ module Intrigue
         parsed_output
       end
 
-      def _remove_gitleaks_temp_files
+      def remove_gitleaks_temp_files
         temporary_files = Dir['/tmp/*.gitleaks']
         begin
           temporary_files.each { |temp| File.delete(temp) }
