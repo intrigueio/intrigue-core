@@ -107,6 +107,14 @@ module Model
     false
     end
 
+    def sensitive?
+      if self.class.metadata.key?(:sensitive)
+        return self.class.metadata[:sensitive] || false
+      else
+        return false
+      end
+    end
+
     def validate
       super
       validates_unique([:project_id, :type, :name])
@@ -117,11 +125,13 @@ module Model
     end
 
     def short_details # ideally this is just excluding extended_ stuff
+      return {"Note" => "Details hidden because sensitive"} unless !self.sensitive?
       details.reject{ |k,v|
         k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/) || k.to_s.match(/^encoded_.*$/)  }
     end
 
     def extended_details # ideally this is just including extended_ stuff
+      return {"Note" => "Details hidden because sensitive"} unless !self.sensitive?
       details.select{ |k,v|
         k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)|| k.to_s.match(/^encoded_.*$/) }
     end
