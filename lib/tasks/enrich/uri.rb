@@ -39,6 +39,13 @@ class Uri < Intrigue::Task::BaseTask
     response = http_request :get, uri
     response2 = http_request :get, uri
 
+    if [response.code, response2.code].all? { |code| code == '0' }
+      _log_error "Unable to reach #{uri}, bailing"
+      @entity.hidden = true
+      @entity.save_changes
+      return # no point in doing additional logic
+    end
+
     unless response && response2 && response.body_utf8
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
@@ -470,7 +477,7 @@ class Uri < Intrigue::Task::BaseTask
   # checks to see if we had an auth config return true
   def check_auth_by_type(configuration, auth_type)
     configuration.each do |c|
-      if "#{c["name"]}" == auth_type && "#{c["value"]}".to_bool
+      if "#{c["name"]}" == auth_type && "#{c["result"]}".to_bool
         return true
       end
     end

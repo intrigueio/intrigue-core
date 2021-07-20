@@ -169,7 +169,6 @@
 
 
   function setDefaultEntityValue() {
-    console.log("Shpend is awesome")
     //get the selected entity type
     var entity_type = $("#entity_type").val()
     

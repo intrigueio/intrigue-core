@@ -219,13 +219,13 @@ class BaseTask
         # do this in a transaction so we don't accidentally miss one completing in another thread
         $db.transaction do
           # get it
+          @entity = Intrigue::Core::Model::Entity.find(:id => @entity.id)
           etc = @entity.enrichment_tasks_completed
           etc << @task_result.task_name
           # set it
           @entity.enrichment_tasks_completed = etc
           @entity.save
         end
-
         # now check it
         is_fully_enriched = @entity.enrichment_tasks_completed.count == @entity.enrichment_tasks.count
         puts "DEBUG: Checking if fully enriched: #{@task_result.task_name} (#{is_enrichment_task})"
