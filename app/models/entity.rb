@@ -15,7 +15,7 @@ module Model
 
   class Entity < Sequel::Model
     plugin :validation_helpers
-    plugin :serialization, :json, :enrichment_tasks_completed
+    plugin :serialization, :json, :enrichment_tasks_completed, :sensitive_details
     plugin :single_table_inheritance, :type
     plugin :timestamps
 
@@ -108,11 +108,7 @@ module Model
     end
 
     def sensitive?
-      if self.class.metadata.key?(:sensitive)
-        return self.class.metadata[:sensitive] || false
-      else
-        return false
-      end
+      self.class.metadata[:sensitive] || false
     end
 
     def validate
@@ -125,13 +121,11 @@ module Model
     end
 
     def short_details # ideally this is just excluding extended_ stuff
-      return {"Note" => "Details hidden because sensitive"} unless !self.sensitive?
       details.reject{ |k,v|
         k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/) || k.to_s.match(/^encoded_.*$/)  }
     end
 
     def extended_details # ideally this is just including extended_ stuff
-      return {"Note" => "Details hidden because sensitive"} unless !self.sensitive?
       details.select{ |k,v|
         k.to_s.match(/^hidden_.*$/) || k.to_s.match(/^extended_.*$/)|| k.to_s.match(/^encoded_.*$/) }
     end
@@ -280,10 +274,6 @@ module Model
       rescue Sequel::DatabaseError => e
         puts "Error saving details for #{self}: #{e}, deleted?"
       end
-    end
-
-    def get_details
-      details
     end
 
     def get_and_set_details(new_details={})
