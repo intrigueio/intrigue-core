@@ -60,6 +60,7 @@ sudo sh -c 'echo "LC_ALL=en_US.UTF-8" >> /etc/environment'
 sudo sh -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen'
 sudo sh -c 'echo "LANG=en_US.UTF-8" > /etc/locale.conf'
 sudo locale-gen en_US.UTF-8
+echo "export LANG=en_US.UTF-8" >> $HOME/.bash_profile
 
 # just in case, do the fix-broken flag
 echo "[+] Installing Intrigue Dependencies..."
