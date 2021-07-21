@@ -58,7 +58,7 @@ module Intrigue
 
         # brute with force.
         brute_force_data = bruteforce_login(task_information, credentials, method(:validator),
-                                            method(:build_post_request_body))
+                                            method(:build_post_request))
 
         unless brute_force_data[:credentials].empty?
 
@@ -76,13 +76,16 @@ module Intrigue
 
       # custom validator, each default login task will have its own.
       # some tasks might require a more complex approach.
-      def validator(response)
+      def validator(response, task_information)
         !response.body_utf8.match(/The login information you entered does not match an account on record. Please try again./i)
       end
 
-      def build_post_request_body(task_information, credential)
-        task_information[:data]['userName'] = credential[:user]
-        task_information[:data]['password'] = credential[:password]
+      def build_post_request(task_information, credential)
+
+        task_information[:data] = {
+          'userName': credential[:user],
+          'password': credential[:password],
+        }
 
         true
       end

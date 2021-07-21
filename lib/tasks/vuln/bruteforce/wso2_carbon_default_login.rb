@@ -59,7 +59,7 @@ module Intrigue
 
         # brute with force.
         brute_force_data = bruteforce_login(task_information, credentials, method(:validator),
-                                            method(:build_post_request_body))
+                                            method(:build_post_request))
 
         unless brute_force_data[:credentials].empty?
 
@@ -77,11 +77,11 @@ module Intrigue
 
       # custom validator, each default login task will have its own.
       # some tasks might require a more complex approach.
-      def validator(response)
+      def validator(response, task_information)
         response.code.to_i != 0 && !response.headers['Location'].match(/loginStatus=false/i)
       end
 
-      def build_post_request_body(task_information, credential)
+      def build_post_request(task_information, credential)
         headers = { "FETCH-CSRF-TOKEN": '1',
                     "Origin": task_information[:uri_data][:base_uri],
                     "Referer": "#{task_information[:uri_data][:base_uri]}/carbon/admin/login.jsp" }
@@ -97,11 +97,13 @@ module Intrigue
           return false
         end
 
-        _log_debug "Token: #{token}"
+        _log_debug "Fetched token: #{token}"
 
-        task_information[:data]['username'] = credential[:user]
-        task_information[:data]['password'] = credential[:password]
-        task_information[:data]['X-CSRF-Token'] = token
+        task_information[:data] = {
+          'username': credential[:user],
+          'password': credential[:password],
+          'X-CSRF-Token': token
+        }
 
         true
       end

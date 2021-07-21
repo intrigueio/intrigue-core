@@ -3,10 +3,10 @@ module Intrigue
     module BruteForceLoginHelper
       include Intrigue::Task::Web
 
-      def bruteforce_login(task_information, credentials, validator, post_data_creator = nil)
+      def bruteforce_login(task_information, credentials, validator, post_data_builder = nil)
         work_q = build_work_queue(credentials)
 
-        brute_force_data = execute_workers(task_information, validator, work_q, post_data_creator)
+        brute_force_data = execute_workers(task_information, validator, work_q, post_data_builder)
       end
 
       def build_work_queue(credentials)
@@ -25,7 +25,7 @@ module Intrigue
         work_q
       end
 
-      def execute_workers(task_information, validator, work_q, post_data_creator = nil)
+      def execute_workers(task_information, validator, work_q, post_data_builder = nil)
         out = {
           responses: [],
           credentials: []
@@ -35,9 +35,9 @@ module Intrigue
           Thread.new do
             while credential = work_q.pop(true)
 
-              if !post_data_creator.nil?
+              if !post_data_builder.nil?
 
-                next unless post_data_creator.call(task_information, credential)
+                next unless post_data_builder.call(task_information, credential)
 
               end
                 send_request_and_validate task_information, credential, validator, out
@@ -66,7 +66,7 @@ module Intrigue
         return true unless response
 
         # only return response if validation was successful, else return nil.
-        if validator.call(response)
+        if validator.call(response, task_information)
           _log_good "Login successful login on #{task_information[:uri]} using credentials: #{credential}!"
 
           out[:responses] << response.body_utf8

@@ -67,7 +67,7 @@ module Intrigue
 
       # custom validator, each default login task will have its own.
       # some tasks might require a more complex approach.
-      def validator(response)
+      def validator(response, task_information)
         !response.body_utf8.match(/id="authFrm"/i) && !response.body_utf8.match(%r{Incorrect name/password}i) && response.code.to_i.between?(
           199, 300
         )

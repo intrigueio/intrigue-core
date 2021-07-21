@@ -44,7 +44,7 @@ module Intrigue
         ]
 
         uri = URI(_get_entity_name)
-        base_uri = "#{uri.scheme}://#{uri.host}:9000"
+        base_uri = "#{uri.scheme}://#{uri.host}:#{uri.port}"
 
         task_information = {
           http_method: :post,
@@ -61,7 +61,7 @@ module Intrigue
 
         # brute with force.
         brute_force_data = bruteforce_login(task_information, credentials, method(:validator),
-                                            method(:build_post_request_body))
+                                            method(:build_post_request))
 
         unless brute_force_data[:credentials].empty?
 
@@ -79,11 +79,11 @@ module Intrigue
 
       # custom validator, each default login task will have its own.
       # some tasks might require a more complex approach.
-      def validator(response)
+      def validator(response, task_information)
         !response.body_utf8.match(/"message":"Invalid credentials"/i)
       end
 
-      def build_post_request_body(task_information, credential)
+      def build_post_request(task_information, credential)
 
         task_information[:data] = {
           'username': credential[:user],
