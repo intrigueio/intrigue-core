@@ -18,6 +18,12 @@ module Intrigue
           example_entities: [
             { 'type' => 'Uri', 'details' => { 'name' => 'http://intrigue.io' } }
           ],
+          affected_software: [
+            {
+              vendor: 'Adminer',
+              product: 'Adminer'
+            }
+          ],
           allowed_options: [
             { name: 'threads', regex: 'integer', default: 10 }
           ],

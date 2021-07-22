@@ -17,6 +17,12 @@ module Intrigue
           example_entities: [
             { 'type' => 'Uri', 'details' => { 'name' => 'http://intrigue.io' } }
           ],
+          affected_software: [
+            {
+              vendor: 'Aerohive',
+              product: 'HiveManager'
+            }
+          ],
           allowed_options: [
             { name: 'threads', regex: 'integer', default: 10 }
           ],
