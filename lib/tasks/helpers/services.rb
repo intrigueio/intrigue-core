@@ -18,8 +18,8 @@ module Services
     begin 
       # connect
       socket = connect_ssl_socket(hostname,port,timeout)
-    rescue OpenSSL::SSL::SSLError => e 
-      _log_error "Unable to connnect ssl certificate"
+    rescue OpenSSL::SSL::SSLError, Errno::ECONNRESET
+      _log_error 'Unable to connnect to ssl certificate'
     end
     
     return nil unless socket && socket.peer_cert
@@ -63,7 +63,7 @@ module Services
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
       cert = get_certificate(ip_entity.name,port_num)
-
+      
       if cert 
         
         # grabs cert names, if not a universal cert 
