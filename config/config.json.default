@@ -427,6 +427,18 @@
       "editable": "true",
       "comment": ""
     },
+    "riskiq_api_key": {
+      "value": "",
+      "uri": "https://community.riskiq.com/",
+      "editable": "true",
+      "comment": ""
+    },
+    "riskiq_api_secret": {
+      "value": "",
+      "uri": "https://community.riskiq.com/",
+      "editable": "true",
+      "comment": ""
+    },
     "shodan_api_key": {
       "value": "",
       "uri": "https://account.shodan.io/login",
