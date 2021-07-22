@@ -34,20 +34,20 @@ module Intrigue
         end
       end
 
-      def do_riskiq(type, query)
+      def get_encoded_api_key
         api_key = _get_task_config 'riskiq_api_key'
         api_secret = _get_task_config 'riskiq_api_secret'
-        encoded_api_key = "Basic #{Base64.strict_encode64("#{api_key}:#{api_secret}")}"
+        "Basic #{Base64.strict_encode64("#{api_key}:#{api_secret}")}"
+      end
 
+      def do_domains(type, query)
         whois_api_url = "https://api.riskiq.net/v0/whois/#{type}?#{type}=#{query}&exact=false"
 
         _log 'Retrieving Domains...'
 
         domains_response = http_request(:get, whois_api_url, nil, {
-                                          'Authorization' => encoded_api_key
+                                          'Authorization' => get_encoded_api_key
                                         }, {}, true, 300)
-
-        p domains_response.return_code
 
         if domains_response.response_code == 504
           _log_error 'Domains Request timed out. Try again later.'
@@ -73,45 +73,50 @@ module Intrigue
             create_dns_entity_from_string(ns)
           end
         end
-        _log "Created #{domains_response_json['results']} DNS Record entities"
+        _log "Created DNS Record entities"
+      end
 
-        # Only enter here if entity_name is an IP address
-        if type == 'address'
-          _log 'Retrieving SSL Certificates...'
+      def do_ssl_certificates(query)
+        _log 'Retrieving SSL Certificates...'
 
-          ssl_api_url = "https://api.riskiq.net/v1/ssl/cert/host?host=#{query}"
+        ssl_api_url = "https://api.riskiq.net/v1/ssl/cert/host?host=#{query}"
 
-          ssl_response = http_request(:get, ssl_api_url, nil, {
-                                        'Authorization' => encoded_api_key
-                                      }, {}, true, 300)
+        ssl_response = http_request(:get, ssl_api_url, nil, {
+                                      'Authorization' => get_encoded_api_key
+                                    }, {}, true, 300)
 
-          p ssl_response.return_code
-          if ssl_response.response_code == 504
-            _log_error 'SSL Certificates Request timed out. Try again later.'
-            return
-          end
-
-          ssl_response_json = JSON.parse(ssl_response.body)
-
-          _log "No SSL Certificates found for #{query}" unless ssl_response_json['content'].length > 0
-
-          _log 'Processing SSL Certificates...'
-          ssl_response_json['content'].each do |content|
-            cert = content['cert']
-
-            _create_entity('SslCertificate', {
-                             'name' => content['cert']['id'],
-                             'cert_type' => content['cert']['signatureAlgorithm'].to_s,
-                             'issuer' => content['cert']['issuer'].to_s,
-                             'not_before' => cert['notBefore'].to_s,
-                             'not_after' => cert['notAfter'].to_s,
-                             'serial' => content['cert']['serialNumber'].to_s,
-                             'subject' => content['cert']['subject'].to_s
-                           })
-          end
-
-          _log "Created #{ssl_response_json['content'].length} SSL Certificate Entities"
+        if ssl_response.response_code == 504
+          _log_error 'SSL Certificates Request timed out. Try again later.'
+          return
         end
+
+        ssl_response_json = JSON.parse(ssl_response.body)
+
+        _log "No SSL Certificates found for #{query}" unless ssl_response_json['content'].length > 0
+
+        _log 'Processing SSL Certificates...'
+        ssl_response_json['content'].each do |content|
+          cert = content['cert']
+
+          _create_entity('SslCertificate', {
+                           'name' => content['cert']['id'],
+                           'cert_type' => content['cert']['signatureAlgorithm'].to_s,
+                           'issuer' => content['cert']['issuer'].to_s,
+                           'not_before' => cert['notBefore'].to_s,
+                           'not_after' => cert['notAfter'].to_s,
+                           'serial' => content['cert']['serialNumber'].to_s,
+                           'subject' => content['cert']['subject'].to_s
+                         })
+        end
+
+        _log "Created SSL Certificate Entities"
+      end
+
+      def do_riskiq(type, query)
+        do_domains(type, query)
+        # Only enter here if entity_name is an IP address
+        do_ssl_certificates(query) if type == 'address'
+
       rescue JSON::ParserError => e
         _log_error "Unable to parse JSON: #{e}"
       end
