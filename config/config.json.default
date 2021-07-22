@@ -499,6 +499,12 @@
       "editable": "true",
       "comment": ""
     },
+    "urlscan_api_key": {
+      "value": "",
+      "uri": "https://urlscan.io/",
+      "editable": "true",
+      "comment": ""
+    },
     "whoisology_api_key": {
       "value": "",
       "uri": "https://whoisology.com",
