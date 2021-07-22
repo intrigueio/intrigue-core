@@ -136,7 +136,8 @@ module Intrigue
           end
 
           # now merge them together and set as the new details
-          _get_and_set_entity_details browser_data_hash
+          # 
+          # _get_and_set_entity_details browser_data_hash
         end
       end
     end
