@@ -349,7 +349,6 @@ class Uri < Intrigue::Task::BaseTask
       "forms" => contains_forms,
       "generator" => generator_string,
       "headers" => headers,
-      "hidden_response_data" => response.body_utf8,
       "redirect_chain" => ident_responses.first[:response_urls] || [],
       "response_data_hash" => response_data_hash,
       "dom_sha1" => dom_sha1,
@@ -403,7 +402,7 @@ class Uri < Intrigue::Task::BaseTask
 
         # if we made it this far, parse them & compare them
         # TODO ... is this overkill?
-        their_doc = e.details["hidden_response_data"]
+        their_doc = e.details["extended_response_body"]
         diffs = parse_html_diffs(our_doc, their_doc)
         their_doc = nil
 
