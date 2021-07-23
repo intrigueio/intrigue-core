@@ -61,7 +61,7 @@
 #             'Token' => '%=Token',
 #             'Redirection' => "#{base_uri}/start.htm"
 #           },
-#           follow_redirects: false,
+#           follow_redirects: true,
 #           timeout: 10,
 #           thread_count: _get_option('threads')
 #         }
@@ -88,11 +88,10 @@
 #       # some tasks might require a more complex approach.
 #       def validator(response, task_information)
 #         _log_debug "#{response.code} #{response.headers}  #{task_information[:data]} #{response.body_utf8}"
-#         response.code != 0 && response.code != 400 && !response.body_utf8.match(/Server gives no specific Information to this Error code/i)
+#         response.code != 0 && response.code != 400 && response.code != 403 && !response.body_utf8.match(/Server gives no specific Information to this Error code/i)
 #       end
 
 #       def build_post_request(task_information, credential)
-
 #         task_information[:data]['Login'] = credential[:user]
 #         task_information[:data]['Password'] = credential[:password]
 
