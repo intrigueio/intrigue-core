@@ -41,8 +41,15 @@ module Intrigue
       def retrieve_repos_authenticated(client, name)
         retrieved_repos = []
 
+        client_api_request_done = false
+        next_url = nil
+
         (1..5).each do |i| # attempt this 5 times in case rate limiting kicked in -> make this better
-          retrieved_repos << client_api_request(client, name)
+          if client_api_request_done == false
+            retrieved_repos << client_api_request(client, name)
+            client_api_request_done = true
+          end
+
           next_url = client.last_response.rels[:next].href if client.last_response.rels[:next]
 
           while next_url
@@ -58,7 +65,7 @@ module Intrigue
           break
         rescue Octokit::AbuseDetected => e
           _log_error "#{e}\nRate limiting hit on attempt #{i}. Retrying."
-          sleep 300
+          sleep 10
           next
         rescue Octokit::TooManyRequests
           # exhausted the max amount of requests per hour/ just return to not lag other tasks
@@ -78,7 +85,8 @@ module Intrigue
 
         repos = results.map { |r| r['full_name'] }
         # only retrieve repositories that are owned by the specific name if specified
-        repos.select { |rn| rn.split('/')[0] == name } if name
+        repos = repos.select { |rn| rn.split('/')[0] == name } if name
+        repos
       end
 
       def client_api_request(client, name)
