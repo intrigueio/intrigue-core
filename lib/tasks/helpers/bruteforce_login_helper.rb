@@ -35,12 +35,14 @@ module Intrigue
           Thread.new do
             while credential = work_q.pop(true)
 
+              cloned_task_information = Marshal.load(Marshal.dump(task_information))
+
               if !post_data_builder.nil?
 
-                next unless post_data_builder.call(task_information, credential)
+                next unless post_data_builder.call(cloned_task_information, credential)
 
               end
-                send_request_and_validate task_information, credential, validator, out
+                send_request_and_validate cloned_task_information, credential, validator, out
                 
             end
           rescue ThreadError
