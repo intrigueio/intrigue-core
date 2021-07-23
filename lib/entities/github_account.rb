@@ -16,7 +16,8 @@ class GithubAccount < Intrigue::Core::Model::Entity
   end
 
   def enrichment_tasks
-    ['enrich/github_account', 'gather_github_repositories'] 
+     # to enrich github accounts, use enrich/github_account and prepend to array below
+    ['gather_github_repositories']
   end
 
   def scoped?
