@@ -48,17 +48,24 @@ module Intrigue
       def search_code(client, key)
         results = []
 
+        client_api_request_done = false
+        next_url = nil
         # try up to X times -> in case rate limiting occurs
         (1..5).each do |i|
           _log "Searching for #{key}"
-          results << client.search_code(key)['items']
+          if client_api_request_done == false
+            results << client.search_code(key)['items']
+            client_api_request_done = true
+          end
+
           next_url = client.last_response.rels[:next].href if client.last_response.rels[:next]
 
           while next_url
             sleep 10
             _log "Getting: #{next_url}"
+            raise Octokit::AbuseDetected if i==1
             results << client.get(next_url)
-
+            
             # get the next url
             break unless client.last_response.rels[:next]
 
