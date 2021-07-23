@@ -14,7 +14,7 @@ module Notifier
       # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
         # use the standard endpoint to grab info
-        hostname = `curl -s http://instance-data.ec2.internal/latest/meta-data/public-hostname`.strip
+        hostname = http_get_body "http://instance-data.ec2.internal/latest/meta-data/public-hostname"
         @system_base_uri = "https://#{hostname}:7777"
       else # use as is
         hostname = `hostname`
