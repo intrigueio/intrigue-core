@@ -32,7 +32,7 @@ module Intrigue
         hosts = json.flatten.map do |record|
           URI.parse(record).host
         rescue URI::InvalidURIError
-          log_error "Unable to parse entity: #{record}. Skipping."
+          _log_error "Unable to parse entity: #{record}. Skipping."
           next
         end
 
