@@ -56,7 +56,7 @@ class SearchIBMXForce < BaseTask
 
     if json["error"] == "Not authorized."
 
-      _log_error "Not authorized. Please check your credentials."
+      _log_error "Not authorized. Please check your API credentials."
 
       return
 
