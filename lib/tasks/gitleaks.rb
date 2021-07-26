@@ -28,7 +28,7 @@ module Intrigue
         custom_keywords = _get_option('custom_keywords').delete(' ').split(',')
         custom_config = create_gitleaks_custom_config(custom_keywords) unless custom_keywords.empty?
 
-        access_token = retrieve_gh_access_token if _get_option('use_authentication')
+        access_token = initialize_gh_client&.fetch('access_token') if _get_option('use_authentication')
 
         issues = run_gitleaks(repo_uri, access_token, custom_config)
         return if issues.nil?
@@ -38,11 +38,6 @@ module Intrigue
         issues.each { |i| create_suspicious_commit_issue(i, i['commit_uri']) }
       end
 
-      def retrieve_gh_access_token
-        client = initialize_gh_client
-        _get_task_config('github_access_token') if client
-        # return access key since github client is valid meaning api key works
-      end
     end
   end
 end

@@ -25,8 +25,9 @@ module Intrigue
       def run
         super
 
-        gh_client = initialize_gh_client
-
+        # use safe nav operator as initialize_gh_client can be nil
+        # however if token is valid, a hash will be returned
+        gh_client = initialize_gh_client&.fetch('client')
         account = _get_entity_name if _get_entity_type_string == 'GithubAccount'
         repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
 

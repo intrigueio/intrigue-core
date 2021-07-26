@@ -63,9 +63,8 @@ module Intrigue
           while next_url
             sleep 10
             _log "Getting: #{next_url}"
-            raise Octokit::AbuseDetected if i==1
             results << client.get(next_url)
-            
+
             # get the next url
             break unless client.last_response.rels[:next]
 
@@ -102,7 +101,8 @@ module Intrigue
       def retrieve_gh_client
         gh_client = initialize_gh_client
         _log_error 'Unable to search across Github without authentication; aborting task.' if gh_client.nil?
-        gh_client
+
+        gh_client&.fetch('client')
       end
 
     end

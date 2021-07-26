@@ -3,18 +3,23 @@ module Intrigue
     module Github
 
       def initialize_gh_client
-        begin
-          access_token = _get_task_config('github_access_token')
-        rescue MissingTaskConfigurationError
-          _log 'Github Access Token is not set in task_config.'
-          _log 'Please note this severely limits the results due to rate limiting.'
-          return nil
-        end
+        # the platform may try to pull the deprecated gitrob_access_token for legacy tasks
+        # if that token doesn't exist, try pulling from the github_access_token
+        access_token = access_token_exists('github_access_token')
+        access_token ||= access_token_exists('gitrob_access_token')
 
-        verify_gh_access_token(access_token) # returns client if valid else nil
+        _log_error 'Github Access Token is not set in task config.' if access_token.nil?
+        return if access_token.nil?
+
+        _verify_gh_access_token(access_token)
       end
 
-      #
+      def access_token_exists(type)
+        _get_task_config(type)
+      rescue MissingTaskConfigurationError
+        nil
+      end
+
       def create_gitleaks_custom_config(keywords)
         temp_rule_file = "/tmp/#{SecureRandom.uuid}-rules.gitleaks"
 
@@ -29,13 +34,12 @@ module Intrigue
         _create_entity 'GithubRepository', {
           'name' => "https://github.com/#{repo_full_name}",
           'repository_name' => repo_full_name,
-          'owner' => repo_full_name.split('/').first,
+          'owner' => repo_full_name.split('/').first
         }
       end
 
       ### Single threaded version
       def run_gitleaks(repo, access_token, config_file)
-
         access_token = '' if access_token.nil? # set to empty string as gitleaks will ignore it
         config_file = "#{$intrigue_basedir}/data/gitleaks.config" if config_file.nil?
 
@@ -49,10 +53,9 @@ module Intrigue
         output
       end
 
-
       # creates a single thread which is running gitleaks against the queue
       #  ... Use this helper if you want a multi-threaded run
-      def threaded_gitleaks(repos_q, gitleaks_config, thread_count=3)
+      def threaded_gitleaks(repos_q, gitleaks_config, thread_count = 3)
         output = []
         workers = (0...thread_count).map do
           results = _run_gitleaks_thread(repos_q, output, _get_task_config('github_access_token'), gitleaks_config)
@@ -74,19 +77,19 @@ module Intrigue
 
       private
 
-      def verify_gh_access_token(token)
+      def _verify_gh_access_token(token)
         client = Octokit::Client.new(access_token: token, per_page: 100)
         begin
           client.user
         rescue Octokit::Unauthorized, Octokit::TooManyRequests
-          _log_error 'Github Access Token invalid either due to invalid credentials or rate limiting reached; defaulting to unauthenticated.'
+          _log_error 'Github Access Token invalid mostly likely due to invalid credentials.'
           return nil
         end
 
         # diable auto pagination
         client.auto_paginate = false
 
-        client
+        { 'access_token' => token, 'client' => client }
       end
 
       def _parse_gitleaks_output(output_file)
@@ -153,7 +156,6 @@ module Intrigue
           _log_error 'Unable to delete gitleaks output.'
         end
       end
-
     end
   end
 end

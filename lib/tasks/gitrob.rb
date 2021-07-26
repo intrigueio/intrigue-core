@@ -22,7 +22,8 @@ class Gitrob < BaseTask
     super
 
     github_account = _get_entity_name
-    token = _get_task_config "gitrob_access_token"
+    token = initialize_gh_client&.fetch('access_token')
+    return if token.nil?
 
     # output file
     temp_file = "#{Dir::tmpdir}/gitrob_#{rand(1000000000000)}.json"
@@ -127,6 +128,8 @@ class Gitrob < BaseTask
     end
 
   end # end run
+
+
 
 end
 end
