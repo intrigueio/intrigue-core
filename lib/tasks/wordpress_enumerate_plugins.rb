@@ -40,7 +40,7 @@ class WordpressEnumeratePlugins < BaseTask
   end # end run()
 
   def extract_wordpress_plugin_paths(uri)
-    page_content = _get_entity_detail("hidden_response_data")
+    page_content = _get_entity_detail("extended_response_body")
     extract_plugins_regex = /\/wp-content\/plugins\/(.*?)\//
     plugins = []
     match_captures = page_content.scan(extract_plugins_regex)
