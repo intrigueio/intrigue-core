@@ -363,7 +363,7 @@
     },
     "ipqs_api_key": {
       "value": "",
-      "uri": "https://www.ipqualityscore.com/documentation/fraud-prevention-api-use-cases,
+      "uri": "https://www.ipqualityscore.com/documentation/fraud-prevention-api-use-cases",
       "editable": "true",
       "comment": ""
     },
