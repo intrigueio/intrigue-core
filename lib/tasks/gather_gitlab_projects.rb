@@ -11,42 +11,50 @@ module Intrigue
           type: 'discovery',
           passive: false,
           allowed_types: ['GitlabAccount'],
-          example_entities: [{ 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio' } }],
+          example_entities: [{ 'type' => 'GitlabAccount', 'details' => { 'name' => 'intrigueio' } }],
           allowed_options: [
-            { 'name' => 'gitlab_host', 'regex' => 'alpha_numeric_list', 'default' => 'https://gitlab.com' }
+            { name: 'gitlab_instance_uri', regex: 'alpha_numeric_list', default: 'https://gitlab.com' }
           ],
           created_types: ['GitlabProject']
         }
       end
 
+      # ADD RATE LIMIT CHECK
+
       ## Default method, subclasses must override this
       def run
         super
         account_name = _get_entity_name
+        gitlab_host = _get_option('gitlab_instance_uri')
 
-        results = retrieve_repositories(account_name)
-        _log "No account or group with the name #{account_name} exists." if results.nil?
+        results = retrieve_repositories(account_name, gitlab_host)
+        return if results.nil?
+
         _log "#{account_name} has no projects" if results.empty?
-        return if results.empty? || results.nil?
+        return if results.empty?
 
         _log_good "Obtained #{results.size} projects belonging to #{account_name}."
 
-        results.each { |r| create_project_entity(r) }
+        results.each { |r| create_project_entity(r, gitlab_host) }
       end
 
-      def retrieve_repositories(name)
+      def retrieve_repositories(name, host)
         # if token is nil ; set to empty since gitlab will ignore empty value in private-token header
         access_token = retrieve_gitlab_token || ''
         headers = { 'PRIVATE-TOKEN' => access_token } if access_token
 
-        uri = if is_group?(name, access_token)
-                "https:/gitlab.com/api/v4/groups/#{name}/projects"
+        uri = if group?(name, access_token)
+                "#{host}/api/v4/groups/#{name}/projects"
               else
-                "https:/gitlab.com/api/v4/users/#{name}/projects"
+                "#{host}/api/v4/users/#{name}/projects"
               end
 
         total_pages = http_request(:get, "#{uri}?per_page=100", nil, headers).headers['x-total-pages']
-        return if total_pages.nil?
+
+        if total_pages.nil?
+          _log "No account or group with the name #{name} exists."
+          return nil
+        end
 
         results = (1..total_pages.to_i).map do |p|
           _log "Obtaining results for Page #{p}."
@@ -69,11 +77,11 @@ module Intrigue
         repositories
       end
 
-      def create_project_entity(project)
+      def create_project_entity(project, host)
         _create_entity 'GitlabProject', {
           'name' => project,
           'project_name' => project,
-          'uri' => "https://gitlab.com/#{project}"
+          'uri' => "#{host}/#{project}"
         }
       end
     end
