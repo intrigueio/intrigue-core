@@ -109,17 +109,17 @@ module Intrigue
         response = http_request :get, task_information[:uri]
 
         # get necessary information.
-        adminer_key = response.headers['Set-Cookie'].to_s.match(/adminer_key=([\w\d\-]+);/i)[1]
-        adminer_sid = response.headers['Set-Cookie'].to_s.match(/adminer_sid=([\w\d\-]+);/i)[1]
-        adminer_version = response.body_utf8.to_s.match(/id="version">(\d+(\.\d+)*)/i)[1]
+        adminer_key = response.headers['Set-Cookie'].to_s.match(/adminer_key=([\w\d\-]+);/i)
+        adminer_sid = response.headers['Set-Cookie'].to_s.match(/adminer_sid=([\w\d\-]+);/i)
+        adminer_version = response.body_utf8.to_s.match(/id="version">(\d+(\.\d+)*)/i)
 
         # TODO - log this when failure happens to know which one failed.
         return false if adminer_key.nil? || adminer_sid.nil? || adminer_version.nil?
 
-        _log_debug "Got adminer key: #{adminer_key} , Got adminer sid: #{adminer_sid} , Got adminer version: #{adminer_version}"
+        _log_debug "Got adminer key: #{adminer_key[1]} , Got adminer sid: #{adminer_sid[1]} , Got adminer version: #{adminer_version[1]}"
 
         task_information[:headers]['Cookie'] =
-          "adminer_key=#{adminer_key}; adminer_version=#{adminer_version}; adminer_permanent=;adminer_sid=#{adminer_sid}"
+          "adminer_key=#{adminer_key[1]}; adminer_version=#{adminer_version[1]}; adminer_permanent=;adminer_sid=#{adminer_sid[1]}"
 
         task_information[:headers]['Referer'] = "#{task_information[:headers]['Origin']}/?username=#{credential[:user]}"
         task_information[:data]['auth[username]'] = credential[:user]

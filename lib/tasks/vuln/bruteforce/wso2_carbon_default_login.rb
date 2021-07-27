@@ -96,19 +96,19 @@ module Intrigue
 
         return false unless response
 
-        token = response.body_utf8.match(/X-CSRF-Token:([\w\d\-]+)/i)[1]
+        token = response.body_utf8.match(/X-CSRF-Token:([\w\d\-]+)/i)
 
         unless token
           _log_debug 'Unable to retrieve CRFT token'
           return false
         end
 
-        _log_debug "Fetched token: #{token}"
+        _log_debug "Fetched token: #{token[1]}"
 
         task_information[:data] = {
           'username': credential[:user],
           'password': credential[:password],
-          'X-CSRF-Token': token
+          'X-CSRF-Token': token[1]
         }
 
         true

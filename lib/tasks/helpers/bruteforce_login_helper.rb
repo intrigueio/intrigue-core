@@ -46,6 +46,8 @@ module Intrigue
                 
             end
           rescue ThreadError
+          rescue Exception => e
+            _log_error "An error occured while bruteforcing: #{e.message}"
           end
         end
 
