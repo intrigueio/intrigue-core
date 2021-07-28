@@ -10,10 +10,9 @@ class SubdomainHijack < BaseIssue
       severity: 2,
       category: "vulnerability",
       status: "potential",
-      description:  " This uri appears to be unclaimed on a third party host, meaning," +
-                    " there's a DNS record on a domain that is in scope, pointing to a third party" +
-                    " but it is unclaimed on the third party host and can be registered with" +
-                    " the host, allowing users to host malicious content on the domain.",
+      description:  "This subdomain appears to be pointing to a third party host " +
+                    " but it is unclaimed on the host and can be registered as part of their user-facing functionality" +
+                    ", allowing a malicious users to claim and host untrusted content on the domain.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         { type: "description", uri: "https://dzone.com/articles/what-are-subdomain-takeovers-how-to-test-and-avoid" },
         { type: "description", uri: "https://labs.detectify.com/2014/10/21/hostile-subdomain-takeover-using-herokugithubdesk-more/" },
