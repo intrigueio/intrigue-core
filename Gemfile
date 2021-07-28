@@ -113,6 +113,7 @@ gem 'shodan'                  # search_shodan
 gem 'snmp',                   :git => 'https://github.com/intrigueio/ruby-snmp.git'
 gem 'spidr',                  :git => 'https://github.com/intrigueio/spidr.git'
 gem 'towerdata_api'           # search_towerdata
+gem 'twitter'                 # search_twitter API
 gem 'whois'                   # dns_zone_transfer, whois
 gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'

@@ -38,6 +38,7 @@ begin  # try to load runtime deps
   require 'snmp'
   require 'spidr'
   require 'towerdata_api'
+  require 'twitter'
   require 'typhoeus'
   require 'versionomy'
   require 'whois'
