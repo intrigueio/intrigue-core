@@ -28,20 +28,20 @@ class SearchTalosBlackList < BaseTask
     entity_name = _get_entity_name
 
     # Get talos Blacklist IP
-    data = open("https://talosintelligence.com/documents/ip-blacklist").read
+    response = http_get_body("https://talosintelligence.com/documents/ip-blacklist")
 
-    if data == nil
-      _log_error("Unable to fetch Url!")
+    if response.empty?
+      _log_error("Got an empty response from the source URL!")
       return
     end
 
     # Create an issue if an IP found in the Talos IP Blacklist
-    if data.include? entity_name
+    if response.include? entity_name
 
       source = "talosintelligence.com"
        description = "Cisco Talos Intelligence Group is one of the largest commercial threat" +
-       " intelligence teams in the world, comprised of world-class researchers, analysts and "
-       " engineers. These teams are supported by unrivaled telemetry and sophisticated systems "
+       " intelligence teams in the world, comprised of world-class researchers, analysts and" +
+       " engineers. These teams are supported by unrivaled telemetry and sophisticated systems" +
        " to create accurate, rapid and actionable threat intelligence for Cisco customers."
 
        _create_linked_issue("suspicious_activity_detected", {
