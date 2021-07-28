@@ -81,7 +81,7 @@ module Intrigue
         _create_entity 'GitlabProject', {
           'name' => project,
           'project_name' => project,
-          'uri' => "#{host}/#{project}"
+          'project_uri' => "#{host}/#{project}"
         }
       end
     end
