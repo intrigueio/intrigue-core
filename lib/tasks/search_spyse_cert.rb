@@ -34,29 +34,36 @@ module Intrigue
 
         # make the request
         response = http_get_body(url, nil, headers)
-        json = JSON.parse(response)
+        begin
+          json = JSON.parse(response)
+        rescue JSON::ParseError
+          _log_error "Failed to parse response as json."
+          return
+        end
         #list_of_domains_sharing_same_certificate = []
         ## Create entities
-        if json['data']['items']
-          json['data']['items'].each do |result|
-            # Check whether it is a wildcard certificate or not
-            if (result['parsed']['names']).count > 1
-              # Extract list of domains sharing the same certificate
-              list_of_domains_sharing_same_certificate = result['parsed']['names']
-              # Extarct certificate experation date
-              end_date = result['parsed']['validity']['end']
-              # Extract certificate algorithm
-              algorithm = result['parsed']['signature_algorithm']['name']
-              # Extract certificate serial number
-              serial = result['parsed']['serial_number']
-              # Create entity with spyse data
-              _create_entity('SslCertificate', {
-                'name' => ssl_certificate,
-                'not_after' => end_date,
-                'serial' => serial,
-                'algorithm' => algorithm,
-                'list_of_domains_sharing_same_certificate' => list_of_domains_sharing_same_certificate
-              })
+        if json.key?('data')
+          if json['data'].key?('items')
+            json['data']['items'].each do |result|
+              # Check whether it is a wildcard certificate or not
+              if (result['parsed']['names']).count > 1
+                # Extract list of domains sharing the same certificate
+                list_of_domains_sharing_same_certificate = result['parsed']['names']
+                # Extarct certificate experation date
+                end_date = result['parsed']['validity']['end']
+                # Extract certificate algorithm
+                algorithm = result['parsed']['signature_algorithm']['name']
+                # Extract certificate serial number
+                serial = result['parsed']['serial_number']
+                # Create entity with spyse data
+                _create_entity('SslCertificate', {
+                  'name' => ssl_certificate,
+                  'not_after' => end_date,
+                  'serial' => serial,
+                  'algorithm' => algorithm,
+                  'list_of_domains_sharing_same_certificate' => list_of_domains_sharing_same_certificate
+                })
+              end
             end
 
             # Create DnsRecord from domains registered with same certificate
