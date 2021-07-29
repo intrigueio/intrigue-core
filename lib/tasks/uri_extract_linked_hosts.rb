@@ -31,11 +31,7 @@ module Intrigue
         contents = http_get_body(uri)
 
         # default to our name for the extract pattern
-        extract_patterns = if _get_option('extract_patterns') != 'default'
-                             _get_option('extract_patterns').split(',')
-                           else
-                             []
-                           end
+        extract_patterns = return_extract_patterns
 
         unless contents
           _log_error "Unable to retrieve uri: #{uri}"
@@ -43,28 +39,51 @@ module Intrigue
         end
 
         ###
-        ## Parse contents for s3,azure,gcloud buckets
+        ## Parse out s3,azure,gcloud buckets
         ###
-        URI.extract(contents).each do |s|
-          next unless extract_aws_bucket_name_from_uri(s)
-
-          _log "Found S3 bucket: #{s}"
-          _create_entity 'AwsS3Bucket', {
-            'name' => extract_aws_bucket_name_from_uri(s),
-            'bucket_name' => extract_aws_bucket_name_from_uri(s),
-            'bucket_uri' => "#{extract_aws_bucket_name_from_uri(s)}.s3.amazonaws.com" # convert to virtual path style
-          }
-        end
+        URI.extract(contents).each { |s| parse_bucket(s) }
 
         ###
         ### Now, parse out all links and do analysis on
         ### the individual links
         ###
         out = parse_dns_records_from_content(uri, contents.gsub(/%2f/i, ''), extract_patterns)
-        out.each do |d|
-          create_dns_entity_from_string d['name'], nil, false, d
-        end
+        out.each { |d| create_dns_entity_from_string(d['name'], nil, false, d) }
       end
+
+      def return_extract_patterns
+        return [] if _get_option('extract_patterns') == 'default'
+
+        _get_option('extract_patterns').split(',')
+      end
+
+      def parse_bucket(uri_str)
+
+        case uri_str
+        when /s3\.amazonaws\.com/i
+          name = extract_aws_bucket_name_from_string(uri_str)
+          b = { 'type' => 'AwsS3Bucket', 'name' => name, 'uri' => "https://#{name}.s3.amazonaws.com" } if name
+        when /storage\.googleapis\.com/i
+          name = extract_gcp_bucket_name_from_string(uri_str)
+          b = { 'type' => 'GcpBucket', 'name' => name, 'uri' => "https://storage.googleapis.com/#{name}" } if name
+        when /blob\.core\.windows\.net/
+          # name = extract_azure_blob_name_from_string(uri_str)
+          # b = { 'type' => '', 'name' => name, 'uri' => "https://storage.googleapis.com/#{name}" } if name
+          'test'
+        end
+
+        create_bucket_entity(b) unless b.nil?
+      end
+
+      def create_bucket_entity(bucket)
+        _create_entity bucket['type'], {
+          'name' => bucket['name'],
+          'bucket_name' => bucket['name'],
+          'bucket_uri' => bucket['uri']
+        }
+      end
+
+
     end
   end
 end
