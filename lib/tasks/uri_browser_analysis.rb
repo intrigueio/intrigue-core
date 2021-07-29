@@ -77,25 +77,25 @@ module Intrigue
 
             request_urls = browser_data_hash['extended_browser_request_urls']
             request_urls.each do |s|
-              next unless extract_bucket_name_from_string(s)
+              next unless extract_aws_bucket_name_from_string(s)
 
               _log "Found S3 bucket: #{s}"
               _create_entity 'AwsS3Bucket', {
-                'name' => extract_bucket_name_from_string(s),
-                'bucket_name' => extract_bucket_name_from_string(s),
-                'bucket_uri' => "#{extract_bucket_name_from_string(s)}.s3.amazonaws.com" # convert to virtual path style
+                'name' => extract_aws_bucket_name_from_string(s),
+                'bucket_name' => extract_aws_bucket_name_from_string(s),
+                'bucket_uri' => "#{extract_aws_bucket_name_from_string(s)}.s3.amazonaws.com" # convert to virtual path style
               }
             end
 
             if page_capture = browser_data_hash['extended_browser_page_capture']
               page_capture.scan(/.+\.amazonaws\.com.+/).each do |s|
-                next unless extract_bucket_name_from_string(s)
+                next unless extract_aws_bucket_name_from_string(s)
 
                 _log "Found S3 bucket: #{s}"
                 _create_entity 'AwsS3Bucket', {
-                  'name' => extract_bucket_name_from_string(s),
-                  'bucket_name' => extract_bucket_name_from_string(s),
-                  'bucket_uri' => "#{extract_bucket_name_from_string(s)}.s3.amazonaws.com" # convert to virtual path style
+                  'name' => extract_aws_bucket_name_from_string(s),
+                  'bucket_name' => extract_aws_bucket_name_from_string(s),
+                  'bucket_uri' => "#{extract_aws_bucket_name_from_string(s)}.s3.amazonaws.com" # convert to virtual path style
                 }
               end
             end

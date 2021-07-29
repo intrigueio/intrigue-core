@@ -41,7 +41,7 @@ module Intrigue
 
       # extracts the bucket_name from a URL
       # there can be different types of naming schemes - virtual hosted & path_style
-      def extract_bucket_name_from_uri(bucket_url)
+      def extract_aws_bucket_name_from_uri(bucket_url)
         # Virtual Hosted Style
         # https://bucketname.s3.amazonaws.com
         # https://bucketname.s3-us-west-2.amazonaws.com/
@@ -69,7 +69,7 @@ module Intrigue
         bucket_name
       end
 
-      def extract_bucket_name_from_string(str)
+      def extract_aws_bucket_name_from_string(str)
         virtual_style_regex = /(?:https:\/\/)?([a-z0-9\-\.]+)\.s3(?:-|.+)?\.amazonaws\.com/i
         path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/([\w\.\-]+)/i
         concat_regex = Regexp.union(virtual_style_regex, path_style_regex)
