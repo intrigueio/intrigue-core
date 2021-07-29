@@ -33,11 +33,9 @@ module Intrigue
         url = "https://api.spyse.com/v4/data/certificate/#{ssl_certificate}"
 
         # make the request
-
-        #response = http_get_body(url, nil, headers)
         response = http_request(:get, url, nil, headers)
 
-        # Check response status
+        # Check response code status
         if response.code.to_i == 200
           # Parse json response
           json = JSON.parse(response.body)
@@ -80,7 +78,7 @@ module Intrigue
             end
           end
         else
-          _log_error "unable to fetch response error code: #{response.code}!"
+          _log_error "unable to fetch response => error code: #{response.code}!"
         end
       end
     end
