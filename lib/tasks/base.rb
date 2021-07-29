@@ -8,6 +8,7 @@ class BaseTask
   # include default helpers
   include Intrigue::Task::AwsHelper
   include Intrigue::Task::Popen
+  include Intrigue::Task::GCloud
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge
   include Intrigue::Task::Browser
