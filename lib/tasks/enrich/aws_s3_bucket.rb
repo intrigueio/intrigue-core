@@ -46,6 +46,7 @@ module Intrigue
 
           if region.nil?
             @entity.hidden = true # bucket is invalid; hide the entity
+            @entity.save_changes
             _log_error 'Unable to determine region of bucket. Bucket most likely does not exist.'
             exists = false
           else
