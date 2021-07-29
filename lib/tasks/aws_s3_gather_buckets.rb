@@ -22,14 +22,11 @@ module Intrigue
         super
 
         # Get the AWS Credentials
-        if _get_entity_type_string == "AwsCredential"
-          aws_access_key = _get_entity_sensitive_detail 'aws_access_key_id'
-          aws_secret_key = _get_entity_sensitive_detail 'aws_secret_access_key'
-        else
-          aws_access_key = _get_task_config('aws_access_key_id')
-          aws_secret_key = _get_task_config('aws_secret_access_key')
-        end
+        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_access_key && aws_secret_key
+        
         # when querying account for buckets; region doesn't make a difference so we use us-east-1 by default
+        _log "Getting S3 buckets..."
         s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key)
 
         begin

@@ -68,6 +68,29 @@ module Intrigue
         bucket_name
       end
 
+      def get_aws_keys_from_entity_type(entity_type)
+        if entity_type == "AwsCredential"
+          aws_access_key = _get_entity_sensitive_detail 'aws_access_key_id'
+          aws_secret_key = _get_entity_sensitive_detail 'aws_secret_access_key'
+        elsif entity_type == "String"
+          aws_access_key = _get_task_config('aws_access_key_id')
+          aws_secret_key = _get_task_config('aws_secret_access_key')
+        else
+          aws_access_key = nil
+          aws_secret_key = nil
+        end
+
+        # if empty string return nil
+        if aws_access_key == ""
+          aws_access_key = nil
+        end
+        if aws_secret_key == ""
+          aws_secret_key = nil
+        end
+
+        return aws_access_key, aws_secret_key
+      end
+
     end
   end
 end
