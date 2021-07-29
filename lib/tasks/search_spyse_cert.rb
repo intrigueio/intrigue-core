@@ -33,46 +33,55 @@ module Intrigue
         url = "https://api.spyse.com/v4/data/certificate/#{ssl_certificate}"
 
         # make the request
-        response = http_get_body(url, nil, headers)
-        json = JSON.parse(response)
-        #list_of_domains_sharing_same_certificate = []
-        ## Create entities
-        if json['data']['items']
-          json['data']['items'].each do |result|
-            # Check whether it is a wildcard certificate or not
-            if (result['parsed']['names']).count > 1
-              # Extract list of domains sharing the same certificate
-              list_of_domains_sharing_same_certificate = result['parsed']['names']
-              # Extarct certificate experation date
-              end_date = result['parsed']['validity']['end']
-              # Extract certificate algorithm
-              algorithm = result['parsed']['signature_algorithm']['name']
-              # Extract certificate serial number
-              serial = result['parsed']['serial_number']
-              # Create entity with spyse data
-              _create_entity('SslCertificate', {
-                'name' => ssl_certificate,
-                'not_after' => end_date,
-                'serial' => serial,
-                'algorithm' => algorithm,
-                'list_of_domains_sharing_same_certificate' => list_of_domains_sharing_same_certificate
-              })
-            end
 
-            # Create DnsRecord from domains registered with same certificate
-            if result['parsed']['names']
-              result['parsed']['names'].each do |domain|
-                _create_entity('DnsRecord', { 'name' => domain })
+        #response = http_get_body(url, nil, headers)
+        response = http_request(:get, url, nil, headers)
+
+        # Check response status
+        if response.code.to_i == 200
+          # Parse json response
+          json = JSON.parse(response.body)
+
+          ## Create entities
+          if json['data']['items']
+            json['data']['items'].each do |result|
+              # Check whether it is a wildcard certificate or not
+              if (result['parsed']['names']).count > 1
+                # Extract list of domains sharing the same certificate
+                list_of_domains_sharing_same_certificate = result['parsed']['names']
+                # Extarct certificate experation date
+                end_date = result['parsed']['validity']['end']
+                # Extract certificate algorithm
+                algorithm = result['parsed']['signature_algorithm']['name']
+                # Extract certificate serial number
+                serial = result['parsed']['serial_number']
+                # Create entity with spyse data
+                _create_entity('SslCertificate', {
+                  'name' => ssl_certificate,
+                  'not_after' => end_date,
+                  'serial' => serial,
+                  'algorithm' => algorithm,
+                  'list_of_domains_sharing_same_certificate' => list_of_domains_sharing_same_certificate
+                })
               end
-            end
-            # Create organizations related to the certificate
-            if result['parsed']['subject']['organization']
-              result['parsed']['subject']['organization'].each do |organization|
-                _create_entity('Organization', { 'name' => organization })
+
+              # Create DnsRecord from domains registered with same certificate
+              if result['parsed']['names']
+                result['parsed']['names'].each do |domain|
+                  _create_entity('DnsRecord', { 'name' => domain })
+                end
+              end
+              # Create organizations related to the certificate
+              if result['parsed']['subject']['organization']
+                result['parsed']['subject']['organization'].each do |organization|
+                  _create_entity('Organization', { 'name' => organization })
+                end
               end
             end
           end
-        end 
+        else
+          _log_error "unable to fetch response error code: #{response.code}!"
+        end
       end
     end
   end
