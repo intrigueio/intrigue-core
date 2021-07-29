@@ -10,7 +10,7 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String'],
+          allowed_types: ['String', 'AwsCredential'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [],
           created_types: ['AwsIamAccount']
@@ -21,8 +21,9 @@ module Intrigue
       def run
         super
 
-        aws_access_key = _get_task_config('aws_access_key_id')
-        aws_secret_key = _get_task_config('aws_secret_access_key')
+        # Get the AWS Credentials
+        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_access_key && aws_secret_key
 
         # IAM is global so region is not needed
         iam = Aws::IAM::Client.new({ region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key })
