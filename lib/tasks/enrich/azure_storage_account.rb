@@ -1,7 +1,7 @@
 module Intrigue
   module Task
     module Enrich
-      class AwsS3Bucket < Intrigue::Task::BaseTask
+      class AzureStorageAccount < Intrigue::Task::BaseTask
         
         def self.metadata
           {
