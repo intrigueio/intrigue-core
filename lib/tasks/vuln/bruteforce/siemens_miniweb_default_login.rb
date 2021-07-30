@@ -107,9 +107,9 @@ module Intrigue
         end
 
         get_response = http_request :get, task_information[:data]['Redirection'], nil, task_information[:headers]
-         # sleep to prevent throttle. This service not only throttles calls per second but also calls per minute
-         # we only want to allow 6 requests per minute
-        sleep(10) 
+        # sleep to prevent throttle. This service not only throttles calls per second but also calls per minute
+        # we only want to allow 6 requests per minute
+        sleep(10)
 
         _log_debug task_information[:data]['Redirection']
         get_response.body_utf8.match(/You are logged in\./i)
