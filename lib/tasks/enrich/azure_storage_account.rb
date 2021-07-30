@@ -2,7 +2,6 @@ module Intrigue
   module Task
     module Enrich
       class AzureStorageAccount < Intrigue::Task::BaseTask
-        
         def self.metadata
           {
             name: 'enrich/azure_storage_account',
@@ -23,23 +22,23 @@ module Intrigue
 
         ## Default method, subclasses must override this
         def run
-          name = _get_entity_detail('name') || _get_entity_detail('storage_account')
+          name = _get_entity_detail('name') || _get_entity_detail('storage_account_name')
           if storage_account_exists?(name)
-            _set_entity_detail('containers', []) # list of empty containers which other task will populate
+            # list of empty containers which other task will populate unless another task already populated
+            _set_entity_detail('containers', []) unless _get_entity_detail('containers')
           else
             _log_error 'Storage account does not exist.'
             @entity.hidden = true # bucket is invalid; hide the entity
             @entity.save_changes
           end
         end
- 
+
         ## confirm the bucket exists by extracting the region from the response headers
         def storage_account_exists?(bucket_name)
           r = http_request(:get, "https://#{bucket_name}.blob.core.windows.net", nil, {}, nil, true, 10)
           # if the storage account does not exist, its a non existent host therefore 0 status code
           r.code != '0'
         end
-
       end
     end
   end

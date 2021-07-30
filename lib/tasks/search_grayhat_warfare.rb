@@ -27,7 +27,7 @@ module Intrigue
         output = return_grayhat_response(search_uri)
         return if output.nil?
 
-        _log_good "Obtained #{output.size} results!"
+        _log_good "Obtained #{output['buckets'].size} results!"
         iterate_results(output) unless output.empty?
       end
 
@@ -43,7 +43,7 @@ module Intrigue
       def create_azure_storage_account(azure)
         _create_entity 'AzureStorageAccount', {
           'name' => extract_storage_account_from_string(azure['bucket']),
-          'storage_name' => extract_storage_account_from_string(azure['bucket']),
+          'storage_account_name' => extract_storage_account_from_string(azure['bucket']),
           'uri' => azure['bucket'],
           'fileCount' => azure['fileCount'],
           'containers' => [azure['container']]
