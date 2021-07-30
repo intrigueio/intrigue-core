@@ -70,14 +70,18 @@ module Intrigue
       # is_iis? -> determines if the target host is running IIS in order to cut down on false positives
       def is_iis?
         found_iss = false
+
         fp = _get_entity_detail("fingerprint")
+        return found_iss if fp.nil?
+
         fp.each do |f|
           if f["vendor"] == "Microsoft" && f["product"] == "Internet Information Services"
             found_iss = true
             break
           end
         end
-        return found_iss
+
+        found_iss
       end
 
       ##

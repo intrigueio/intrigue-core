@@ -37,7 +37,7 @@ class SearchIBMXForce < BaseTask
 
     if entity_type == "IpAddress"
       #search Ip for reputation and related information
-      search_ip_reputation entity_name
+      search_ip_reputation(entity_name, headers)
     else
       _log_error "Unsupported entity type"
     end
@@ -45,7 +45,7 @@ class SearchIBMXForce < BaseTask
   end #end
 
   # Get IP Reputation
-  def search_ip_reputation(entity_name)
+  def search_ip_reputation(entity_name, headers)
 
     # Set the URL for ip data
     url = "https://api.xforce.ibmcloud.com:443/ipr/history/#{entity_name}"
@@ -53,6 +53,14 @@ class SearchIBMXForce < BaseTask
     # make the request
     response = http_get_body(url,nil,headers)
     json = JSON.parse(response)
+
+    if json["error"] == "Not authorized."
+
+      _log_error "Not authorized. Please check your API credentials."
+
+      return
+
+    end
 
     json["history"].each do |result|
 
