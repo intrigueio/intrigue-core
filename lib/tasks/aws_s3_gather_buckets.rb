@@ -44,11 +44,19 @@ module Intrigue
         _log_good "Retrieved #{bucket_names.size} buckets."
 
         bucket_names.each do |name|
-          _create_entity 'AwsS3Bucket', {
+          en = _create_entity 'AwsS3Bucket', {
             'name' => name, # use the new virtual host path since path style will be deprecated,
             'bucket_name' => name,
-            'bucket_uri' => "#{name}.s3.amazonaws.com"
+            'bucket_uri' => "#{name}.s3.amazonaws.com",
           }
+
+          # record how we retrieved the s3 bucket
+          if _get_entity_type_string == 'AwsCredential'
+            en.set_detail("source", "aws_credential")
+            en.set_sensitive_detail("source_entity_id", @entity.id)
+          elsif _get_entity_type_string == 'String'
+            en.set_detail("source", "configuration")
+          end 
         end
       end
     end
