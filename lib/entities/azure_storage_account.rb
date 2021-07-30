@@ -17,7 +17,7 @@ module Intrigue
           name: 'AzureStorageAccount',
           description: 'An Azure Storage Account',
           user_creatable: true,
-          example: 'storage-account-name'
+          example: 'storageaccount'
         }
       end
 
@@ -34,7 +34,7 @@ module Intrigue
       end
 
       def enrichment_tasks
-        ['enrich/azure_blob']
+        ['enrich/azure_storage_account']
       end
 
       def scoped?(_conditions = {})
