@@ -7,6 +7,7 @@ class BaseTask
 
   # include default helpers
   include Intrigue::Task::AwsHelper
+  include Intrigue::Task::Azure
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge
