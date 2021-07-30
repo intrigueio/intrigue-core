@@ -39,36 +39,6 @@ module Intrigue
         client
       end
 
-      # extracts the bucket_name from a URL
-      # there can be different types of naming schemes - virtual hosted & path_style
-      def extract_bucket_name_from_uri(bucket_url)
-        # Virtual Hosted Style
-        # https://bucketname.s3.amazonaws.com
-        # https://bucketname.s3-us-west-2.amazonaws.com/
-        # https://bucketname.s3.us-west-2.amazonaws.com
-        # bucketname.s3.amazonaws.com
-        # bucketname.s3-region.amazonaws.com
-        virtual_style_regex = /(?:https:\/\/)?^(?=.*-)[a-zA-Z0-9-]+\.s3(?:-|.+)?\.amazonaws\.com/ 
-
-        ## Path Style -> being deprecated soon; adding in for legacy support
-        # https://s3.amazonaws.com/bucketname
-        # s3.amazonaws.com/bucketname
-        path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/([\w\.\-]+)/
-
-        case bucket_url
-        when virtual_style_regex
-          bucket_name = bucket_url.scan(virtual_style_regex).last.first
-        when path_style_regex
-          bucket_name = bucket_url.scan(path_style_regex).last.first
-        else
-          # log_error 'Unable to extract bucket name from URL.'
-          # rather print error in task which calls this helper
-          bucket_name = nil
-        end
-
-        bucket_name
-      end
-
       def extract_bucket_name_from_string(str)
         virtual_style_regex = /(?:https:\/\/)?([a-z0-9\-\.]+)\.s3(?:-|.+)?\.amazonaws\.com/i
         path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/([\w\.\-]+)/i
