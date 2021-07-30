@@ -23,9 +23,6 @@ module Intrigue
               product: 'Miniweb'
             }
           ],
-          allowed_options: [
-            { name: 'threads', regex: 'integer', default: 10 }
-          ],
           created_types: ['Uri']
         }
       end
@@ -54,15 +51,19 @@ module Intrigue
           http_method: :post,
           uri: "#{base_uri}/FormLogin",
           headers: { 'Content-Type' => 'application/x-www-form-urlencoded',
+                     'Host' => "#{uri.host}:#{uri.port}",
                      'Origin' => base_uri.to_s,
-                     'Referer' => "#{base_uri}/start.html" },
+                     'Referer' => "#{base_uri}/start.html",
+                     'DNT' => 1,
+                     'Upgrade-Insecure-Requests' => 1,
+                     'Cookie' => 'siemens_ad_secure_session=; siemens_ad_session=' },
           data: {
             'Token' => '%=Token',
             'Redirection' => "#{base_uri}/start.html"
           },
           follow_redirects: true,
           timeout: 10,
-          thread_count: _get_option('threads')
+          thread_count: 1 # We can't allow more than one thread due to throttling
         }
 
         # brute with force.
@@ -86,7 +87,6 @@ module Intrigue
       # custom validator, each default login task will have its own.
       # some tasks might require a more complex approach.
       def validator(response, task_information)
-
         if response.headers['Set-Cookie'].nil?
           task_information[:headers]['Cookie'] = 'siemens_ad_secure_session=; siemens_ad_session=;'
 
@@ -96,43 +96,28 @@ module Intrigue
 
           if siemens_ad_session.nil?
             _log_debug "Unable to fetch cookie, Set-Cookie: #{response.headers['Set-Cookie']}"
-            task_information[:headers]['Cookie'] = 'siemens_ad_secure_session=; siemens_ad_session=;'
+            task_information[:headers]['Cookie'] = 'siemens_ad_secure_session=; siemens_ad_session='
           else
             _log_debug "Got siemens_ad_session cookie: #{siemens_ad_session[1]}"
 
             task_information[:headers]['Cookie'] =
-              "siemens_ad_secure_session=; siemens_ad_session=#{siemens_ad_session[1]};"
+              "siemens_ad_secure_session=; siemens_ad_session=#{siemens_ad_session[1]}"
           end
 
         end
 
-        _log_debug response.headers
-
         get_response = http_request :get, task_information[:data]['Redirection'], nil, task_information[:headers]
+         # sleep to prevent throttle. This service not only throttles calls per second but also calls per minute
+         # we only want to allow 6 requests per minute
+        sleep(10) 
 
+        _log_debug task_information[:data]['Redirection']
         get_response.body_utf8.match(/You are logged in\./i)
       end
 
       def build_post_request(task_information, credential)
-        response = http_request :get, task_information[:uri]
-
-        unless response.headers['Set-Cookie'].nil?
-
-          siemens_ad_session = response.headers['Set-Cookie'].to_s.match(/siemens_ad_session=(.*?);/i)
-
-          if siemens_ad_session.nil?
-            _log_debug "Unable to fetch cookie, Set-Cookie: #{response.headers['Set-Cookie']}"
-          else
-            _log_debug "Got siemens_ad_session cookie: #{siemens_ad_session[1]}"
-            task_information[:headers]['Cookie'] = "siemens_ad_session=#{siemens_ad_session[1]};"
-          end
-
-        end
-        # if we can't find the cookie, try anyway.
-
         task_information[:data]['Login'] = credential[:user]
         task_information[:data]['Password'] = credential[:password]
-
         true
       end
     end
