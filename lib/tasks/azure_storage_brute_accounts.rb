@@ -1,6 +1,6 @@
 module Intrigue
   module Task
-    class AzureStorageBrute < BaseTask
+    class AzureStorageAccountBrute < BaseTask
       include Intrigue::Task::Web
 
       def self.metadata
@@ -12,12 +12,12 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: ['UniqueKeyword', 'Organization', 'String'],
+          allowed_types: %w[UniqueKeyword Organization String],
           example_entities: [
             { 'type' => 'String', 'details' => { 'name' => 'intrigueio' } }
           ],
           allowed_options: [
-            { name: 'additional_permutation_wordlist', regex: 'alpha_numeric_list', default: '' },
+            { name: 'additional_permutation_wordlist', regex: 'alpha_numeric_list', default: '' }
           ],
           created_types: ['AzureStorageAccount']
         }
@@ -36,7 +36,10 @@ module Intrigue
         _log "Found #{valid_accounts.size} valid accounts."
         return if valid_accounts.empty?
 
-        valid_accounts.each { |v| create_entity(v) }
+        valid_accounts.each do |v| 
+          create_entity(v)
+          check_for_public_blob_access(v)
+        end
       end
 
       # generate permutations using the keywords provided along with the additional permutations wordlist
@@ -45,9 +48,9 @@ module Intrigue
 
         permutations = []
         patterns = [''] # azure storage accounts cannot have any dashes/underscores/dots
-        additional_permutations = _get_option('additional_permutation_wordlist').delete(' ').split(',') 
+        additional_permutations = _get_option('additional_permutation_wordlist').delete(' ').split(',')
 
-        words = ['backup', 'backups', 'dev', 'development', 'eng', 'engineering', 'old', 'prod', 'qa', 'stage', 'staging', 'test', 'testing', 'marketing', 'web']
+        words = %w[backup backups dev development eng engineering old prod qa stage staging test testing marketing web]
         words << additional_permutations
         words.flatten!.uniq!
 
@@ -93,6 +96,20 @@ module Intrigue
         }
       end
 
+      # public_blob_access is enabled at the top level aka the storage account
+      # blablabala
+      # blablabalabla
+      # blabalbalablaalb
+      def check_for_public_blob_access(account)
+        return unless http_request(:get, "https://#{account}.blob.core.windows.net").code == '400'
+
+        # public blob access enabled else it would be 409
+        _create_linked_issue('azure_storage_acc_public_access', {
+                               proof: "This following storage account: #{account} allows public access to its containers.",
+                               source: "https://#{account}.blob.core.windows.net",
+                               status: 'confirmed'
+                             })
+      end
     end
   end
 end
