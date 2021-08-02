@@ -7,7 +7,7 @@ module Intrigue
       end
 
       def extract_storage_container_from_string(str)
-        str.scan(/(?:https:\/\/)?\w+\.blob\.windows\.core\.net\/([\w|\-]+)\/?/i).flatten.first
+        str.scan(/(?:https:\/\/)?\w+\.blob\.core\.windows\.net\/([\w|\-]+)\/?/i).flatten.first
       end
 
       def add_container_to_entity_details(entity, container)
