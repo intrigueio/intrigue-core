@@ -12,7 +12,7 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: ['AzureStorageAccount', 'Uri'],
+          allowed_types: %w[AzureStorageAccount Uri],
           example_entities: [
             { 'type' => 'AzureStorageAccount', 'details' => { 'name' => 'intrigueio' } }
           ],
@@ -36,7 +36,11 @@ module Intrigue
         _log "Found #{results.size} container(s)!"
         return if results.empty?
 
-        apply_results(name, results)
+        # add containers to entity details
+        results.each { |r| add_container_to_entity_details(@entity, r) }
+
+        # check if any of the containers allow for blobs to be listed
+        listable_container_check(name, results)
       end
 
       def verify_storage_account_exists(name)
@@ -79,29 +83,37 @@ module Intrigue
         default_list.flatten.uniq
       end
 
-      # determine whether the object exists by issuing HTTP Requests
+      # determine whether the container exists by issuing HTTP Requests
       def determine_container_exists(input_q, output_q, name)
         t = Thread.new do
           until input_q.empty?
             while container = input_q.shift
-              r = http_request :get, "https://#{name}.blob.core.windows.net/#{container}/?comp=list"
-              output_q << container if r.code == '200'
+              r = http_request :get, "https://#{name}.blob.core.windows.net/#{container}/!!invalidblob!!"
+              output_q << container if r.body.include?('The specified blob does not exist.')
             end
           end
         end
         t
       end
 
-      def apply_results(account, results)
-        results.each do |r|
-          add_container_to_entity_details(@entity, r)
-          # TODO: create new issue and change severity
-          _create_linked_issue('azure_blob_exposed_files', {
-                                 proof: 'This Azure Storage Container allows anonymous users to list blobs in its container.',
-                                 source: "https://#{account}.blob.core.windows.net/#{r}/?comp=list",
-                                 status: 'confirmed'
-                               })
-        end
+      def listable_container_check(account, valid_results)
+        _log 'Checking whether any of the found containers allow for anonymous listing of blobs.'
+        listable_check = ->(container_uri) { http_request(:get, container_uri).code == '200' }
+
+        valid_results.select! { |r| listable_check.call("https://#{account}.blob.core.windows.net/#{r}/?comp=list") }
+        return if valid_results.empty?
+
+        _log_good "Found #{valid_results.size} container(s) that allow for anonymous listing of blobs."
+
+        valid_results.each { |v| create_listable_container_issue("https://#{account}.blob.core.windows.net/#{v}/?comp=list") }
+      end
+
+      def create_listable_container_issue(proof_uri)
+        _create_linked_issue('azure_blob_exposed_files', {
+                               proof: 'This Azure Storage Container allows anonymous users to list blobs in its container.',
+                               source: proof_uri,
+                               status: 'confirmed'
+                             })
       end
     end
   end
