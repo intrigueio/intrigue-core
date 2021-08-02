@@ -26,6 +26,7 @@ module Intrigue
           if storage_account_exists?(name)
             # list of empty containers which other task will populate unless another task already populated
             _set_entity_detail('containers', []) unless _get_entity_detail('containers')
+            _set_entity_detail('public_access_allowed', public_access_allowed?(name))
           else
             _log_error 'Storage account does not exist.'
             @entity.hidden = true # bucket is invalid; hide the entity
@@ -34,11 +35,19 @@ module Intrigue
         end
 
         ## confirm the bucket exists by extracting the region from the response headers
-        def storage_account_exists?(bucket_name)
-          r = http_request(:get, "https://#{bucket_name}.blob.core.windows.net", nil, {}, nil, true, 10)
+        def storage_account_exists?(storage_account)
+          _log 'Verifying whether Storage Account exists.'
+          r = http_request(:get, "https://#{storage_account}.blob.core.windows.net", nil, {}, nil, true, 10)
           # if the storage account does not exist, its a non existent host therefore 0 status code
           r.code != '0'
         end
+
+        def public_access_allowed?(storage_account)
+          _log 'Verifying whether Storage Account allows for public access.'
+          r = http_request(:get, "https://#{storage_account}.blob.core.windows.net", nil, {}, nil, true, 10)
+          r.code == '400' && r.body.include?('InvalidQueryParameterValue')
+        end
+
       end
     end
   end

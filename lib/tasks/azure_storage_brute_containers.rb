@@ -30,20 +30,17 @@ module Intrigue
         name = _get_entity_name
         return unless verify_storage_account_exists(name)
 
-        if public_access_blocked?(name)
-          _log_error 'The top level Storage Account blocks public access; meaning containers are not public.'
-          return
-        end
+        return unless public_access_allowed?
 
         results = bruteforce_containers(name)
-        _log "Found #{results.size} containers!"
+        _log "Found #{results.size} container(s)!"
         return if results.empty?
 
-        _log 'Adding results to entity details.'
-        results.each { |r| add_container_to_entity_details(@entity, r) }
+        apply_results(name, results)
       end
 
       def verify_storage_account_exists(name)
+        _log 'Checking if Storage Account exists.'
         require_enrichment if _get_entity_detail('containers').nil? # force enrichment
         containers = _get_entity_detail('containers')
 
@@ -52,10 +49,12 @@ module Intrigue
         containers
       end
 
-      # maybe lets do this in the enrichment process?
-      def public_access_blocked?(account)
-        rbody = http_get_body("https://#{account}.blob.core.windows.net")
-        rbody.include? 'Public access is not permitted on this Storage Account.'
+      def public_access_allowed?
+        _log 'Verifying whether Storage Account allows for public access.'
+        access = _get_entity_detail('public_access_allowed')
+        _log_error 'The top level Storage Account blocks public access; aborting.' unless access
+
+        access
       end
 
       def bruteforce_containers(account)
@@ -77,7 +76,7 @@ module Intrigue
         user_supplied_list = _get_option('additional_container_wordlist')
         default_list = File.read("#{$intrigue_basedir}/data/azure_containers.list").split("\n")
         default_list << user_supplied_list.delete(' ').split(',') unless user_supplied_list.empty?
-        default_list.flatten.uniq 
+        default_list.flatten.uniq
       end
 
       # determine whether the object exists by issuing HTTP Requests
@@ -93,6 +92,17 @@ module Intrigue
         t
       end
 
+      def apply_results(account, results)
+        results.each do |r|
+          add_container_to_entity_details(@entity, r)
+          # TODO: create new issue and change severity
+          _create_linked_issue('azure_blob_exposed_files', {
+                                 proof: 'This Azure Storage Container allows anonymous users to list blobs in its container.',
+                                 source: "https://#{account}.blob.core.windows.net/#{r}/?comp=list",
+                                 status: 'confirmed'
+                               })
+        end
+      end
     end
   end
 end
