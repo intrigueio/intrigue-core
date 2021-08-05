@@ -48,7 +48,7 @@ module Intrigue
         # https://bucketname.s3.us-west-2.amazonaws.com
         # bucketname.s3.amazonaws.com
         # bucketname.s3-region.amazonaws.com
-        virtual_style_regex = /(?:https:\/\/)?(.+)\.s3(?:-|.+)?\.amazonaws.com/ 
+        virtual_style_regex = /(?:https:\/\/)?^(?=.*-)[a-zA-Z0-9-]+\.s3(?:-|.+)?\.amazonaws\.com/ 
 
         ## Path Style -> being deprecated soon; adding in for legacy support
         # https://s3.amazonaws.com/bucketname
@@ -61,12 +61,14 @@ module Intrigue
         when path_style_regex
           bucket_name = bucket_url.scan(path_style_regex).last.first
         else
-          _log_error 'Unable to extract bucket name from URL.'
+          # log_error 'Unable to extract bucket name from URL.'
+          # rather print error in task which calls this helper
           bucket_name = nil
         end
 
         bucket_name
       end
+
 
       def get_aws_keys_from_entity_type(entity_type)
         if entity_type == "AwsCredential"
@@ -89,6 +91,14 @@ module Intrigue
         end
 
         return aws_access_key, aws_secret_key
+
+      def extract_bucket_name_from_string(str)
+        virtual_style_regex = /(?:https:\/\/)?([a-z0-9\-\.]+)\.s3(?:-|.+)?\.amazonaws\.com/i
+        path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/([\w\.\-]+)/i
+        concat_regex = Regexp.union(virtual_style_regex, path_style_regex)
+
+        str.scan(concat_regex).flatten.compact.last
+
       end
 
     end

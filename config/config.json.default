@@ -361,6 +361,12 @@
       "editable": "true",
       "comment": ""
     },
+    "ipqs_api_key": {
+      "value": "",
+      "uri": "https://www.ipqualityscore.com/documentation/fraud-prevention-api-use-cases",
+      "editable": "true",
+      "comment": ""
+    },
     "mailbox_layer_apikey": {
       "value": "",
       "uri": "https://mailboxlayer.com/dashboard",
@@ -484,6 +490,12 @@
     "twitter_access_token_secret": {
       "value": "",
       "uri": "https://dev.twitter.com",
+      "editable": "true",
+      "comment": ""
+    },
+    "urlscan_api_key": {
+      "value": "",
+      "uri": "https://urlscan.io/",
       "editable": "true",
       "comment": ""
     },

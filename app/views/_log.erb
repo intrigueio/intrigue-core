@@ -4,8 +4,8 @@ function getLog(){
   //get the list of tasks and rewrite the task
   $.getJSON(window.location.href + "/log", function(data) {
     log_data = data["data"];
-    document.getElementById("log").empty
-    document.getElementById("log").innerHTML = "<span class='like-pre-dark'>" + htmlEncode(log_data) + "</span></br>";
+    document.getElementById("log-body").empty
+    document.getElementById("log-body").textContent = data["data"];
   });
 }
 
@@ -13,23 +13,18 @@ window.setInterval(function(){
   getLog();  //calling every 6 seconds
 }, 6000);
 
-//call right away
+// call right away
 getLog();
 
-function htmlEncode(s)
-{
-  var el = document.createElement("div");
-  el.innerText = el.textContent = s;
-  s = el.innerHTML;
-  return s;
-}
 </script>
 
 <div class="card transparent-card">
   <div class="card-title h5">Task Log</div>
   <div class="card-body">
     <div id="log" style="overflow-y: scroll; height:600px; width:100%;">
-    <p>[Gathering log...]</p>
+      <span id="log-body" class="like-pre-dark">
+        <p>[Gathering log...]</p>
+      </span>
     </div>
   </div>
 </div>
