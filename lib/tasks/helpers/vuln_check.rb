@@ -2,12 +2,29 @@ module Intrigue
 module Task
 module VulnCheck
 
+  def vendor?(fingerprint, vendor_name)
+    matches_fingerprint_metadata?(fingerprint, vendor_name, 'vendor')
+  end
+
   # fingerprint is an array of fps, product name is a string
   def is_product?(fingerprint, product_name)
+    matches_fingerprint_metadata?(fingerprint, product_name, 'product')
+  end
+
+  def tag?(fingerprint, tag)
     return false unless fingerprint
-    out = fingerprint.any?{|v| "#{v['product']}".match(/#{product_name}/i) if v['product']}
-    _log_good "Matched fingerprint to product: #{product_name} !" if out
-  out
+
+    out = fingerprint.any? { |v| (v['tags']).to_s.include?(tag) if v['tags'] }
+    _log_good "Matched tag: #{tag} !" if out
+    out
+  end
+
+  def matches_fingerprint_metadata?(fingerprint, value_to_match, type)
+    return false unless fingerprint
+
+    out = fingerprint.any? { |v| (v[type]).to_s.match(/#{value_to_match}/i) if v[type] }
+    _log_good "Matched fingerprint to #{type}: #{value_to_match} !" if out
+    out
   end
 
   # function to compare version_a with version_b according to given operator.

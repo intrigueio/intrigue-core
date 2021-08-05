@@ -20,6 +20,9 @@ module Ident
       _log "Getting checks for #{vendor_string} #{product_string}"
       checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
 
+      _log "Appending login bruteforce checks for #{vendor_string} #{product_string}"
+      checks_to_be_run << Intrigue::TaskFactory.checks_for_vendor_product(vendor_string, product_string)
+
       all_checks << checks_to_be_run
     end
 
