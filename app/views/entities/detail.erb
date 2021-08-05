@@ -32,7 +32,7 @@
 
     <div class="col-sm-5">
 
-    <% if @entity.type_string == "Uri" && @entity.has_detail?('extended_screenshot_contents') %>
+    <% if (@entity.type_string == "Uri" || @entity.type_string == "NetworkService") && @entity.has_detail?('extended_screenshot_contents') %>
     <div class="card transparent-card" >
       <div class="card-title h5">Screenshot</div>
       <div class="card-body">
