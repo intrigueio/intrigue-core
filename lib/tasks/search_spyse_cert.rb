@@ -22,7 +22,7 @@ module Intrigue
       def run
         super
         # Get entity name
-        ssl_certificate = _get_entity_name
+        ssl_certificate = _get_entity_name[/\(([^()]*)\)/, 1]
 
         # Make sure the key is set
         api_key = _get_task_config('spyse_api_key')
