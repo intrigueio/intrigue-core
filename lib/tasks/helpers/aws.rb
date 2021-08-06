@@ -91,6 +91,7 @@ module Intrigue
         end
 
         return aws_access_key, aws_secret_key
+      end
 
       def extract_bucket_name_from_string(str)
         virtual_style_regex = /(?:https:\/\/)?([a-z0-9\-\.]+)\.s3(?:-|.+)?\.amazonaws\.com/i
