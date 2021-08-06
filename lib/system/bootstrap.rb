@@ -66,7 +66,7 @@ module Bootstrap
       end
 
       # parse up the seeds
-      parsed_seeds = p["seeds"].map{|s| _parse_entity s["entity"] }
+      parsed_seeds = p["seeds"].map{|s| _parse_entity_hash s }
 
       # handle no-seed cases
       next unless parsed_seeds.count > 0
@@ -92,7 +92,7 @@ module Bootstrap
 
               # Create & scope the entity
               created_entity = Intrigue::EntityManager.create_first_entity(
-                project_name, entity["type"], entity["details"]["name"], entity["details"])
+                project_name, entity["type"], entity["details"]["name"], entity["details"], entity["sensitive_details"])
 
               # just in case we tried to create an invalid entity, skip
               next unless created_entity
@@ -115,7 +115,7 @@ module Bootstrap
   end
 
 
-  private
+  
 
   # parse out entity from the cli
   def _parse_entity(entity_string)
@@ -131,12 +131,34 @@ module Bootstrap
     entity_hash = {
       "type" => entity_type,
       "name" => entity_name,
-      "details" => { "name" => entity_name, "whitelist" => true }
+      "details" => { "name" => entity_name, "whitelist" => true },
+      "sensitive_details" => {}
     }
 
   entity_hash
   end
 
+  def _parse_entity_hash(entity_hash)
+    if entity_hash.class != Hash
+      puts "Error while parsing entity hash: Invalid type"
+      return nil
+    end
+
+    parsed_entity_hash = Intrigue::Core::System::Bootstrap::_parse_entity(entity_hash["entity"]) # have to namespace for core-cli to work
+ 
+    # merge details from bootstrap seed entity
+    if entity_hash.key?("details")
+      parsed_entity_hash["details"] = parsed_entity_hash["details"].merge(entity_hash["details"])
+    end
+
+    if entity_hash.key?("sensitive_details")
+      parsed_entity_hash["sensitive_details"] = parsed_entity_hash["sensitive_details"].merge(entity_hash["sensitive_details"])
+    end
+
+  parsed_entity_hash
+  end
+
+  private
   # Parse out options from cli
   def _parse_options(option_string)
 

@@ -10,7 +10,7 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String'],
+          allowed_types: ['String', 'AwsCredential'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [],
           created_types: ['AwsS3Bucket']
@@ -22,10 +22,11 @@ module Intrigue
         super
 
         # Get the AWS Credentials
-        aws_access_key = _get_task_config('aws_access_key_id')
-        aws_secret_key = _get_task_config('aws_secret_access_key')
-
+        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_access_key && aws_secret_key
+        
         # when querying account for buckets; region doesn't make a difference so we use us-east-1 by default
+        _log "Getting S3 buckets..."
         s3 = Aws::S3::Resource.new(region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key)
 
         begin
@@ -43,11 +44,19 @@ module Intrigue
         _log_good "Retrieved #{bucket_names.size} buckets."
 
         bucket_names.each do |name|
-          _create_entity 'AwsS3Bucket', {
+          en = _create_entity 'AwsS3Bucket', {
             'name' => name, # use the new virtual host path since path style will be deprecated,
             'bucket_name' => name,
-            'bucket_uri' => "#{name}.s3.amazonaws.com"
+            'bucket_uri' => "#{name}.s3.amazonaws.com",
           }
+
+          # record how we retrieved the s3 bucket
+          if _get_entity_type_string == 'AwsCredential'
+            en.set_detail("source", "aws_credential")
+            en.set_sensitive_detail("source_entity_id", @entity.id)
+          elsif _get_entity_type_string == 'String'
+            en.set_detail("source", "configuration")
+          end 
         end
       end
     end
