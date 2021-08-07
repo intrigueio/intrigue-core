@@ -27,7 +27,7 @@ class IpGeolocate < BaseTask
 
     _set_entity_detail "geolocation", location_hash
 
-    location_hash_with_name = {"name" => "#{location_hash["city"]} #{location_hash["country"]}"}.merge(location_hash)
+    location_hash_with_name = {"name" => "#{location_hash["city"]} #{location_hash["country_name"]}"}.merge(location_hash)
 
     begin
       if location_hash
