@@ -53,6 +53,8 @@ module Intrigue
 
         geolocation_data = JSON.parse(response.body_utf8)
 
+        geolocation_data.except!("currency", "threat", "time_zone")
+
         _log_debug geolocation_data
 
         geolocation_data
