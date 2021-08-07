@@ -112,6 +112,7 @@ class UriCheckSudomainHijack  < BaseTask
         source: "Fastly",
         patterns: [/Fastly error: unknown domain/i] ,
         confirmed: false,
+        edge_case: true,
         skip_url_patterns: [/fastly.com/]
       },
       {
@@ -273,6 +274,7 @@ class UriCheckSudomainHijack  < BaseTask
         source: "Smartling",
         patterns: [/Domain is not configured/i] ,
         confirmed: false,
+        edge_case: true,
         skip_url_patterns: []
       },
       {
@@ -379,14 +381,27 @@ class UriCheckSudomainHijack  < BaseTask
     if valid_match
       # out has been set with the last valid match
       confirmed_string = valid_match[:confirmed] ? 'confirmed' : 'potential'
-      _create_hijackable_subdomain_issue valid_match[:source], uri, confirmed_string, valid_match
+      if valid_match[:edge_case]
+        _create_edge_case_hijackable_subdomain_issue valid_match[:source], uri, confirmed_string, valid_match
+      else
+        _create_hijackable_subdomain_issue valid_match[:source], uri, confirmed_string, valid_match
+      end
     end
 
   end #end run
 
   def _create_hijackable_subdomain_issue type, uri, status, regex
     _create_linked_issue("subdomain_hijack",{
-      type: "Subdomain Hijacking Detected (#{type})",
+      details: {
+        uri: uri,
+        type: type
+      },
+      proof: "Matched pattern: #{regex}"
+    })
+  end
+
+  def _create_edge_case_hijackable_subdomain_issue type, uri, status, regex
+    _create_linked_issue("subdomain_hijack_edge_case",{
       details: {
         uri: uri,
         type: type

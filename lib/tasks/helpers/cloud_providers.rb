@@ -20,11 +20,8 @@ module CloudProviders
   private 
 
   def _cloud_classifier_lookup(ip_address)
-    cloudclassifier_api_key = _get_task_config "cloudclassifier_api_key"
-    unless cloudclassifier_api_key
-      _log_error "Unable to check, verify you've entered a valid Intrigue.io API key!"
-      return nil
-    end
+    cloudclassifier_api_key = _retrieve_cloud_classifier_key
+    return nil if cloudclassifier_api_key.nil?
 
     begin 
       api_url = "https://cloudclassifier.intrigue.io/search/ip/#{ip_address}?key=#{cloudclassifier_api_key}"
@@ -44,6 +41,12 @@ module CloudProviders
     end
   
   nil
+  end
+
+  def _retrieve_cloud_classifier_key
+    _get_task_config 'cloudclassifier_api_key'
+  rescue MissingTaskConfigurationError
+    _log_error 'Cloud Classifier API missing in the task config; skipping cloud classification.'
   end
 
   def _get_cloud_status_ip_address(ip_address)

@@ -27,7 +27,7 @@ class SaasServicenowCheck < BaseTask
     if _get_entity_type_string == "WebAccount"
       account_name = _get_entity_detail("username")
     else
-      account_name = "#{_get_entity_name}".santize_unicode
+      account_name = "#{_get_entity_name}".sanitize_unicode
     end
 
     # try a couple variations
