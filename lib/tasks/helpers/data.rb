@@ -277,48 +277,6 @@ module Data
   tcp_ports.split(",")
   end
 
-  # def geolocate_ip(ip)
-
-  #   return nil unless File.exist? "#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb"
-
-  #   begin
-  #     db = MaxMindDB.new("#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb",MaxMindDB::LOW_MEMORY_FILE_READER)
-
-  #     _log "looking up location for #{ip}"
-
-  #     #
-  #     # This call attempts to do a lookup
-  #     #
-  #     location = db.lookup(ip)
-
-  #     #translate the hash to remove some of the multiingual stuff
-  #     hash = {}
-
-  #     hash[:city] = location.to_hash["city"]["names"]["en"] if location.to_hash["city"]
-  #     hash[:continent] = location.to_hash["continent"]["names"]["en"] if location.to_hash["continent"]
-  #     hash[:continent_code] = location.to_hash["continent"]["code"] if location.to_hash["continent"]
-  #     hash[:country] = location.to_hash["country"]["names"]["en"] if location.to_hash["country"]
-  #     hash[:country_code] = location.to_hash["country"]["iso_code"] if location.to_hash["country"]
-  #     hash.merge(location.to_hash["location"].map { |k,v| [k.to_sym,v] }.to_h) if location.to_hash["location"]
-  #     hash[:postal] = location.to_hash["postal"]["code"] if location.to_hash["postal"]
-  #     hash[:registered_country] = location.to_hash["registered_country"]["names"]["en"] if location.to_hash["registered_country"]
-  #     hash[:registered_country_code] = location.to_hash["registered_country"]["iso_code"] if location.to_hash["registered_country"]
-  #     hash[:subdivisions] = location.to_hash["subdivisions"].map{|s| s["names"]["en"] } if location.to_hash["subdivisions"]
-
-  #   rescue RuntimeError => e
-  #     _log "Error reading file: #{e}"
-  #   rescue ArgumentError => e
-  #     _log "Argument Error #{e}"
-  #   rescue Encoding::InvalidByteSequenceError => e
-  #     _log "Encoding error: #{e}"
-  #   rescue Encoding::UndefinedConversionError => e
-  #     _log "Encoding error: #{e}"
-  #   end
-
-  # hash
-  # end
-
-
 end
 end
 end
