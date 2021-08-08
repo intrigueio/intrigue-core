@@ -48,7 +48,6 @@ class DnsMorph < BaseTask
         # make sure it's a string
         ip_address = "#{x["a_record"]}"
         
-        # use local maxmind
         geo = geolocate_ip(ip_address)
         x["country_code"] = geo["country_code"] if geo
         
