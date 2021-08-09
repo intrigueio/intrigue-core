@@ -12,7 +12,7 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: %w[AzureStorageAccount Uri],
+          allowed_types: ['AzureStorageAccount'],
           example_entities: [
             { 'type' => 'AzureStorageAccount', 'details' => { 'name' => 'intrigueio' } }
           ],

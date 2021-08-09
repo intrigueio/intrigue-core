@@ -12,7 +12,7 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: %w[UniqueKeyword Organization String],
+          allowed_types: ['UniqueKeyword', 'Organization', 'String'],
           example_entities: [
             { 'type' => 'String', 'details' => { 'name' => 'intrigueio' } }
           ],
@@ -96,6 +96,7 @@ module Intrigue
         }
       end
 
+      # TODO: maybe split up this task on its own?
       # public_blob_access is enabled at the top level aka the storage account
       # blablabala
       # blablabalabla
@@ -103,7 +104,7 @@ module Intrigue
       def check_for_public_blob_access(account)
         return unless http_request(:get, "https://#{account}.blob.core.windows.net").code == '400'
 
-        # public blob access enabled else it would be 409
+        # public blob access enabled else it would be 409; TODO: match based on actual response body
         _create_linked_issue('azure_storage_acc_public_access', {
                                proof: "This following storage account: #{account} allows public access to its containers.",
                                source: "https://#{account}.blob.core.windows.net",

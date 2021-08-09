@@ -6,7 +6,7 @@ module Intrigue
           added: '2020-09-01',
           name: 'azure_storage_acc_public_access',
           pretty_name: 'Azure Storage Account Allows Public Access',
-          severity: 3,
+          severity: 4,
           status: 'potential',
           category: 'misconfiguration',
           # TODO: change the wording in description because it makes it sound like the access is implicit
