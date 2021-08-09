@@ -56,6 +56,11 @@ module Intrigue
 
         domains_response_json = JSON.parse(domains_response.body)
 
+        if domains_response.response_code == 401 && domains_response_json['error'] == 'Unauthorized'
+          _log_error 'API Credentials are expired. Please update them.'
+          return
+        end
+
         if domains_response_json['results'] == 0
           _log "No DNS results found for #{query}"
           return
@@ -73,7 +78,7 @@ module Intrigue
             create_dns_entity_from_string(ns)
           end
         end
-        _log "Created DNS Record entities"
+        _log 'Created DNS Record entities'
       end
 
       def do_ssl_certificates(query)
@@ -109,14 +114,13 @@ module Intrigue
                          })
         end
 
-        _log "Created SSL Certificate Entities"
+        _log 'Created SSL Certificate Entities'
       end
 
       def do_riskiq(type, query)
         do_domains(type, query)
         # Only enter here if entity_name is an IP address
         do_ssl_certificates(query) if type == 'address'
-
       rescue JSON::ParserError => e
         _log_error "Unable to parse JSON: #{e}"
       end
