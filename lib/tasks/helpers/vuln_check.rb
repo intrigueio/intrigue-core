@@ -112,6 +112,22 @@ module VulnCheck
 
   end
 
+  def get_update_for_vendor_product(entity, vendor, product)
+    fingerprints = entity.get_detail("fingerprint")
+    return nil unless fingerprints
+
+    version_update = nil
+    fingerprints.each do |f|
+      if f["vendor"] == vendor && f["product"] == product && f["update"] != "" && f["update"] != nil
+        version_update = f["update"]
+        break
+      end
+    end
+
+    version_update
+
+  end
+
   def fingerprint_to_inference_issues(fingerprint)
     fingerprint.each do |fp| 
       next unless fp["vulns"]
