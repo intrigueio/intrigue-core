@@ -48,12 +48,12 @@ class DnsMorph < BaseTask
         # make sure it's a string
         ip_address = "#{x["a_record"]}"
         
-        geo = geolocate_ip(ip_address)
         x["country_code"] = geo["country_code"] if geo
         
         # use team cymru lookup
         info = Intrigue::Client::Search::Cymru::IPAddress.new.whois(ip_address)
         if info
+          geo = geolocate_ip(ip_address)
           x["asn_id"] = info[0] 
           x["asn_name"] = info[5]
           x["allocation_date"] = info[4]
