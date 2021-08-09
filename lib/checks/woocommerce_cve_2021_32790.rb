@@ -1,10 +1,10 @@
 module Intrigue
   module Issue
-    class WoocommerceSQLInjection < BaseIssue
+    class WoocommerceCVE202132790 < BaseIssue
       def self.generate(instance_details = {})
         {
           added: '2021-03-30',
-          name: 'woocommerce_sql_injection',
+          name: 'woocommerce_cve_2021_32790',
           pretty_name: 'Woocommerce Unauthenticated SQL Injection (CVE-2021-32790)',
           severity: 1,
           category: 'vulnerability',
@@ -18,11 +18,9 @@ module Intrigue
           ],
           references: [
             { type: 'description', uri: 'https://woocommerce.com/posts/critical-vulnerability-detected-july-2021' },
-            { type: 'description', uri: 'https://nvd.nist.gov/vuln/detail/CVE-2021-32790'}
+            { type: 'description', uri: 'https://nvd.nist.gov/vuln/detail/CVE-2021-32790'},
             { type: 'description', uri: 'https://viblo.asia/p/phan-tich-loi-unauthen-sql-injection-woocommerce-naQZRQyQKvx' }
           ],
-
-          # rootxharsh,iamnoooob,S1r1u5_,cookiehanhoan,madrobot
           authors: ['jl-dos', 'rootxharsh', 'iamnoooob', 'S1r1u5_', 'cookiehanhoan', 'madrobot', 'maxim']
         }.merge!(instance_details)
       end
@@ -30,7 +28,7 @@ module Intrigue
   end
 
   module Task
-    class WoocommerceSQLInjection < BaseCheck
+    class WoocommerceCVE202132790 < BaseCheck
       def self.check_metadata
         {
           allowed_types: ['Uri']
