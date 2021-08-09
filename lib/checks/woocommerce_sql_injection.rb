@@ -5,19 +5,20 @@ module Intrigue
         {
           added: '2021-03-30',
           name: 'woocommerce_sql_injection',
-          pretty_name: 'Woocommerce Unauthenticated SQL Injection',
+          pretty_name: 'Woocommerce Unauthenticated SQL Injection (CVE-2021-32790)',
           severity: 1,
           category: 'vulnerability',
           status: 'confirmed',
-          description: 'Pending Advisory Notes | WooCommerce (versions 3.3 through 5.5.0) and WooCommerce Blocks feature plugins (versions 2.5 through 5.5.0) were vulnerable to a critical unauthenticated SQL injection vulnerability.',
+          description: 'An SQL injection vulnerability impacts all WooCommerce sites running the WooCommerce plugin between version 3.3.0 and 3.3.6. Malicious actors (already) having admin access, or API keys to the WooCommerce site can exploit vulnerable endpoints of `/wp-json/wc/v3/webhooks`, `/wp-json/wc/v2/webhooks` and other webhook listing API. Read-only SQL queries can be executed using this exploit, while data will not be returned, by carefully crafting `search` parameter information can be disclosed using timing and related attacks.',
           identifiers: [
-            { type: 'CVE', name: 'CVE-PENDING' }
+            { type: 'CVE', name: 'CVE-2021-32790' }
           ],
           affected_software: [
             { vendor: 'WooCommerce', product: 'WooCommerce' }
           ],
           references: [
             { type: 'description', uri: 'https://woocommerce.com/posts/critical-vulnerability-detected-july-2021' },
+            { type: 'description', uri: 'https://nvd.nist.gov/vuln/detail/CVE-2021-32790'}
             { type: 'description', uri: 'https://viblo.asia/p/phan-tich-loi-unauthen-sql-injection-woocommerce-naQZRQyQKvx' }
           ],
 
