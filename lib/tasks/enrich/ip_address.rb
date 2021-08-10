@@ -84,7 +84,11 @@ class IpAddress < Intrigue::Task::BaseTask
     # geolocate
     _log "Geolocating..."
     location_hash = geolocate_ip(lookup_name)
-    _set_entity_detail("geolocation", location_hash)
+    if !location_hash.nil? 
+      _set_entity_detail("geolocation", location_hash)
+    else
+      _log "Unable to retrieve Gelocation."
+    end
 
     ###
     ### Check Whois
