@@ -35,7 +35,6 @@ module Intrigue
         }
       end
 
-
       def telerik_file_upload_handler_registered?(uri)
         fp_string = 'RadAsyncUpload handler is registered succesfully, however, it may not be accessed directly'
         running = http_get_body("#{uri}/Telerik.Web.UI.WebResource.axd?type=rau").include? fp_string
@@ -44,13 +43,12 @@ module Intrigue
         running
       end
 
-      def extract_telerik_version(uri)
-        parsed_uri = URI(uri)
-        r = http_get_body("#{parsed_uri.scheme}://#{parsed_uri.host}") # get index page
-        r.scan(/([\d|\.]+{5,9})/).flatten
+      def extract_version_via_response_body(base_uri)
+        r = http_get_body(base_uri) # get index page
+        r.scan(/([\d|\.]+{5,9})/).flatten 
       end
 
-      def check
+      def vuln_via_response_body_ver?(version)
         vulnerable_versions = ['2019.3.1023', '2019.3.917', '2019.2.514', '2019.1.215', '2019.1.115', '2018.3.910',
                                '2018.2.710', '2018.2.516', '2018.1.117', '2015.2.623', '2014.1.403', '2017.3.913',
                                '2017.2.711', '2017.2.621', '2017.2.503', '2017.1.228', '2017.1.118', '2016.3.1027',
@@ -68,13 +66,46 @@ module Intrigue
                                '2007.31425', '2007.31314', '2007.31218', '2007.21107', '2007.21010', '2007.2918',
                                '2007.1626', '2007.1521', '2007.1423']
 
+        (version & vulnerable_versions).any?
+      end
+
+      def vuln_via_js_response_header?(base_uri)
+        _log 'Doing one last check to see if target is possibly vulnerable via Javascript files.'
+
+        r = http_get_body(base_uri) # get index page
+        js_endpoint = r.scan(%r{<script src="(/WebResource.axd\?[\w|=|\-|&|;]+)}) # extract javascript file
+
+        r2 = http_request(:get, "#{base_uri}#{js_endpoint}") # hit javascript file
+        last_modified = r2.headers['Last-Modified'] # grab last modified response header value
+        return false if last_modified.nil?
+
+        date = last_modified.scan(/20\d\d/).flatten.first.to_i # grab year in response header
+        date <= 2019
+      end
+
+      def determine_vulnerable(uri)
+        parsed_uri = "#{URI(uri).scheme}://#{URI(uri).host}"
+
+        response_body_version = extract_version_via_response_body(parsed_uri)
+        vulnerable = vuln_via_response_body_ver?(response_body_version)
+
+        unless vulnerable
+          _log 'Target is not vulnerable via version in response body.'
+          vulnerable = vuln_via_js_response_header?(parsed_uri)
+        end
+
+        _log 'Target is not vulnerable.' unless vulnerable
+
+        vulnerable
+      end
+
+      def check
         uri = _get_entity_name
         return unless telerik_file_upload_handler_registered?(uri)
 
-        is_vulnerable = (extract_telerik_version(uri) & vulnerable_versions).any?
-        _log 'Target is not vulnerable.' unless is_vulnerable
+        _log 'Telerik File Upload handler; proceeding to determine if instance is vulnerable via the version.'
 
-        is_vulnerable
+        determine_vulnerable(uri)
       end
     end
   end
