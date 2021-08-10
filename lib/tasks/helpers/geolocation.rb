@@ -10,24 +10,9 @@ module Intrigue
       require 'json'
 
       def geolocate_ip(ip)
-        config = _get_system_config('intrigue_global_module_config')['geolocation_api_key']
+        config = get_config
 
-        _log config['uri']
-
-        if config.nil?
-          _log_error 'Geolocation configuration not set. Unable to proceed with Geolocation task.'
-          return nil
-        end
-
-        if config['value'] == 'CHANGE_ME' || config['value'].nil?
-          _log_error 'Geolocation api key has not been set. Unable to proceed with Geolocation task.'
-          return nil
-        end
-
-        if config['uri'].nil?
-          _log_error 'Geolocation base api url not found. Unable to proceed with Geolocation task.'
-          return nil
-        end
+        return nil if config.nil?
 
         params = {
           "api-key": config['value']
@@ -53,7 +38,7 @@ module Intrigue
 
         geolocation_data = JSON.parse(response.body_utf8)
 
-        geolocation_data.except!("currency", "threat", "time_zone")
+        geolocation_data.except!('currency', 'threat', 'time_zone')
 
         _log_debug geolocation_data
 
@@ -62,6 +47,31 @@ module Intrigue
         _log_error "Error getting Geolocation: #{e}"
 
         nil
+      end
+
+      private
+
+      def get_config
+        config = _get_system_config('intrigue_global_module_config')['geolocation_api_key']
+
+        _log config['uri']
+
+        if config.nil?
+          _log_error 'Geolocation configuration not set. Unable to proceed with Geolocation task.'
+          return nil
+        end
+
+        if config['value'] == 'CHANGE_ME' || config['value'].nil?
+          _log_error 'Geolocation api key has not been set. Unable to proceed with Geolocation task.'
+          return nil
+        end
+
+        if config['uri'].nil?
+          _log_error 'Geolocation base api url not found. Unable to proceed with Geolocation task.'
+          return nil
+        end
+
+        config
       end
 
       def build_request(base_url, ip, params)

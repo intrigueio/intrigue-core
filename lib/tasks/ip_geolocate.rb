@@ -25,7 +25,9 @@ module Intrigue
         location_hash = geolocate_ip(ip_address)
 
         begin
-          unless location_hash.nil?
+          if location_hash.nil?
+            _log 'Unable to complete Geolocation task.'
+          else
             _set_entity_detail 'geolocation', location_hash
 
             location_hash_with_name = { 'name' => "#{location_hash['city']} #{location_hash['country_name']}" }.merge(location_hash)

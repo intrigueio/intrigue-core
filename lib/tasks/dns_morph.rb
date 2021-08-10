@@ -52,7 +52,11 @@ class DnsMorph < BaseTask
         info = Intrigue::Client::Search::Cymru::IPAddress.new.whois(ip_address)
         if info
           geo = geolocate_ip(ip_address)
-          x["country_code"] = geo["country_code"] if !geo.nil?
+          if geo.nil?
+            _log "Unable to retrieve Gelocation."
+          else
+            x["country_code"] = geo["country_code"]
+          end
           x["asn_id"] = info[0] 
           x["asn_name"] = info[5]
           x["allocation_date"] = info[4]
