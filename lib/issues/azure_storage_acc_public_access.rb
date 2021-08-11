@@ -2,11 +2,11 @@ module Intrigue
   module Issue
     class AzureStorageAccountPublicAccess < BaseIssue
       def self.generate(instance_details = {})
-        to_return = {
+        {
           added: '2020-09-01',
           name: 'azure_storage_acc_public_access',
           pretty_name: 'Azure Storage Account Allows Public Access',
-          severity: 4,
+          severity: 5,
           status: 'potential',
           category: 'misconfiguration',
           # TODO: change the wording in description because it makes it sound like the access is implicit
@@ -18,7 +18,6 @@ module Intrigue
           ]
         }.merge(instance_details)
 
-        to_return
       end
     end
   end
