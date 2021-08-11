@@ -88,8 +88,8 @@ module Intrigue
         t = Thread.new do
           until input_q.empty?
             while container = input_q.shift
-              r = http_request :get, "https://#{name}.blob.core.windows.net/#{container}/!!invalidblob!!"
-              output_q << container if r.body.include?('The specified blob does not exist.')
+              container_uri = "https://#{name}.blob.core.windows.net/#{container}"
+              output_q << container if azure_storage_container_exists?(container_uri)
             end
           end
         end
@@ -109,7 +109,7 @@ module Intrigue
       end
 
       def create_listable_container_issue(proof_uri)
-        _create_linked_issue('azure_blob_exposed_files', {
+        _create_linked_issue('azure_storage_container_public_listing', {
                                proof: 'This Azure Storage Container allows anonymous users to list blobs in its container.',
                                source: proof_uri,
                                status: 'confirmed'

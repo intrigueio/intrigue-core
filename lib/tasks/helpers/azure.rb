@@ -18,6 +18,12 @@ module Intrigue
         entity.set_detail('containers', containers)
       end
 
+
+      def azure_storage_container_exists?(container_uri)
+        r = http_request :get, "#{container_uri}/!!invalidblob!!"
+        r.body.include?('The specified blob does not exist.')
+      end
+
       def create_azure_storage_entity(name)
         _create_entity 'AzureStorageAccount', {
           'name' => name,
@@ -25,6 +31,7 @@ module Intrigue
           'uri' => "https://#{name}.blob.core.windows.net"
         }
       end
+      
 
     end
   end
