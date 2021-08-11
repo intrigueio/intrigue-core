@@ -529,7 +529,7 @@
       "editable": "true",
       "comment": ""
     },
-    "geolocation_api_key": {
+    "ipdata_api_key": {
       "value": "CHANGE_ME",
       "uri": "api.ipdata.co"
     }

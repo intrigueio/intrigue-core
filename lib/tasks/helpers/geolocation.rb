@@ -52,7 +52,7 @@ module Intrigue
       private
 
       def get_config
-        config = _get_system_config('intrigue_global_module_config')['geolocation_api_key']
+        config = _get_system_config('intrigue_global_module_config')['ipdata_api_key']
 
         _log config['uri']
 
