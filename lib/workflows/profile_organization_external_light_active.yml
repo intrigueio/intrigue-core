@@ -16,6 +16,9 @@ definition:
   - task: aws_s3_find_listable_objects
   - task: aws_s3_bruteforce_objects
   - task: aws_s3_put_file
+  AzureStorageAccount:
+  - task: azure_storage_container_brute
+  - task: azure_storage_blobs_brute
   Domain:
   - task: aws_s3_bruteforce_buckets
   - task: dns_brute_sub
@@ -67,11 +70,13 @@ definition:
   - task: search_bgp
   - task: web_account_check
   - task: whois_lookup
+  - task: azure_storage_account_brute
   UniqueKeyword:
   - task: saas_jira_check
   - task: search_bgp
   - task: web_account_check
   - task: whois_lookup
+  - task: azure_storage_account_brute
   Uri:
   - task: uri_check_api_endpoint
   - task: uri_brute_generic_content

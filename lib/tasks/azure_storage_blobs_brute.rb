@@ -8,8 +8,8 @@ module Intrigue
           name: 'azure_storage_blobs_brute',
           pretty_name: 'Azure Storage Blobs Bruteforcer',
           authors: ['maxim'],
-          description: 'todo-todo-todo-todo-todo',
-          references: [],
+          description: 'This task will attempt to bruteforce the blobs which live within a container belonging to an Azure Storage Account. If the value of the <b>container</b> option is left default; the task will be run on all the containers that are stored in the entity\'s details.',
+          references: ['https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction'],
           type: 'discovery',
           passive: true,
           allowed_types: ['AzureStorageAccount'],
@@ -20,7 +20,7 @@ module Intrigue
             { name: 'container', regex: 'alpha_numeric_list', default: 'changeme-default.' },
             { name: 'additional_blobs_wordlist', regex: 'alpha_numeric_list', default: '' }
           ],
-          created_types: []
+          created_types: ['AzureStorageAccount']
         }
       end
 

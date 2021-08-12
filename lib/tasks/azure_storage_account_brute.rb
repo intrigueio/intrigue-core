@@ -9,7 +9,7 @@ module Intrigue
           pretty_name: 'Azure Storage Account Bruteforcer',
           authors: ['maxim'],
           description: 'This task takes keywords and uses them to create permutations which are then bruteforced to confirm if an Azure Storage account with that name exists.<br><br>Task Options:<br><ul><li>additional_permutation_wordlist - (default value: empty) - Additional strings to use as a wordlist to generate permutations.</li><li>additional_keywords - (default value: false) - Additional keywords that can be used to generate bucket names with.</ul>',
-          references: [],
+          references: ['https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction'],
           type: 'discovery',
           passive: true,
           allowed_types: ['UniqueKeyword', 'Organization', 'String'],

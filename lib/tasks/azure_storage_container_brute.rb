@@ -9,7 +9,7 @@ module Intrigue
           pretty_name: 'Azure Storage Container Bruteforcer',
           authors: ['maxim'],
           description: 'This task accepts an Azure Storage Account and bruteforces the names of common containers attempting to find containers that allow anonymous read access.',
-          references: [],
+          references: ['https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction'],
           type: 'discovery',
           passive: true,
           allowed_types: ['AzureStorageAccount'],
@@ -19,7 +19,7 @@ module Intrigue
           allowed_options: [
             { name: 'additional_container_wordlist', regex: 'alpha_numeric_list', default: '' }
           ],
-          created_types: []
+          created_types: ['AzureStorageAccount']
         }
       end
 
