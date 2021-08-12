@@ -5,7 +5,7 @@ module Intrigue
 
       def self.metadata
         {
-          name: 'azure_storage_blobs_bruteforce',
+          name: 'azure_storage_blobs_brute',
           pretty_name: 'Azure Storage Blobs Bruteforcer',
           authors: ['maxim'],
           description: 'todo-todo-todo-todo-todo',

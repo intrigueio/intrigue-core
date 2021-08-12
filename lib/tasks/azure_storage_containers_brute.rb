@@ -5,7 +5,7 @@ module Intrigue
 
       def self.metadata
         {
-          name: 'azure_storage_container_bruteforce',
+          name: 'azure_storage_container_brute',
           pretty_name: 'Azure Storage Container Bruteforcer',
           authors: ['maxim'],
           description: 'This task accepts an Azure Storage Account and bruteforces the names of common containers attempting to find containers that allow anonymous read access.',
