@@ -33,6 +33,16 @@ module Intrigue
 
         access
       end
+
+      def azure_storage_account_exists?(entity)
+        _log 'Checking if Storage Account exists.'
+        require_enrichment if entity.get_detail('containers').nil? # force enrichment
+        containers = entity.get_detail('containers')
+
+        # if containers nil meaning enrichment did not determine a valid storage account
+        _log_error "The Storage Account #{entity.name} does not exist" if containers.nil?
+        containers.nil? ? false : true
+      end
   
       # verify whether the container has container or blob access levels
       # if container access level is set to private then no point in performing any actions
@@ -49,7 +59,6 @@ module Intrigue
           'uri' => "https://#{name}.blob.core.windows.net"
         }
       end
-      
 
     end
   end

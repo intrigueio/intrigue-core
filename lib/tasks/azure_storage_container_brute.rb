@@ -28,7 +28,7 @@ module Intrigue
         super
 
         name = _get_entity_name
-        return unless verify_storage_account_exists(name)
+        return unless azure_storage_account_exists?(@entity)
 
         return unless azure_storage_container_pub_access?(@entity)
 
@@ -41,16 +41,6 @@ module Intrigue
 
         # check if any of the containers allow for blobs to be listed
         listable_container_check(name, results)
-      end
-
-      def verify_storage_account_exists(name)
-        _log 'Checking if Storage Account exists.'
-        require_enrichment if _get_entity_detail('containers').nil? # force enrichment
-        containers = _get_entity_detail('containers')
-
-        # if containers nil meaning enrichment did not determine a valid storage account
-        _log_error "The Storage Account #{name} does not exist" if containers.nil?
-        containers
       end
 
       def bruteforce_containers(account)

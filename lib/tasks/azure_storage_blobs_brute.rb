@@ -28,6 +28,7 @@ module Intrigue
       def run
         super
 
+        return unless azure_storage_account_exists?(@entity)
         return unless azure_storage_container_pub_access?(@entity)
 
         container_uris = create_container_uri_list
