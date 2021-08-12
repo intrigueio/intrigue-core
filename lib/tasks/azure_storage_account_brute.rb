@@ -28,11 +28,9 @@ module Intrigue
         super
         # create permutations
         keyword = _get_entity_name
-        permutations = generate_permutations(keyword) # generate permutations
-        permutations << keyword
-        permutations.flatten!
+        permutations_list = create_permutation_wordlist(keyword)
 
-        valid_accounts = bruteforce_storage_accounts(permutations)
+        valid_accounts = bruteforce_storage_accounts(permutations_list)
         _log "Found #{valid_accounts.size} valid accounts."
         return if valid_accounts.empty?
 
@@ -42,24 +40,27 @@ module Intrigue
         end
       end
 
+      def create_permutation_wordlist(keyword)
+        perms = generate_permutations(keyword) # generate permutations
+        perms << keyword
+        perms.flatten
+      end
+
       # generate permutations using the keywords provided along with the additional permutations wordlist
-      def generate_permutations(keyword)
-        _log "Generating permutations for keyword: #{keyword}"
+      def generate_permutations(key)
+        _log "Generating permutations for keyword: #{key}"
 
         permutations = []
-        patterns = [''] # azure storage accounts cannot have any dashes/underscores/dots
         additional_permutations = _get_option('additional_permutation_wordlist').delete(' ').split(',')
 
         words = %w[backup backups dev development eng engineering old prod qa stage staging test testing marketing web public private priv development env environment secret replica artifact]
         words << additional_permutations
-        words.flatten!.uniq!
+        words.flatten!.uniq
 
         # generate different sets of permutations
-        patterns.each do |pattern|
-          words.each do |word|
-            permutations << "#{keyword}#{pattern}#{word}"
-            permutations << "#{word}#{pattern}#{keyword}"
-          end
+        words.each do |word|
+          permutations << "#{key}#{word}"
+          permutations << "#{word}#{key}"
         end
 
         permutations
@@ -96,15 +97,9 @@ module Intrigue
         }
       end
 
-      # TODO: maybe split up this task on its own?
-      # public_blob_access is enabled at the top level aka the storage account
-      # blablabala
-      # blablabalabla
-      # blabalbalablaalb
       def check_for_public_blob_access(account)
         return unless http_request(:get, "https://#{account}.blob.core.windows.net").code == '400'
 
-        # public blob access enabled else it would be 409; TODO: match based on actual response body
         _create_linked_issue('azure_storage_acc_public_access', {
                                proof: "This following storage account: #{account} allows public access to its containers.",
                                source: "https://#{account}.blob.core.windows.net",
