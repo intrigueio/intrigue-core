@@ -50,7 +50,7 @@ module Intrigue
         patterns = [''] # azure storage accounts cannot have any dashes/underscores/dots
         additional_permutations = _get_option('additional_permutation_wordlist').delete(' ').split(',')
 
-        words = %w[backup backups dev development eng engineering old prod qa stage staging test testing marketing web]
+        words = %w[backup backups dev development eng engineering old prod qa stage staging test testing marketing web public private priv development env environment secret replica artifact]
         words << additional_permutations
         words.flatten!.uniq!
 
