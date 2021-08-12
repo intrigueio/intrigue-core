@@ -26,6 +26,7 @@ module Intrigue
           if storage_account_exists?(name)
             # list of empty containers which other task will populate unless another task already populated
             _set_entity_detail('containers', []) unless _get_entity_detail('containers')
+            _set_entity_detail('blobs', []) unless _get_entity_detail('blobs')
             _set_entity_detail('public_access_allowed', public_access_allowed?(name))
           else
             _log_error 'Storage account does not exist.'

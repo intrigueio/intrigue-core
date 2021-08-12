@@ -30,7 +30,7 @@ module Intrigue
         name = _get_entity_name
         return unless verify_storage_account_exists(name)
 
-        return unless public_access_allowed?
+        return unless azure_storage_container_pub_access?(@entity)
 
         results = bruteforce_containers(name)
         _log "Found #{results.size} container(s)!"
@@ -51,14 +51,6 @@ module Intrigue
         # if containers nil meaning enrichment did not determine a valid storage account
         _log_error "The Storage Account #{name} does not exist" if containers.nil?
         containers
-      end
-
-      def public_access_allowed?
-        _log 'Verifying whether Storage Account allows for public access.'
-        access = _get_entity_detail('public_access_allowed')
-        _log_error 'The top level Storage Account blocks public access; aborting.' unless access
-
-        access
       end
 
       def bruteforce_containers(account)

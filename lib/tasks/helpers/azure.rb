@@ -18,7 +18,25 @@ module Intrigue
         entity.set_detail('containers', containers)
       end
 
+      def add_blob_uri_to_entity_details(entity, blob)
+        blobs = entity.get_detail('blobs')
+        return if blobs.include? blob
 
+        blobs << blob
+        entity.set_detail('blobs', blobs)
+      end
+
+      def azure_storage_container_pub_access?(entity)
+        _log 'Verifying whether Storage Account allows for public access.'
+        access = entity.get_detail('public_access_allowed')
+        _log_error 'The top level Storage Account blocks public access; aborting.' unless access
+
+        access
+      end
+  
+      # verify whether the container has container or blob access levels
+      # if container access level is set to private then no point in performing any actions
+      # the same response is returned if a container doesnt exist and if its private
       def azure_storage_container_exists?(container_uri)
         r = http_request :get, "#{container_uri}/!!invalidblob!!"
         r.body.include?('The specified blob does not exist.')
