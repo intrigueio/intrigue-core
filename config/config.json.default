@@ -355,9 +355,11 @@
       "editable": "true",
       "comment": ""
     },
-    "ipdata_api_key": {
-      "value": "CHANGE_ME",
-      "uri": "api.ipdata.co"
+    "ipinfo_api_key": {
+      "value": "",
+      "uri": "https://ipinfo.io/developers",
+      "editable": "true",
+      "comment": ""
     },
     "ipqs_api_key": {
       "value": "",

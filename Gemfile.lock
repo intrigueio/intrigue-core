@@ -32,10 +32,30 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: a1511b43fcb848cbfc0b16ee88418928b8a03906
+  branch: main
+  specs:
+    intrigue-ident (5.2.7)
+      dnsruby
+      mongo
+      murmurhash3
+      recog-intrigue
+      snmp
+      socketry
+      typhoeus
+
+GIT
   remote: https://github.com/intrigueio/ip_ranger
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
     ip_ranger (0.0.2)
+
+GIT
+  remote: https://github.com/intrigueio/maxminddb
+  revision: 1a48218c7577bc137bd7736e62a28e2d7d92b39c
+  specs:
+    maxminddb (0.1.22)
 
 GIT
   remote: https://github.com/intrigueio/rex-sslscan.git
@@ -176,7 +196,7 @@ GEM
       rake (>= 12.0.0, < 14.0.0)
     dnsimple (6.0.0)
       httparty
-    dnsruby (1.61.7)
+    dnsruby (1.61.5)
       simpleidn (~> 0.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -201,7 +221,7 @@ GEM
     faraday_middleware-aws-sigv4 (0.5.0)
       aws-sigv4 (~> 1.0)
       faraday (>= 0.15)
-    ffi (1.15.3)
+    ffi (1.15.1)
     fiber-local (1.0.0)
     filesize (0.2.0)
     flareon (1.0.5)
@@ -309,7 +329,7 @@ GEM
     mime-types-data (3.2021.0225)
     mini_mime (1.1.0)
     minitest (5.14.4)
-    mongo (2.15.0)
+    mongo (2.14.0)
       bson (>= 4.8.2, < 5.0.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
@@ -322,9 +342,9 @@ GEM
       http-2 (~> 0.11)
     netrc (0.11.0)
     nio4r (2.5.7)
-    nokogiri (1.12.3-x86_64-darwin)
+    nokogiri (1.11.7-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.12.3-x86_64-linux)
+    nokogiri (1.11.7-x86_64-linux)
       racc (~> 1.4)
     open3 (0.1.1)
     openssl (2.2.0)
@@ -516,6 +536,7 @@ DEPENDENCIES
   ip_ranger!
   ipaddr
   json (>= 2.3.0)
+  maxminddb!
   net-dns
   net-http2
   neutrino_api!
