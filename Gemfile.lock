@@ -10,6 +10,33 @@ GIT
       logging (~> 2.0)
       test-unit (~> 3.1, >= 3.1.5)
 
+GIT
+  remote: https://github.com/intrigueio/chrome_remote.git
+  revision: 084cb663abdc458a2af16c134f1446151bcbd5c0
+  specs:
+    chrome_remote (0.3.0)
+      websocket-driver (~> 0.6)
+
+GIT
+  remote: https://github.com/intrigueio/cloudflare.git
+  revision: 2dcc737c94c65c1e6b55400487ed2eb5db3d805c
+  specs:
+    cloudflare (4.3.0)
+      async-rest (~> 0.12.3)
+
+GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: 0216816644a443417128c36352b74e3359f27ae4
+  branch: main
+  specs:
+    intrigue-ident (5.6.6)
+      dnsruby
+      mongo
+      murmurhash3
+      recog-intrigue
+      snmp
+      socketry
+      typhoeus
 
 GIT
   remote: https://github.com/intrigueio/ip_ranger
@@ -90,18 +117,18 @@ GEM
       timers (~> 4.1)
     async-dns (1.2.6)
       async-io (~> 1.15)
-    async-http (0.56.3)
-      async (~> 1.25)
-      async-io (~> 1.28)
-      async-pool (~> 0.2)
+    async-http (0.56.5)
+      async (>= 1.25)
+      async-io (>= 1.28)
+      async-pool (>= 0.2)
       protocol-http (~> 0.22.0)
       protocol-http1 (~> 0.14.0)
       protocol-http2 (~> 0.14.0)
     async-io (1.32.0)
       async (~> 1.14)
-    async-pool (0.3.6)
-      async (~> 1.25)
-    async-rest (0.10.1)
+    async-pool (0.3.8)
+      async (>= 1.25)
+    async-rest (0.12.4)
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.1)
@@ -315,7 +342,7 @@ GEM
     pg (1.2.3)
     power_assert (2.0.0)
     protocol-hpack (1.4.2)
-    protocol-http (0.22.2)
+    protocol-http (0.22.5)
     protocol-http1 (0.14.1)
       protocol-http (~> 0.22)
     protocol-http2 (0.14.2)
@@ -443,7 +470,7 @@ GEM
     versionomy (0.5.0)
       blockenspiel (~> 0.5)
     webrick (1.7.0)
-    websocket-driver (0.7.4)
+    websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     whois (5.0.2)
@@ -473,7 +500,6 @@ DEPENDENCIES
   cloudflare!
   compare-xml
   couchrest
-  dnsbl-client!
   dnsimple
   dnsruby
   elasticsearch
