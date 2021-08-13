@@ -10,18 +10,6 @@ GIT
       logging (~> 2.0)
       test-unit (~> 3.1, >= 3.1.5)
 
-GIT
-  remote: https://github.com/intrigueio/cloudflare.git
-  revision: be12151e164f2e636560f7947cdbc601ab003ce6
-  specs:
-    cloudflare (4.2.0)
-      async-rest (~> 0.10.0)
-
-GIT
-  remote: https://github.com/intrigueio/dnsbl-client.git
-  revision: d88bb5eae3dfd03c418f67ae5767234a862a92b8
-  specs:
-    dnsbl-client (1.0.4)
 
 GIT
   remote: https://github.com/intrigueio/ip_ranger
