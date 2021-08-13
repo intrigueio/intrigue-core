@@ -55,11 +55,7 @@ class Domain < Intrigue::Task::BaseTask
     resolutions.each do |r|
       # create unscoped domains for all CNAMEs
       if r["response_type"] == "CNAME" && entity_scoped
-
         create_dns_entity_from_string(r["response_data"]) 
-
-        _log r["response_data"]
-
       end
     end
 
