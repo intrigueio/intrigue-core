@@ -124,7 +124,7 @@ gem 'zetalytics'
 gem 'versionomy'
 
 # comment if developing on chrome_remote locally
-#gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
+gem 'chrome_remote',          :git => 'https://github.com/intrigueio/chrome_remote.git'
 
 # Handlers
 gem 'couchrest'
