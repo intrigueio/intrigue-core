@@ -10,7 +10,7 @@ module Intrigue
           references: ['https://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html'],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String'],
+          allowed_types: ['String', 'AwsCredential'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           example_entity_placeholder: false,
           allowed_options: [
@@ -24,8 +24,9 @@ module Intrigue
       def run
         super
 
-        aws_access_key = _get_task_config('aws_access_key_id')
-        aws_secret_key = _get_task_config('aws_secret_access_key')
+        # Get the AWS Credentials
+        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_access_key && aws_secret_key
         hosted_zone_id = _get_option 'Hosted Zone ID'
 
         # route53 is global; region does not matter. set to us-east-1 to satisfy SDK.

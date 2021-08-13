@@ -196,7 +196,7 @@ module Intrigue
       load_paths.each do |path|
         Dir.glob("#{path}/*.yml").each do |f|
           template = YAML.load_file(f)
-          out << template.symbolize_keys
+          out << template.symbolize_keys!
         end
       end
 

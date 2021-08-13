@@ -28,7 +28,7 @@ class BaseTask
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
-
+  include Intrigue::Task::Geolocation
 
   def self.inherited(base)
     ::Intrigue::TaskFactory.register(base)

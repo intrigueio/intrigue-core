@@ -32,32 +32,6 @@ GIT
     dnsbl-client (1.0.4)
 
 GIT
-  remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: f294b9f8adf2c72c914d2ad63dd089ceec27708e
-  branch: main
-  specs:
-    intrigue-ident (5.6.1)
-      dnsruby
-      mongo
-      murmurhash3
-      recog-intrigue
-      snmp
-      socketry
-      typhoeus
-
-GIT
-  remote: https://github.com/intrigueio/ip_ranger
-  revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
-  specs:
-    ip_ranger (0.0.2)
-
-GIT
-  remote: https://github.com/intrigueio/maxminddb
-  revision: 1a48218c7577bc137bd7736e62a28e2d7d92b39c
-  specs:
-    maxminddb (0.1.22)
-
-GIT
   remote: https://github.com/intrigueio/rex-sslscan.git
   revision: a52c53ec09bd70cdd025b49c16dfeafe9fd3be5a
   specs:
@@ -342,8 +316,6 @@ GEM
       http-2 (~> 0.11)
     netrc (0.11.0)
     nio4r (2.5.7)
-    nokogiri (1.11.7)
-      mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     octokit (4.21.0)
       faraday (>= 0.9)
@@ -540,7 +512,6 @@ DEPENDENCIES
   ip_ranger!
   ipaddr
   json (>= 2.3.0)
-  maxminddb!
   net-dns
   net-http2
   neutrino_api!

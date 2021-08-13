@@ -1,6 +1,6 @@
 module Intrigue
 module Task
-class SearchBadIps < BaseTask
+class SearchEmergingThreats < BaseTask
 
   def self.metadata
     {
@@ -33,7 +33,7 @@ class SearchBadIps < BaseTask
       return
     end
 
-    # Create an issue if an IP found in the Talos IP Blacklist
+    # Create an issue if an IP found in the Emerging Threats Blacklist
     if data.include? entity_name
        source = "emergingthreats.net"
        description = "emerginthreats.net is a well reputed blacklist "

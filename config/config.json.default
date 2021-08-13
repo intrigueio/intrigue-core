@@ -355,9 +355,13 @@
       "editable": "true",
       "comment": ""
     },
-    "ipinfo_api_key": {
+    "ipdata_api_key": {
+      "value": "CHANGE_ME",
+      "uri": "api.ipdata.co"
+    },
+    "ipqs_api_key": {
       "value": "",
-      "uri": "https://ipinfo.io/developers",
+      "uri": "https://www.ipqualityscore.com/documentation/fraud-prevention-api-use-cases",
       "editable": "true",
       "comment": ""
     },

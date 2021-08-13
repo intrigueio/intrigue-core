@@ -97,7 +97,6 @@ gem 'googleajax'              # search_google
 gem 'google_search_results'
 gem 'ip_ranger',              :git => "https://github.com/intrigueio/ip_ranger"
 gem 'ipaddr'
-gem 'maxminddb',              :git => "https://github.com/intrigueio/maxminddb"
 gem 'net-dns'                 # dns_cache_snoop
 gem 'net-http2'               
 gem 'http-2'               # http2 client support
