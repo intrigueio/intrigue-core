@@ -195,6 +195,10 @@ mv *.json data/gitrob
 rm gitrob_linux_amd64_3.4.1-beta.zip README.md
 cd $HOME
 
+# gitleaks
+echo "[+] Getting Gitleaks... "
+GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
+
 # jarmscan
 echo "[+] Getting Jarmscan... "
 cd $HOME/bin

@@ -114,6 +114,7 @@ gem 'towerdata_api'           # search_towerdata
 gem 'whois'                   # dns_zone_transfer, whois
 gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
+gem 'octokit', '~> 4.0'
 gem 'open3'
 gem 'typhoeus'
 gem 'zetalytics'
