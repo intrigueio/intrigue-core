@@ -41,17 +41,11 @@ class Domain < Intrigue::Task::BaseTask
 
     if !new_entity.nil? 
       _log "Geolocating..."
-      geolocation_hashes = []
-      new_entity.each do |entity|
-        location_hash = geolocate_ip(entity["name"])
-        if !location_hash.nil?
-          geolocation_hashes << location_hash
-        end
-      end
-      if geolocation_hashes.empty? 
-        _log "Unable to retrieve Gelocation." 
+      location_hash = geolocate_ip(new_entity.first["name"]) unless new_entity.first["name"].nil?
+      if location_hash.nil? 
+        _log "Unable to retrieve Gelocation."
       else
-        _set_entity_detail("geolocation", geolocation_hashes)
+        _set_entity_detail("geolocation", location_hash)
       end
     end
 
