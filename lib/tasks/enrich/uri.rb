@@ -324,6 +324,14 @@ class Uri < Intrigue::Task::BaseTask
       resp = cymru_ip_whois_lookup(resolved_ip_address)
       net_geo = resp[:net_country_code]
       net_name = resp[:net_name]
+
+      _log "Geolocating..."
+      location_hash = geolocate_ip(resolved_ip_address)
+      if location_hash.nil? 
+        _log "Unable to retrieve Gelocation."
+      else
+        _set_entity_detail("geolocation", location_hash)
+      end
     end
 
     # get the hashed dom structure

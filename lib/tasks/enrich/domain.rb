@@ -33,11 +33,27 @@ class Domain < Intrigue::Task::BaseTask
 
     # get our resolutiosn
     results = resolve(lookup_name)
-  
+
     ####
     ### Create aliased entities
     #### 
-    create_dns_aliases(results, @entity) if entity_scoped
+    new_entity = create_dns_aliases(results, @entity) if entity_scoped
+
+    if !new_entity.nil? 
+      _log "Geolocating..."
+      geolocation_hashes = []
+      new_entity.each do |entity|
+        location_hash = geolocate_ip(entity["name"])
+        if !location_hash.nil?
+          geolocation_hashes << location_hash
+        end
+      end
+      if geolocation_hashes.empty? 
+        _log "Unable to retrieve Gelocation." 
+      else
+        _set_entity_detail("geolocation", geolocation_hashes)
+      end
+    end
 
     resolutions = collect_resolutions(results)
     _set_entity_detail("resolutions", resolutions )
@@ -45,7 +61,11 @@ class Domain < Intrigue::Task::BaseTask
     resolutions.each do |r|
       # create unscoped domains for all CNAMEs
       if r["response_type"] == "CNAME" && entity_scoped
+
         create_dns_entity_from_string(r["response_data"]) 
+
+        _log r["response_data"]
+
       end
     end
 
