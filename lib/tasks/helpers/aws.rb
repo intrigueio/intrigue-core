@@ -45,6 +45,7 @@ module Intrigue
         concat_regex = Regexp.union(virtual_style_regex, path_style_regex)
 
         str.scan(concat_regex).flatten.compact.last
+
       end
 
     end

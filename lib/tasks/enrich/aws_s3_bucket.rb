@@ -25,17 +25,13 @@ module Intrigue
         def run
           # TODO bug fix: when entity is created from task; name detail is not stored
           bucket_name = _get_entity_detail('name') || _get_entity_detail('bucket_name')
+          
+          # check if the bucket actually exists. If not, this will hide the entity.
           return unless bucket_exists?(bucket_name)
 
-          # set default entity details because if there are no keys stored in task.config the enrichment task will abruptly end
-          # even if there are no keys; we can still use unauthenticated techniques (in other tasks) to retrieve information about the bucket
-          _set_entity_detail 'aws_keys_valid', false
-          _set_entity_detail 'belongs_to_api_key', false
-
+          # check if bucket is owned by aws keys in configuration
           region = _get_entity_detail('region')
-
           s3_client = initialize_s3_client(region, bucket_name)
-
           bucket_belongs_to_api_key?(s3_client, bucket_name) if s3_client
         end
  
@@ -68,8 +64,10 @@ module Intrigue
             _log 'AWS Keys do not have permission to list the buckets belonging to the account; defaulting to false.'
           end
 
-          _log 'Bucket belongs to API Key.' if result
-          _set_entity_detail 'belongs_to_api_key', result
+          if result
+            _log 'Bucket belongs to API Key.' 
+            _set_entity_detail 'source', 'configuration'
+          end
         end
 
       end

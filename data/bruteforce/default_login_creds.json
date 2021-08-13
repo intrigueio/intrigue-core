@@ -1,0 +1,34 @@
+[
+    { 
+        "user": "root",
+        "password": "root"
+    },
+    { 
+        "user": "root",
+        "password": "password"
+    },
+    { 
+        "user": "admin",
+        "password": "password"
+    },
+    { 
+        "user": "root",
+        "password": "admin" 
+    },
+    { 
+        "user": "admin",
+        "password": "root"
+    },
+    { 
+        "user": "administrator",
+        "password": "administrator"
+    },
+    { 
+        "user": "admin",
+        "password": "administrator"
+    },
+    { 
+        "user": "administrator",
+        "password": "admin"
+    }
+]
