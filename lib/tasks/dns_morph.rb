@@ -48,13 +48,15 @@ class DnsMorph < BaseTask
         # make sure it's a string
         ip_address = "#{x["a_record"]}"
         
-        # use local maxmind
-        geo = geolocate_ip(ip_address)
-        x["country_code"] = geo["country_code"] if geo
-        
         # use team cymru lookup
         info = Intrigue::Client::Search::Cymru::IPAddress.new.whois(ip_address)
         if info
+          geo = geolocate_ip(ip_address)
+          if geo.nil?
+            _log "Unable to retrieve Gelocation."
+          else
+            x["country_code"] = geo["country_code"]
+          end
           x["asn_id"] = info[0] 
           x["asn_name"] = info[5]
           x["allocation_date"] = info[4]
