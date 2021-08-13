@@ -20,7 +20,6 @@ begin  # try to load runtime deps
   require 'flareon'
   require 'ip_ranger'
   require 'ipaddr'
-  require 'maxminddb'
   require 'net-http2'
   require 'net/dns'
   require 'net/ftp'

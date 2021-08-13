@@ -223,11 +223,11 @@ class BaseTask
           etc = @entity.enrichment_tasks_completed
           etc << @task_result.task_name
           # set it
-          @entity.enrichment_tasks_completed = etc
+          @entity.enrichment_tasks_completed = etc.uniq
           @entity.save
         end
         # now check it
-        is_fully_enriched = @entity.enrichment_tasks_completed.count == @entity.enrichment_tasks.count
+        is_fully_enriched = @entity.enrichment_tasks_completed.count == @entity.enrichment_tasks.uniq.count
         puts "DEBUG: Checking if fully enriched: #{@task_result.task_name} (#{is_enrichment_task})"
         puts "DEBUG: #{@entity.name}, Completed: #{@entity.enrichment_tasks_completed} (#{@entity.enrichment_tasks_completed.count}), #{@entity.enrichment_tasks.count}"
       end
