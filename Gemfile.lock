@@ -18,12 +18,6 @@ GIT
       async-rest (~> 0.10.0)
 
 GIT
-  remote: https://github.com/intrigueio/dnsbl-client.git
-  revision: d88bb5eae3dfd03c418f67ae5767234a862a92b8
-  specs:
-    dnsbl-client (1.0.4)
-
-GIT
   remote: https://github.com/intrigueio/ip_ranger
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
