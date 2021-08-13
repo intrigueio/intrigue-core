@@ -12,31 +12,24 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/chrome_remote.git
-  revision: 752ae5882605f638ee2f797cfd289fc01f3f78cf
+  revision: 084cb663abdc458a2af16c134f1446151bcbd5c0
   specs:
-    chrome_remote (0.2.0)
-      socketry
-      websocket-driver (~> 0.7)
+    chrome_remote (0.3.0)
+      websocket-driver (~> 0.6)
 
 GIT
   remote: https://github.com/intrigueio/cloudflare.git
-  revision: be12151e164f2e636560f7947cdbc601ab003ce6
+  revision: 2dcc737c94c65c1e6b55400487ed2eb5db3d805c
   specs:
-    cloudflare (4.2.0)
-      async-rest (~> 0.10.0)
-
-GIT
-  remote: https://github.com/intrigueio/dnsbl-client.git
-  revision: d88bb5eae3dfd03c418f67ae5767234a862a92b8
-  specs:
-    dnsbl-client (1.0.4)
+    cloudflare (4.3.0)
+      async-rest (~> 0.12.3)
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: a1511b43fcb848cbfc0b16ee88418928b8a03906
+  revision: 0216816644a443417128c36352b74e3359f27ae4
   branch: main
   specs:
-    intrigue-ident (5.2.7)
+    intrigue-ident (5.6.6)
       dnsruby
       mongo
       murmurhash3
@@ -50,12 +43,6 @@ GIT
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
     ip_ranger (0.0.2)
-
-GIT
-  remote: https://github.com/intrigueio/maxminddb
-  revision: 1a48218c7577bc137bd7736e62a28e2d7d92b39c
-  specs:
-    maxminddb (0.1.22)
 
 GIT
   remote: https://github.com/intrigueio/rex-sslscan.git
@@ -122,7 +109,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     async (1.29.0)
       console (~> 1.10)
@@ -130,18 +117,18 @@ GEM
       timers (~> 4.1)
     async-dns (1.2.6)
       async-io (~> 1.15)
-    async-http (0.56.3)
-      async (~> 1.25)
-      async-io (~> 1.28)
-      async-pool (~> 0.2)
+    async-http (0.56.5)
+      async (>= 1.25)
+      async-io (>= 1.28)
+      async-pool (>= 0.2)
       protocol-http (~> 0.22.0)
       protocol-http1 (~> 0.14.0)
       protocol-http2 (~> 0.14.0)
     async-io (1.32.0)
       async (~> 1.14)
-    async-pool (0.3.6)
-      async (~> 1.25)
-    async-rest (0.10.1)
+    async-pool (0.3.8)
+      async (>= 1.25)
+    async-rest (0.12.4)
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.1)
@@ -196,7 +183,7 @@ GEM
       rake (>= 12.0.0, < 14.0.0)
     dnsimple (6.0.0)
       httparty
-    dnsruby (1.61.5)
+    dnsruby (1.61.7)
       simpleidn (~> 0.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -221,7 +208,7 @@ GEM
     faraday_middleware-aws-sigv4 (0.5.0)
       aws-sigv4 (~> 1.0)
       faraday (>= 0.15)
-    ffi (1.15.1)
+    ffi (1.15.3)
     fiber-local (1.0.0)
     filesize (0.2.0)
     flareon (1.0.5)
@@ -329,7 +316,7 @@ GEM
     mime-types-data (3.2021.0225)
     mini_mime (1.1.0)
     minitest (5.14.4)
-    mongo (2.14.0)
+    mongo (2.15.0)
       bson (>= 4.8.2, < 5.0.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
@@ -342,7 +329,9 @@ GEM
       http-2 (~> 0.11)
     netrc (0.11.0)
     nio4r (2.5.7)
-    nokogiri (1.11.7-x86_64-darwin)
+    nokogiri (1.12.3-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.12.3-x86_64-linux)
       racc (~> 1.4)
     octokit (4.21.0)
       faraday (>= 0.9)
@@ -356,7 +345,7 @@ GEM
     pg (1.2.3)
     power_assert (2.0.0)
     protocol-hpack (1.4.2)
-    protocol-http (0.22.2)
+    protocol-http (0.22.5)
     protocol-http1 (0.14.1)
       protocol-http (~> 0.22)
     protocol-http2 (0.14.2)
@@ -487,7 +476,7 @@ GEM
     versionomy (0.5.0)
       blockenspiel (~> 0.5)
     webrick (1.7.0)
-    websocket-driver (0.7.4)
+    websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     whois (5.0.2)
@@ -504,6 +493,7 @@ GEM
 PLATFORMS
   ruby
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   async-dns
@@ -517,7 +507,6 @@ DEPENDENCIES
   cloudflare!
   compare-xml
   couchrest
-  dnsbl-client!
   dnsimple
   dnsruby
   elasticsearch
@@ -540,7 +529,6 @@ DEPENDENCIES
   ip_ranger!
   ipaddr
   json (>= 2.3.0)
-  maxminddb!
   net-dns
   net-http2
   neutrino_api!

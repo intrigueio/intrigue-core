@@ -4,7 +4,6 @@ function getResultJson(id){
   //get the list of tasks and rewrite the task
   $.getJSON(location.origin + "/<%=h @project_name%>/results/"+ id +".json", function(data) {
     
-    //console.log(data);
     $( "#entities" ).empty();
     
     // Set the values based on just this task's allowed type
@@ -58,12 +57,12 @@ getResultJson(<%=@result.id%>);
   <p>Handlers: <%= @result.handlers %></p>
   <p>Depth: <%=@result.depth %> </p>
   <p>Entity: <a href="/<%=h @project_name%>/entities/<%=h @result.base_entity.id if @result.base_entity %>"><%= h "#{@result.base_entity}" %></a></p>
-  <p>Options: <%=@result.options %> </p>
+  <p>Options: <%=h @result.options %> </p>
   <p>Cancelled: <%= @result.cancelled %> (<a href="<%=h request.path%>/cancel">Cancel</a>)</p>
   <p>Complete: <%= @result.complete %></p>
   <p>Entity Count: <%= @result.entities.count %></p>
   <p>Workflow: <%= @result.scan_result.workflow if @result.scan_result %></p>
-  <p>Max Depth: <%=@result.scan_result.depth if @result.scan_result %> </p>
+  <p>Max Depth: <%= @result.scan_result.depth if @result.scan_result %> </p>
 
   Export:
   <ul>

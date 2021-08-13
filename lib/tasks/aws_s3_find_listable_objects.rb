@@ -27,53 +27,56 @@ module Intrigue
 
       def run
         super
+        require_enrichment
+        # check if bucket is valid and gives us a region
         region = s3_bucket_enriched?
         return if region.nil?
 
+        # get the bucket name
         bucket_name = _get_entity_detail 'bucket_name'
 
-        s3_client = initialize_s3_client(region, bucket_name)
+        # do the UNAUTH bit
+        # check to see if we can find objects unauthenticated
+        bucket_objects = retrieve_objects_via_http bucket_name
+        if bucket_objects.nil?
+          _log "No listable objects found via unauthenticated method"
+        else
+          _log_good "Found #{bucket_objects.size} listable object(s)."
+          create_issue(bucket_name, bucket_objects)
+        end
 
-        # retrieve all listable objects 
-        bucket_objects = retrieve_listable_objects(s3_client, bucket_name)
-        return if bucket_objects.nil?
+        # do the auth bit
+        if use_authentication?
+          # initialize s3 client with configuration keys
+          s3_client = initialize_s3_client(region, bucket_name)
+          if s3_client
+            bucket_objects = retrieve_objects_via_api s3_client, bucket_name
+            if bucket_objects.nil?
+              _log "No listable objects found via unauthenticated method"
+            else
+              _log_good "Found #{bucket_objects.size} listable object(s)."
+              create_issue(bucket_name, bucket_objects)
+            end
+          end
 
-        _log_good "Found #{bucket_objects.size} listable object(s)."
-        create_issue(bucket_name, bucket_objects)
+        end
 
-        return unless _get_option('bruteforce_found_objects')
-
-        # if any listable objects are found; the bruteforce task is automatically started to see if objects are accessible
-        # the objects that are found will be used as a wordlist
-        start_task('task', @entity.project, nil, 'aws_s3_bruteforce_objects', @entity, 1, [{ 'name' => 'objects_list', 'value' => bucket_objects.join(',') }])
+        if _get_option('bruteforce_found_objects') && bucket_objects && !bucket_objects.empty?
+          # if any listable objects are found and the option to bruteforce found objects is set to true, 
+          # start the aws_s3_bruteforce_objects task
+          start_task('task', @entity.project, nil, 'aws_s3_bruteforce_objects', @entity, 1, [{ 'name' => 'objects_list', 'value' => bucket_objects.join(',') }])
+        end
       end
 
       # checks to see if use_authentication option has been set to true 
       # if the bucket owns the key, we return false as false positives will occur
       def use_authentication?
         auth = _get_option('use_authentication')
-        if auth && _get_entity_detail('belongs_to_api_key')
+        if !auth || (_get_entity_detail('source') == "configuration")
           _log 'Cannot use authentication if bucket belongs to API key as false positives will occur.'
-          _log 'Defaulting to using unauthenticated techniques.'
           auth = false
         end
         auth
-      end
-
-      # Calls different methods based on the API Key provided to retrieve an object's listable objects
-      #
-      # Tries two different techniques depending on the API Key provided:
-      # - Bucket not owned by API Key => Use the AWS 'authenticated' API call to attempt to list object
-      # - API Key invalid or no listable objects found via API call => Use HTTP as last resort
-      #
-      # returns listable objects if any were found
-      def retrieve_listable_objects(client, bucket)
-        # if pub objs not blocked we go the api route (auth)
-        bucket_objs = retrieve_objects_via_api(client, bucket) if client && use_authentication?
-        # if the api route fails (mostly due to lack permissions/or no public objects; we'll quickly try the unauth http route)
-        bucket_objs = retrieve_objects_via_http(bucket) if client.nil? || bucket_objs.nil?
-        bucket_objs.reject! { |b| b =~ %r{.+/$} }  unless bucket_objs.nil? # remove folder names if bucket_objs is not nil
-        bucket_objs
       end
 
       # Attempts to retrieve the bucket's listable objects via an API call
@@ -85,6 +88,8 @@ module Intrigue
           objs = []
           _log_error 'Could not retrieve bucket objects using the authenticated technique due to insufficient permissions.'
         end
+
+        objs.reject! { |b| b =~ %r{.+/$} } unless objs.nil? # remove folder names if bucket_objs is not nil
         objs unless objs.empty? # force a nil return if an empty array as we are catching the nil reference
       end
 
@@ -101,6 +106,10 @@ module Intrigue
         xml_doc.remove_namespaces!
         results = xml_doc.xpath('//ListBucketResult//Contents//Key').children.map(&:text)
         results[0...999] # return first 1k results as some buckets may have tons of objects
+
+        # format before
+        results.reject! { |b| b =~ %r{.+/$} }  unless results.nil? # remove folder names if bucket_objs is not nil
+        results unless results.empty? 
       end
 
       # Creates an issue if listable objects are found

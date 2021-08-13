@@ -47,11 +47,12 @@ module Issue
       task_result_id: @task_result.id,
       project_id: @project.id,
       scoped: linked_entity.scoped,
+      # this is a critically important attribute, see above
       source: instance_specifics[:source] || instance_specifics['source'] || "intrigue"
     }
 
     issue = Intrigue::Issue::IssueFactory.create_instance_by_type(
-    issue_type, issue_model_details, _encode_hash(instance_specifics))
+              issue_type, issue_model_details, _encode_hash(instance_specifics))
 
     # Notify
     _notify("LI Sev #{issue[:severity]}!```#{issue[:name]}```") if issue[:severity] <= 2
@@ -205,6 +206,18 @@ module Issue
       port: port,
       proto: proto,
       transport: transport })
+  end
+
+  def _create_execessive_redirects_issue(uri, redirect_chain, count)
+
+    proof = {
+      redirect_count: count,
+      redirect_chain: redirect_chain
+    }
+    
+    _create_linked_issue("excessive_redirects_identified", {
+      proof: proof,
+      uri: uri})
   end
 
 end

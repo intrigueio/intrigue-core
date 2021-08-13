@@ -3,7 +3,6 @@
 :concurrency: 40
 :process_limits:
   task: 5
-  control: 1
   task_enrichment: 15
   task_browser: 1
   task_autoscheduled: 15

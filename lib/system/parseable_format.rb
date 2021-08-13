@@ -138,6 +138,41 @@ module ParseableFormat
 
   end
 
+  def shodan_json_to_entities(filename)
+
+    entities = []
+
+    # parse newlines, which each contains a json object
+    f = File.open(filename,"r")
+    file_lines = f.readlines
+    f.close
+
+    # ensure we're sane  with the data we're bringing in
+    json_entries = []
+    file_lines.each do |l|
+      parsed_l = JSON.parse(l)
+      json_entries << parsed_l
+    end
+
+    puts 'Parsing shodan json file'
+    json_entries.each do |je|
+      
+      # create ip address entities
+      if je["ip_str"] =~ ipv4_regex || je["ip_str"] =~ ipv6_regex
+        entities << {entity_type: "IpAddress", entity_name: je["ip_str"] }
+      end
+
+      # create hostnames
+      je["hostnames"].each do |je_host|
+        if je_host =~ dns_regex
+          entities << {entity_type: "DnsRecord", entity_name: je_host }
+        end
+      end
+
+    end
+    entities
+  end
+
   private
 
   def parse_json_file(filename)
