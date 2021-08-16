@@ -73,8 +73,8 @@ module Intrigue
 
           # we're complete, no need to retry
           break
-        rescue Octokit::AbuseDetected => e
-          _log_error "#{e}\nRate limiting hit on attempt #{i}; Retrying."
+        rescue Octokit::AbuseDetected, Octokit::Forbidden
+          _log_error "Rate limiting hit on attempt #{i}; Retrying in 5 minutes."
           sleep 300
           next
         rescue Octokit::TooManyRequests
