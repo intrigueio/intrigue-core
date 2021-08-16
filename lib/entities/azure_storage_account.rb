@@ -1,7 +1,7 @@
 module Intrigue
   module Entity
     class AzureStorageAccount < Intrigue::Core::Model::Entity
-      ### Azure Storage works in the following way:
+      # Azure Storage works in the following way:
       #### Storage Account
       ##### Container A
       ######## Blob 1
