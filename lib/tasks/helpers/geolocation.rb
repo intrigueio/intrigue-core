@@ -54,8 +54,6 @@ module Intrigue
       def get_config
         config = _get_system_config('intrigue_global_module_config')['ipdata_api_key']
 
-        _log config['uri']
-
         if config.nil?
           _log_error 'Geolocation configuration not set. Unable to proceed with Geolocation task.'
           return nil
