@@ -69,9 +69,8 @@ class EntityManager
 
     # Merge the details if it already exists
     entity = entity_exists?(project,type_string,downcased_name)
-
+    is_new_entity = false
     if entity # already exists, but now it's created by us... let's clean it up
-
       entity.set_details(details_hash.to_h.deep_merge(entity.details.to_h))
       entity.set_sensitive_details(sensitive_details_hash.to_h.deep_merge(entity.sensitive_details.to_h))
 
@@ -87,6 +86,7 @@ class EntityManager
       #####
 
     else
+      is_new_entity = true
       # Create a new entity, validating the attributes
       g = Intrigue::Core::Model::AliasGroup.create(:project_id => project.id)
       entity = Intrigue::Core::Model::Entity.create({
@@ -111,6 +111,10 @@ class EntityManager
     # Ensure we have an entity
     unless new_entity && new_entity.transform! && new_entity.validate_entity
       puts "Error creating entity: #{new_entity}. " + "Entity: #{type_string}##{name} #{details_hash}"
+
+      # we don't want to delete if the entity already exists as this might end-up removing previous valid entities.
+      new_entity.delete if is_new_entity
+
       return nil
     end
 
