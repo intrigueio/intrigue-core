@@ -34,7 +34,8 @@ module Intrigue
         _create_entity 'GithubRepository', {
           'name' => "https://github.com/#{repo_full_name}",
           'repository_name' => repo_full_name,
-          'owner' => repo_full_name.split('/').first
+          'owner' => repo_full_name.split('/').first,
+          'repository_uri' => "https://github.com/#{repo_full_name}"
         }
       end
 
