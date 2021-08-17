@@ -39,7 +39,7 @@ module Intrigue
         client
       end
 
-      def add_objects_to_entity(entity, new_objects)
+      def add_objects_to_s3_entity(entity, new_objects)
         objects = entity.get_detail('found_objects')
         uniq_objects = new_objects - objects
         return if uniq_objects.empty?

@@ -42,7 +42,7 @@ module Intrigue
           _log "No listable objects found via unauthenticated method"
         else
           _log_good "Found #{bucket_objects.size} listable object(s)."
-          add_objects_to_entity(@entity, bucket_objects)
+          add_objects_to_s3_entity(@entity, bucket_objects)
           create_issue(bucket_name, bucket_objects)
         end
 
@@ -56,7 +56,7 @@ module Intrigue
               _log "No listable objects found via unauthenticated method"
             else
               _log_good "Found #{bucket_objects.size} listable object(s)."
-              add_objects_to_entity(@entity, bucket_objects)
+              add_objects_to_s3_entity(@entity, bucket_objects)
               create_issue(bucket_name, bucket_objects)
             end
           end
