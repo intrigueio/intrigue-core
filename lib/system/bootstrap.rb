@@ -26,11 +26,23 @@ module Bootstrap
     # XXX - Assumes we start at a clean system!!!!
     config["projects"].each do |p|
 
+      project_name = p["name"]
+
+      # always generate a workflow name
+      generated_workflow_name = "#{p["workflow_name"]}_#{SecureRandom.hex(6)}"
+      workflow_definition = p["workflow_definition"]
+
+      # And add a new user workflow from the definition -
+      # this allows us to easily modify the workflow on the platform
+      Intrigue::Core::Model::Workflow.add_user_workflow({
+        name: generated_workflow_name,
+        definition: workflow_definition
+      })
+
       Intrigue::NotifierFactory.default.each do |x|
-        x.notify("#{p["name"]} collection starting with #{p["seeds"].count if p["seeds"]} seeds, using workflow: #{p["workflow_name"]}!")
+        x.notify("#{project_name} collection starting with #{p["seeds"].count if p["seeds"]} seeds, using workflow: #{generated_workflow_name}!")
       end
 
-      project_name = p["name"]
       @task_result.log "Working on project: #{project_name}" if @task_result
 
       project = Intrigue::Core::Model::Project.find_or_create(:name => "#{project_name}")
@@ -38,21 +50,20 @@ module Bootstrap
       # Set exclusion setting
       task_name = p["task_name"] || "create_entity"
       options = p["task_options"] || []
-      workflow_name = p["workflow_name"]
       depth = p["depth"] || 5
       scan_handlers = p["scan_handlers"] || []
       auto_enrich = p["auto_enrich"] || true
       auto_scope = true
 
       project.options = p["project_options"] || []
-      
+
       # vulnerability checks must be enabled at the project level
       if p["vulnerability_checks_enabled"]
         project.vulnerability_checks_enabled = true
-      else 
+      else
         project.vulnerability_checks_enabled = false
       end
-      
+
       project.use_standard_exceptions = p["use_standard_exceptions"] || true
 
       project.allowed_namespaces = p["allowed_namespaces"]
@@ -62,7 +73,8 @@ module Bootstrap
       # Add our exceptions
       puts "Adding exceptions to the database"
       if config["additional_exception_list"]
-        _add_no_traverse_entities(project.id, config["additional_exception_list"].sort.to_a)
+        _add_no_traverse_entities(project.id,
+          config["additional_exception_list"].sort.to_a)
       end
 
       # parse up the seeds
@@ -99,7 +111,7 @@ module Bootstrap
 
               # Kick off the task (don't set handler on the task)
               task_result = start_task(nil, project, nil, task_name,
-                created_entity, depth, options, scan_handlers, workflow_name, auto_enrich, auto_scope)
+                created_entity, depth, options, scan_handlers, generated_workflow_name, auto_enrich, auto_scope)
 
               # Manually start enrichment for the first entity
               created_entity.enrich(task_result) if auto_enrich
@@ -115,7 +127,7 @@ module Bootstrap
   end
 
 
-  
+
 
   # parse out entity from the cli
   def _parse_entity(entity_string)
@@ -145,7 +157,7 @@ module Bootstrap
     end
 
     parsed_entity_hash = Intrigue::Core::System::Bootstrap::_parse_entity(entity_hash["entity"]) # have to namespace for core-cli to work
- 
+
     # merge details from bootstrap seed entity
     if entity_hash.key?("details")
       parsed_entity_hash["details"] = parsed_entity_hash["details"].merge(entity_hash["details"])

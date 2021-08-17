@@ -6,7 +6,6 @@ module Intrigue
       @hash = hash
     end
 
-
     def definition
       @hash[:definition]
     end
