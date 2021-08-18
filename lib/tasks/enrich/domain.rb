@@ -33,11 +33,21 @@ class Domain < Intrigue::Task::BaseTask
 
     # get our resolutiosn
     results = resolve(lookup_name)
-  
+
     ####
     ### Create aliased entities
     #### 
-    create_dns_aliases(results, @entity) if entity_scoped
+    new_entity = create_dns_aliases(results, @entity) if entity_scoped
+
+    if !new_entity.nil? 
+      _log "Geolocating..."
+      location_hash = geolocate_ip(new_entity.first["name"]) unless new_entity.first["name"].nil?
+      if location_hash.nil? 
+        _log "Unable to retrieve Gelocation."
+      else
+        _set_entity_detail("geolocation", location_hash)
+      end
+    end
 
     resolutions = collect_resolutions(results)
     _set_entity_detail("resolutions", resolutions )

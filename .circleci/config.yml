@@ -9,6 +9,15 @@ workflows:
       - build-core:
           context:
               - Build Context (Low Security)
+      - security-scan-core:
+          requires:
+            - build-core
+          context:
+              - SecurityTesting Context
+          filters:
+              branches:
+                only:
+                  - develop 
 
 jobs:
   build-core:
@@ -55,5 +64,16 @@ jobs:
                   }
                 }
               ]
-            }  
+            }
+  security-scan-core:
+    docker:
+      - image: circleci/openjdk:11.0.3-jdk-stretch
+    steps:
+      - checkout
+      - run:
+          name: Run whitesource
+          command:  | 
+            curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
+            echo Unified Agent downloaded successfully
+            java -jar wss-unified-agent.jar -d ./
     

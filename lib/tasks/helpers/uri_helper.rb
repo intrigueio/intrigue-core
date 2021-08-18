@@ -8,11 +8,16 @@ module Intrigue
         ip_addr = IPAddr.new ip
         ip_addr.ipv4? || ip_addr.ipv6?
       rescue IPAddr::InvalidAddressError => e
-        _log_error "Invalid IP Address #{e}"
+        _log_error "#{ip} Seems to be an invalid IP Address #{e}"
+        false
+      rescue StandardError => e
+        _log_error "#{ip} Seems to be an invalid IP Address #{e}"
         false
       end
 
       def get_host_from_ip(address)
+        return address if valid_ip?(address)
+
         url = URI.parse(address)
 
         ip_to_test = if !url.host.nil?
@@ -25,7 +30,7 @@ module Intrigue
 
         ip_to_test
       rescue StandardError => e
-        _log_error "Unable to parse URL: #{e}"
+        _log_error "Unable to parse '#{address}' URL: #{e}"
         nil
       end
     end
