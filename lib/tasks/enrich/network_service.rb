@@ -45,6 +45,14 @@ class NetworkService < Intrigue::Task::BaseTask
     _set_entity_detail("port", port)
     _set_entity_detail("proto", proto)
 
+    _log "Geolocating..."
+    location_hash = geolocate_ip(ip_address)
+    if location_hash.nil? 
+      _log "Unable to retrieve Gelocation."
+    else
+      _set_entity_detail("geolocation", location_hash)
+    end
+
     # Use Ident to fingerprint
     _log "Grabbing banner and fingerprinting!"
     ident = Intrigue::Ident::Ident.new

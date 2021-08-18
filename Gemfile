@@ -86,7 +86,6 @@ gem 'aws-sdk-sqs'
 gem 'json', '>= 2.3.0'
 gem 'censys',                 :git => 'https://github.com/pentestify/censys.git'
 gem 'cloudflare',             :git => 'https://github.com/intrigueio/cloudflare.git'
-gem 'dnsbl-client',           :git => 'https://github.com/intrigueio/dnsbl-client.git'
 gem 'dnsimple'
 gem 'dnsruby'                 # dns_zone_transfer
 gem 'flareon'                 # dns resolution over http
@@ -115,6 +114,7 @@ gem 'towerdata_api'           # search_towerdata
 gem 'whois'                   # dns_zone_transfer, whois
 gem 'whois-parser'            # whois
 gem 'whoisology',             :git => 'https://github.com/pentestify/whoisology.git'
+gem 'octokit', '~> 4.0'
 gem 'open3'
 gem 'typhoeus'
 gem 'zetalytics'

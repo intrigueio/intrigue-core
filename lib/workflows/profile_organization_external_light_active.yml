@@ -56,7 +56,9 @@ definition:
   EmailAddress:
   - task: vuln/saas_google_calendar_check
   GithubAccount:
-  - task: gitrob
+  - task: gather_github_repositories
+  GithubRepository:
+    - task: gitleaks
   IpAddress:
   - task: naabu_scan
   NetBlock:

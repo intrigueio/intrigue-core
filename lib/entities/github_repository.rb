@@ -7,12 +7,12 @@ class GithubRepository < Intrigue::Core::Model::Entity
       name: "GithubRepository",
       description: "A Github Repository",
       user_creatable: true,
-      example: "intrigueio/intrigue-core"
+      example: "https://github.com/intrigueio/intrigue-core"
     }
   end
 
   def validate_entity
-    name.match /^[\d\w\-]+\/[\d\w\-]+/
+    name.match /^https:\/\/github.com\/[\d\w\-]{1,39}+\/[\d\w\-]{1,100}+/
   end
 
   def scoped?
