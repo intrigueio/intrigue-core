@@ -202,11 +202,8 @@ module Intrigue
       #
       # pull user workflows (requires core)
       #
-      begin
-        mod = Required::Module::const_get "Intrigue::Core::Model"
-        out.concat(Intrigue::Core::Model::Workflow.all.map{|x| x.to_h })
-      rescue NameError
-        #Doesn't exist, dont try to load them again
+      if defined?(Intrigue::Core::Model)
+        out.concat(Intrigue::Core::Model::Workflow.all.map(&:to_h))
       end
 
     out
