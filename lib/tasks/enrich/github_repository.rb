@@ -26,8 +26,7 @@ module Intrigue
         ## Default method, subclasses must override this
 
         def run
-          repo_name = _get_entity_detail('name') 
-          repo_name = extract_full_repo_name(repo_name) if repo_name =~ /https:\/\/github\.com/i
+          repo_name = extract_full_repo_name(_get_entity_name)
 
           _set_entity_detail('owner', repo_name.split('/').first)
           _set_entity_detail('repository_name', repo_name.split('/')[1])
@@ -39,10 +38,6 @@ module Intrigue
           # if non 404 we'll just assume its private
           r = http_request(:get, "https://api.github.com/repos/#{repo_full_name}")
           r.code == '200'
-        end
-
-        def extract_full_repo_name(repo)
-          repo.scan(/https:\/\/github\.com\/([\w|\-]+\/[\w|\-]+)/i).flatten.first
         end
 
       end
