@@ -202,9 +202,7 @@ module Intrigue
       #
       # pull user workflows (requires core)
       #
-
-
-
+      
       if defined?(Intrigue::Core::Model)
         out.concat(Intrigue::Core::Model::Workflow.all.map{|x| x.to_h })   
       end
