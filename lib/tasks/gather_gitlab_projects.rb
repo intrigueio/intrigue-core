@@ -12,9 +12,7 @@ module Intrigue
           passive: false,
           allowed_types: ['GitlabAccount'],
           example_entities: [{ 'type' => 'GitlabAccount', 'details' => { 'name' => 'intrigueio' } }],
-          allowed_options: [
-            { name: 'gitlab_instance_uri', regex: 'alpha_numeric_list', default: 'https://gitlab.com' }
-          ],
+          allowed_options: [],
           created_types: ['GitlabProject']
         }
       end
@@ -42,7 +40,7 @@ module Intrigue
 
         _log_good "Obtained #{results.size} projects belonging to #{account_name.gsub('%2f', '/')}."
 
-        results.each { |r| create_gitlab_project_entity("#{host}/#{r}") }
+        results.each { |r| _create_entity('GitlabProject', { 'name' => "#{host}/#{r}" }) }
       end
 
       def retrieve_repositories(name, host)
@@ -84,15 +82,6 @@ module Intrigue
         repositories
       end
 
-      def create_gitlab_project_entity(project_uri)
-        parsed_project_uri = parse_gitlab_uri(project_uri)
-        _create_entity 'GitlabProject', {
-          'name' => project_uri,
-          'project_name' => parsed_project_uri['project'],
-          'project_uri' => project_uri,
-          'project_account' => parsed_project_uri['account']
-        }
-      end
     end
   end
 end

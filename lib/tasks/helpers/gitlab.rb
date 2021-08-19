@@ -9,7 +9,7 @@ module Intrigue
           _log 'Please not this means private repositories or private groups will not be retrieved.'
           return nil
         end
-        
+
         token if _gitlab_token_valid?(token)
       end
 
@@ -25,7 +25,7 @@ module Intrigue
 
         parsed_uri = URI(gitlab_instance)
         host = "#{parsed_uri.scheme}://#{parsed_uri.host}"
-        account = gitlab_instance.scan(/#{host}\/([\d\w\-\.\/]{2,255}+)\//i).flatten.first
+        account = gitlab_instance.scan(/#{host}\/([\d\w\-\.\/]{2,255}+)\/?/i).flatten.first
         project = gitlab_instance.scan(/#{host}\/#{account}\/([\d\w\-\.]{1,255}+)/i).flatten.first
 
         { 'host' => host, 'account' => account, 'project' => project }
