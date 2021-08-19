@@ -6,13 +6,13 @@ module Intrigue
           name: 'GitlabAccount',
           description: 'A Gitlab Account',
           user_creatable: true,
-          example: 'intrigueio'
+          example: 'https://gitlab.com/intrigueio'
         }
       end
 
       def validate_entity
-        # gitlab account names are 1-255 characters and contain dots, underscores and dashes but cannot start with them
-        name.match(/^[^\-|_|\.][\w\-?\.?]{1,255}$/)
+        # match generic uri as gitlab instances can be self-hosted...
+        name.match(/^https?:\/\/.*$/)
       end
 
       def enrichment_tasks

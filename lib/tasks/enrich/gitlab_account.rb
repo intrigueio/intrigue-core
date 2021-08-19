@@ -15,7 +15,7 @@ module Intrigue
             example_entities: [
               { 'type' => 'GitlabAccount',
                 'details' => {
-                  'name' => 'intrigueio'
+                  'name' => 'https://gitlab.com/intrigueio'
                 } }
             ],
             allowed_options: [],
@@ -27,6 +27,9 @@ module Intrigue
         def run
           _log "Marking #{_get_entity_type_string}: #{_get_entity_name} enriched!"
         end
+
+
+
       end
     end
   end

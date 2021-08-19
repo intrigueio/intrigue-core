@@ -20,6 +20,18 @@ module Intrigue
         r.code == '200'
       end
 
+      def parse_gitlab_uri(gitlab_instance)
+        # same regex as account name however project name can start with a dot or underscore but not a dash
+        # gitlab groups support support subgroups
+        # gitlab account names are 1-255 characters and contain dots, underscores and dashes but cannot start with them
+
+        parsed_uri = URI(gitlab_instance)
+        host = "#{parsed_uri.scheme}://#{parsed_uri.host}"
+        account = gitlab_instance.scan(/#{host}\/([\d\w\-\.]{1,255}+)/i).flatten.first
+        project = gitlab_instance.scan(/#{host}\/#{account}\/([\d\w\-\.]{1,255}+)/i).flatten.first
+        {'host' => host, 'account' => account, 'project' => project}
+      end
+
       private
 
       def _gitlab_token_valid?(token)

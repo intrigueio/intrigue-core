@@ -6,14 +6,13 @@ module Intrigue
           name: 'GitlabProject',
           description: 'A Gitlab Project',
           user_creatable: true,
-          example: 'intrigueio/intrigue-core'
+          example: 'https://gitlab.com/intrigueio/intrigue-core'
         }
       end
 
       def validate_entity
-        # same regex as account name however project name can start with a dot or underscore but not a dash
-        # gitlab groups support support subgroups
-        name.match(/^[^\-|_|\.][\w\-?\.?]{1,255}\/[^\-][\w\-?\.?\/?]{2,255}$/)
+        # match generic uri has gitlab instances can be self-hosted...
+        name.match(/^https?:\/\/.*$/)
       end
 
       def scoped?
