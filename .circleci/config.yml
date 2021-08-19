@@ -67,13 +67,14 @@ jobs:
             }
   security-scan-core:
     docker:
-      - image: circleci/openjdk:11.0.3-jdk-stretch
+      - image: circleci/ruby:2.7.2-browsers
     steps:
       - checkout
       - run:
           name: Run whitesource
           command:  | 
+            bundle install
             curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
             echo Unified Agent downloaded successfully
-            java -jar wss-unified-agent.jar -d ./
+            java -jar wss-unified-agent.jar -project intrigue-core -d ./
     

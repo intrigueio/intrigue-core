@@ -63,7 +63,7 @@ module Intrigue
           while next_url
             sleep 10
             _log "Getting: #{next_url}"
-            results << client.get(next_url)
+            results << client.get(next_url)['items']
 
             # get the next url
             break unless client.last_response.rels[:next]
@@ -73,8 +73,8 @@ module Intrigue
 
           # we're complete, no need to retry
           break
-        rescue Octokit::AbuseDetected => e
-          _log_error "#{e}\nRate limiting hit on attempt #{i}; Retrying."
+        rescue Octokit::AbuseDetected, Octokit::Forbidden
+          _log_error "Rate limiting hit on attempt #{i}; Retrying in 5 minutes."
           sleep 300
           next
         rescue Octokit::TooManyRequests
@@ -87,15 +87,11 @@ module Intrigue
       end
 
       def parse_results(repositories)
-        repositories = repositories.flatten.compact
+        repositories.flatten!.compact!
         _log 'Unable to find any repositories which contain the provided keyword.' if repositories.empty?
         return if repositories.empty?
 
-        # reject all results that don't contain repository key (API adds some duplicate results in a diff format)
-        repos = repositories.reject { |r| r['repository'].nil? }
-        # there will be duplicates however due to different attributes they will not be uniq'd
-        # to help combat this just extract the full repo_name and uniq (because thats the only information needed)
-        repos.map { |repo| repo['repository']['full_name'] }.uniq
+        repositories.map { |repo| repo['repository']['full_name'] }.uniq
       end
 
       def retrieve_gh_client
