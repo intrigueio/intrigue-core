@@ -24,18 +24,25 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        account_name = _get_entity_name
-        gitlab_host = _get_option('gitlab_instance_uri')
+        parsed_uri = parse_gitlab_uri(_get_entity_name)
+        host = parsed_uri['host']
+        account_name = parsed_uri['account']
+        account_name.gsub!('/', '%2f') # in case this is a subgroup ensure to urlencode any /
 
-        results = retrieve_repositories(account_name, gitlab_host)
+        if [host, account_name].include?(nil)
+          _log_error 'Error parsing Gitlab Account; ensure the format is \'https://gitlab-instance.com/username\''
+          return
+        end
+
+        results = retrieve_repositories(account_name, host)
         return if results.nil?
 
         _log "#{account_name} has no projects" if results.empty?
         return if results.empty?
 
-        _log_good "Obtained #{results.size} projects belonging to #{account_name}."
+        _log_good "Obtained #{results.size} projects belonging to #{account_name.gsub('%2f', '/')}."
 
-        results.each { |r| create_project_entity(r, gitlab_host) }
+        results.each { |r| create_gitlab_project_entity("#{host}/#{r}") }
       end
 
       def retrieve_repositories(name, host)
@@ -77,11 +84,13 @@ module Intrigue
         repositories
       end
 
-      def create_project_entity(project, host)
+      def create_gitlab_project_entity(project_uri)
+        parsed_project_uri = parse_gitlab_uri(project_uri)
         _create_entity 'GitlabProject', {
-          'name' => project,
-          'project_name' => project,
-          'project_uri' => "#{host}/#{project}"
+          'name' => project_uri,
+          'project_name' => parsed_project_uri['project'],
+          'project_uri' => project_uri,
+          'project_account' => parsed_project_uri['account']
         }
       end
     end
