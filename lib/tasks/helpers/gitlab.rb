@@ -9,7 +9,7 @@ module Intrigue
           _log 'Please not this means private repositories or private groups will not be retrieved.'
           return nil
         end
-
+        
         token if _gitlab_token_valid?(token)
       end
 
@@ -40,7 +40,7 @@ module Intrigue
         _log 'Gitlab Access Token is invalid; defaulting to unauthenticated.' if r.code == '401'
         _log 'Gitlab Access Token lacks permissions; defaulting to authenticated.' if r.code == '403'
 
-        r.code == '404'
+        r.code == '200'
       end
     end
   end
