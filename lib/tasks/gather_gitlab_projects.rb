@@ -22,7 +22,7 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        parsed_uri = parse_gitlab_uri(_get_entity_name)
+        parsed_uri = parse_gitlab_uri(_get_entity_name, 'account')
         host = parsed_uri['host']
         account_name = parsed_uri['account']
         account_name.gsub!('/', '%2f') # in case this is a subgroup ensure to urlencode any /
@@ -45,7 +45,6 @@ module Intrigue
 
       def retrieve_repositories(name, host)
         # if token is nil ; set to empty since gitlab will ignore empty value in private-token header
-        require 'pry'; binding.pry
         access_token = retrieve_gitlab_token(host) || ''
         headers = { 'PRIVATE-TOKEN' => access_token } if access_token
 
