@@ -8,7 +8,7 @@ class UriGatherSslCert  < BaseTask
     {
       :name => "uri_gather_ssl_certificate",
       :pretty_name => "URI Gather SSL Certificate",
-      :authors => ["jcran"],
+      :authors => ["jcran","Anas Ben Salah"],
       :description => "Grab the SSL certificate from an application server",
       :references => [],
       :type => "discovery",
@@ -45,23 +45,6 @@ class UriGatherSslCert  < BaseTask
 
     # one way to detect self-signed
     if certificate_details["subject"] == certificate_details["issuer"]
-      ############################################
-      ####            Old Issue              ####
-      ###########################################
-      # _create_issue({
-      #   name: "Self-signed Certificate Detected",
-      #   severity: 5,
-      #   type: "self_signed_certificate",
-      #   status: "confirmed",
-      #   description: "The following site: #{uri} is configured with a self-signed certificate",
-      #   references: [
-      #     "https://security.stackexchange.com/questions/93162/how-to-know-if-certificate-is-self-signed/162263"
-      #   ],
-      #     details: { certificate: certificate_details }
-      # })
-      ############################################
-      ####            New Issue               ####
-      ############################################
       _create_linked_issue("self_signed_certificate",{
         proof: "The following site: #{uri} is configured with a self-signed certificate",
         detailed_description: "The following site: #{uri} is configured with a self-signed certificate",
