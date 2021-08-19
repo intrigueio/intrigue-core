@@ -45,7 +45,8 @@ module Intrigue
 
       def retrieve_repositories(name, host)
         # if token is nil ; set to empty since gitlab will ignore empty value in private-token header
-        access_token = retrieve_gitlab_token || ''
+        require 'pry'; binding.pry
+        access_token = retrieve_gitlab_token(host) || ''
         headers = { 'PRIVATE-TOKEN' => access_token } if access_token
 
         uri = if group?(name, access_token)

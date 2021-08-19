@@ -1,7 +1,7 @@
 module Intrigue
   module Task
     module Gitlab
-      def retrieve_gitlab_token
+      def retrieve_gitlab_token(host)
         begin
           token = _get_task_config('gitlab_access_token')
         rescue MissingTaskConfigurationError
@@ -10,7 +10,7 @@ module Intrigue
           return nil
         end
 
-        token if _gitlab_token_valid?(token)
+        token if _gitlab_token_valid?(token, host)
       end
 
       def group?(name, token)
@@ -33,9 +33,9 @@ module Intrigue
 
       private
 
-      def _gitlab_token_valid?(token)
+      def _gitlab_token_valid?(token, host)
         headers = { 'PRIVATE-TOKEN' => token }
-        r = http_request(:get, 'https://gitlab.com/api/v4/user', nil, headers)
+        r = http_request(:get, "#{host}/api/v4/user", nil, headers)
 
         _log 'Gitlab Access Token is invalid; defaulting to unauthenticated.' if r.code == '401'
         _log 'Gitlab Access Token lacks permissions; defaulting to authenticated.' if r.code == '403'
