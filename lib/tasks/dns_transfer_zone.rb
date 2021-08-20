@@ -51,6 +51,8 @@ class DnsTransferZone < BaseTask
           _log_error "Unable to connect"
         rescue Timeout::Error => e
           _log_error "Timed out!"
+        rescue Errno::EADDRNOTAVAIL => e
+          _log_error "Cannot assign address"
         end
 
         if zone.nil?
