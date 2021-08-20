@@ -64,9 +64,9 @@ module Intrigue
           end
 
           break
-        rescue Octokit::AbuseDetected => e
-          _log_error "#{e}\nRate limiting hit on attempt #{i}. Retrying."
-          sleep 300 # sleep 5 mins to reset 
+        rescue Octokit::AbuseDetected, Octokit::Forbidden
+          _log_error "Rate limiting hit on attempt #{i}; Retrying in 5 minutes."
+          sleep 300
           next
         rescue Octokit::TooManyRequests
           # exhausted the max amount of requests per hour/ just return to not lag other tasks

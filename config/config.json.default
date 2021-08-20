@@ -365,6 +365,12 @@
       "editable": "true",
       "comment": ""
     },
+    "leak_lookup_api_key": {
+      "value": "",
+      "uri": "https://leak-lookup.com/api",
+      "editable": "true",
+      "comment": ""
+    },
     "mailbox_layer_apikey": {
       "value": "",
       "uri": "https://mailboxlayer.com/dashboard",
