@@ -23,6 +23,7 @@ class SslCertificate < Intrigue::Task::BaseTask
             "subject" => "example",
             "issuer" => "example cert issuer",
             "algorithm" => "SHA256",
+            "fingerprint_sha256" => "b3d1c464976e725e599d3548180cb56311818f224e701f9d56f22e8079a7b396",
             "hidden_text" => "blah blah blah"
           }
         }
