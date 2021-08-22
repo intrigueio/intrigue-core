@@ -30,7 +30,6 @@ module Model
       Digest::SHA2.hexdigest(out)
     end
 
-
     def to_s
       "#{name} on #{entity.type} #{entity.name}"
     end

@@ -9,7 +9,7 @@ class WebsphereInfoLeak < BaseIssue
       pretty_name: "IBM Websphere Info Leak",
       identifiers: [],
       severity: 2,
-      category: "vulnerability",
+      category: "misconfiguration",
       status: "confirmed",
       description: "This server is exposing sensitive paths.",
       remediation: "Block access to these paths.",
