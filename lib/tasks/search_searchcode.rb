@@ -10,9 +10,9 @@ module Intrigue
           references: ['https://searchcode.com/api/'],
           type: 'discovery',
           passive: true,
-          allowed_types: ['UniqueToken', 'String'],
+          allowed_types: ['UniqueKeyword', 'String'],
           example_entities: [
-            { 'type' => 'UniqueToken', 'details' => { 'name' => 'uniquetoken1337' } }
+            { 'type' => 'UniqueKeyword', 'details' => { 'name' => 'uniquevalue1337' } }
           ],
           allowed_options: [],
           created_types: ['GitlabAccount', 'GithubAccount']
