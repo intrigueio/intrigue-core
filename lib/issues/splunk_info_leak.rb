@@ -1,7 +1,7 @@
 module Intrigue
   module Issue
   class SplunkInfoLeak < BaseIssue
-  
+
     def self.generate(instance_details)
       to_return = {
         added: "2020-01-01",
@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Splunk Info Leak",
         severity: 1,
         status: "confirmed",
-        category: "vulnerability",
+        category: "misconfiguration",
         description: "This server is sensitive information on a status page.",
         remediation: "Update the system.",
         affected_software: [
@@ -19,11 +19,10 @@ module Intrigue
         ],
         # task: handled in ident
       }.merge!(instance_details)
-  
+
     to_return
     end
-  
+
   end
   end
   end
-    

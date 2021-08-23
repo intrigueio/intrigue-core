@@ -7,7 +7,7 @@ class ExposedDatabaseService < BaseIssue
       added: "2020-09-25",
       name: "exposed_database_service",
       pretty_name: "Exposed Database Service",
-      severity: 3, 
+      severity: 3,
       category: "misconfiguration",
       status: "confirmed",
       description: "A database service was found listening on the network.",

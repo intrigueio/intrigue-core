@@ -1,7 +1,7 @@
 module Intrigue
   module Issue
   class ExposedDatabse < BaseIssue
-  
+
     def self.generate(instance_details={})
       {
         added: "2020-01-01",
@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Exposed Database",
         severity: 2,
         status: "confirmed",
-        category: "misconfiguration",
+        category: "leak",
         description: "A database was found exposed.",
         remediation: "Investigate and determine if this system should be exposed to anonymous users.",
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
@@ -17,7 +17,7 @@ module Intrigue
         # task: handled in ident
       }.merge!(instance_details)
     end
-  
+
   end
   end
   end
