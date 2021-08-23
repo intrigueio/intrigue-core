@@ -24,21 +24,21 @@ module Intrigue
         super
         results = search_searchcode(_get_entity_name)
         repos = results.map { |r| r['repo'] }
-        
+
         _log "Obtained #{repos.uniq.size} results."
         return if repos.empty?
 
         repos.uniq.each { |r| _create_entity('GitlabProject', { 'name' => r }) }
-
       end
 
       def search_searchcode(keyword)
+        api_key = retrieve_searchcode_api_key # unused for now; come back to this later when the request structure for API is known
         pages_count = make_api_call("https://searchcode.com/api/codesearch_I/?q=#{keyword}&src=13") # 13 = gitlab
         return if pages_count.nil?
 
         # max 49 pages
         total_pages = pages_count['total'] > 10 ? 10 : results['total']
-        api_uris = (0...total_pages).map { |t| "https://searchcode.com/api/codesearch_I/?q=#{keyword}&src=13&p=#{t}&per_page=100"}
+        api_uris = (0...total_pages).map { |t| "https://searchcode.com/api/codesearch_I/?q=#{keyword}&src=13&p=#{t}&per_page=100" }
         request_dispatcher(api_uris)
       end
 
@@ -74,7 +74,13 @@ module Intrigue
         log_error 'Unable to parse JSON response.'
       end
 
-
+      def retrieve_searchcode_api_key
+        _get_task_config('searchcode_api_key')
+      rescue MissingTaskConfigurationError
+        _log 'Searchcode API key not set in task_config'
+        _log 'This will limit the search results to 100 items.'
+        _
+      end
+    end
   end
-end
 end

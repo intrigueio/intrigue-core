@@ -449,6 +449,12 @@
       "editable": "true",
       "comment": ""
     },
+    "searchcode_api_key": {
+      "value": "",
+      "uri": "https://searchcode.com/api/",
+      "editable": "true",
+      "comment": ""
+    },
     "security_trails_api_key": {
       "value": "",
       "uri": "https://securitytrails.com/corp/apidocs",
