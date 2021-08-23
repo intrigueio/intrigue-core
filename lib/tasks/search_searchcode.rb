@@ -78,8 +78,7 @@ module Intrigue
         _get_task_config('searchcode_api_key')
       rescue MissingTaskConfigurationError
         _log 'Searchcode API key not set in task_config'
-        _log 'This will limit the search results to 100 items.'
-        _
+        _log 'This will limit the findings to max 100 results.'
       end
     end
   end
