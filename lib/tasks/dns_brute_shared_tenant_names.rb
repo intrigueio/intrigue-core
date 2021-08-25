@@ -45,7 +45,13 @@ module Intrigue
           name: 'acquia-sites-devcloud',
           domain: 'devcloud.acquia-sites.com',
           verify_method: :dns
-        } #,{
+        },
+        {
+          name: 'microsoft-powerapps',
+          domain: 'powerappsportals.com',
+          verify_method: :dns
+        }
+        #,{
         #  name: 'hubspot',
         #  domain: 'hs-sites.com',
         #  verify_method: :content_body,
