@@ -15,7 +15,9 @@ class DnsPermute < BaseTask
       :passive => false,
       :allowed_types => ["Domain","DnsRecord"],
       :example_entities =>  [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
-      :allowed_options => [],
+      :allowed_options => [
+        {:name => "threads", :regex => "integer", :default => 3 }
+      ],
       :created_types => ["DnsRecord"]
     }
   end
@@ -25,13 +27,14 @@ class DnsPermute < BaseTask
 
     # Set the basename
     basename = _get_entity_name
+    thread_count = _get_options "threads"
 
-    # gracefully decline to permute these.. 
+    # gracefully decline to permute these..
     skip_regexes = [ /^.*s3.*\.amazonaws.com$/,  ]
     skip_regexes.each do |r|
       if basename =~ /r/
         _log_error "Unable to permute, too many false positives to make it worthwhile"
-        return 
+        return
       end
     end
 
@@ -43,42 +46,21 @@ class DnsPermute < BaseTask
     baselist = basename.split(".")
     if parse_domain_name(basename) == basename
       brute_domain = basename
-    else 
+    else
       brute_domain = baselist[1..-1].join(".")
     end
 
     # Check for wildcard DNS, modify behavior appropriately. (Only create entities
     # when we know there's a new host associated)
     wildcard_responses = gather_wildcard_resolutions(brute_domain, true)
-    _log "Using wildcard ips as: #{wildcard_ips}"
+    _log "Using wildcard ips as: #{wildcard_responses}"
 
 
     # Create a queue to hold our list of attempts
     work_q = Queue.new
 
-    perm_list = [
-      { :type => "both", :permutation => "0" },
-      { :type => "both", :permutation => "1" },
-      { :type => "both", :permutation => "2" },
-      { :type => "both", :permutation => "3" },
-      { :type => "both", :permutation => "4" },
-      { :type => "both", :permutation => "5" },
-      { :type => "both", :permutation => "6" },
-      { :type => "both", :permutation => "7" },
-      { :type => "both", :permutation => "8" },
-      { :type => "both", :permutation => "9" },
-      { :type => "both", :permutation => "w" },
-      { :type => "prefix", :permutation => "www" },
-      { :type => "prefix", :permutation => "x" },
-      { :type => "suffix", :permutation => "-dev" },
-      { :type => "suffix", :permutation => "-prd" },
-      { :type => "suffix", :permutation => "-prod" },
-      { :type => "suffix", :permutation => "-production" },
-      { :type => "suffix", :permutation => "-stg" },
-      { :type => "suffix", :permutation => "-stage" },
-      { :type => "suffix", :permutation => "-staging" },
-      { :type => "suffix", :permutation => "-test" }
-    ]
+    # grab the common permutation list (data helper)
+    perm_list = common_dns_permuation_list
 
     # Use the list to generate permutations
     perm_list.each do |p|
@@ -146,7 +128,7 @@ class DnsPermute < BaseTask
     end
 
     # Create a pool of worker threads to work on the queue
-    workers = (0...1).map do
+    workers = (0...thread_count).map do
       Thread.new do
         _log "Starting thread..."
         begin
@@ -163,22 +145,24 @@ class DnsPermute < BaseTask
               if resolved_address # If we resolved, create the right entities
                 _log "Resolved: #{fqdn} to #{resolved_address}"
 
-
                 unless wildcard_responses.include?(resolved_address)
                   _log_good "Resolved address #{resolved_address} for #{fqdn} and it wasn't in our wildcard list."
                   main_entity = _create_entity("DnsRecord", {"name" => fqdn })
                 end
 
+              else
+                _log "Did not resolve: #{fqdn}"
               end
             end
           end # end while
-        rescue ThreadError
+        rescue ThreadError => e
+          _log_error "Caugh thread error: #{e}"
         end
       end
     end; "ok"
     workers.map(&:join); "ok"
   end
-  
+
 end
 end
 end
