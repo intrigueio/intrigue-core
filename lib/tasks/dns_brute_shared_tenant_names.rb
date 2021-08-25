@@ -13,7 +13,7 @@ module Intrigue
         :references => [],
         :type => "discovery",
         :passive => false,
-        :allowed_types => [ "Domain", "DnsRecord", "Uniquekeyword"],
+        :allowed_types => [ "Domain", "DnsRecord", "UniqueKeyword"],
         :example_entities =>  [
           {"type" => "Domain", "details" => {"name" => "intrigue.io"}}
         ],
