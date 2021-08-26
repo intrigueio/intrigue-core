@@ -37,6 +37,10 @@ module Intrigue
         }
       end
 
+      def extract_github_account_name(repo)
+        repo.scan(/https:\/\/github\.com\/([\w|\-]+)\/?/i).flatten.first
+      end
+
       def extract_full_repo_name(repo)
         repo.scan(/https:\/\/github\.com\/([\w|\-]+\/[\w|\-]+)/i).flatten.first
       end
