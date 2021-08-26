@@ -14,7 +14,7 @@ module Intrigue
           passive: true,
           allowed_types: ['String', 'GithubAccount'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } },
-                             { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'intrigueio' } }],
+                             { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'https://github.com/intrigueio' } }],
           allowed_options: [{ name: 'ignore_forked', regex: 'boolean', default: false }],
           created_types: ['GithubRepository'],
           queue: 'task_github'
@@ -28,7 +28,7 @@ module Intrigue
         # use safe nav operator as initialize_gh_client can be nil
         # however if token is valid, a hash will be returned
         gh_client = initialize_gh_client&.fetch('client')
-        account = _get_entity_name if _get_entity_type_string == 'GithubAccount'
+        account = extract_github_owner_name(_get_entity_name) if _get_entity_type_string == 'GithubAccount'
         repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
 
         _log 'No repositories discovered.' if repos.nil?
@@ -130,7 +130,7 @@ module Intrigue
       def account_exists?(name)
         response = http_get_json_body("https://api.github.com/users/#{name}")
 
-        exists = response['message'] != 'Not Found'
+        exists = response['message'] != 'Not Found' if response
         _log_error "#{name} is not a valid Github user/repository; exiting." unless exists
 
         exists
