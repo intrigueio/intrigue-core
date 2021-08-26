@@ -56,7 +56,7 @@ class Masscan < BaseTask
     begin
 
       # Create a tempfile to store result
-      temp_file = Tempfile.new("masscan-#{rand(10000000)}")
+      temp_file_path = "#{$intrigue_basedir}/tmp/masscan-#{rand(1000000000)}"
 
       port_string = ""
       port_string << "#{opt_tcp_ports}" if opt_tcp_ports.length > 0
@@ -66,13 +66,13 @@ class Masscan < BaseTask
       _log "Port string: #{port_string}"
 
       # shell out to masscan and run the scan
-      masscan_string = "masscan --ports #{port_string} --rate #{opt_send_rate} -oL #{temp_file.path} --range #{to_scan}"
+      masscan_string = "masscan --ports #{port_string} --rate #{opt_send_rate} -oL #{temp_file_path} --range #{to_scan}"
       masscan_string = "sudo #{masscan_string}" unless Process.uid == 0
 
       _log "Running... #{masscan_string}"
       _unsafe_system(masscan_string)
 
-      f = File.open(temp_file.path).each_line do |line|
+      f = File.open(temp_file_path).each_line do |line|
 
         # Skip comments
         next if line =~ /^#.*/
@@ -103,8 +103,7 @@ class Masscan < BaseTask
       end
 
     ensure
-      temp_file.close
-      temp_file.unlink
+      File.delete(temp_file_path)
     end
   end
 
