@@ -10,7 +10,7 @@ module Intrigue
         one_to_one :scan_result
         many_to_one :project
 
-        @@log_level = 'fatal'
+        @@log_level = Intrigue::Core::System::Config.config['intrigue_task_log_level'] || 'fatal'
 
         def self.scope_by_project(name)
           named_project_id = Intrigue::Core::Model::Project.first(name: name).id
@@ -19,7 +19,6 @@ module Intrigue
 
         def before_create
           self.location = Intrigue::Core::System::Config.config['intrigue_task_log_location'] || 'database'
-          @@log_level = Intrigue::Core::System::Config.config['intrigue_task_log_level'] || 'fatal'
           super
         end
 
