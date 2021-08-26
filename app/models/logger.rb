@@ -31,23 +31,24 @@ module Intrigue
         end
 
         def log_debug(message)
-          _log "[D] #{message}\n" if ['verbose', 'debug'].include? @@log_level
+          p ['verbose', 'debug'].include? @@log_level.downcase
+          _log "[D] #{message}\n" if ['verbose', 'debug'].include? @@log_level.downcase
         end
 
         def log_good(message)
-          _log "[+] #{message}\n" if ['verbose', 'good', 'debug'].include? @@log_level
+          _log "[+] #{message}\n" if ['verbose', 'good', 'debug'].include? @@log_level.downcase
         end
 
         def log_error(message)
-          _log "[E] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error'].include? @@log_level
+          _log "[E] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error'].include? @@log_level.downcase
         end
 
         def log_warning(message)
-          _log "[W] #{message}\n" if ['verbose', 'good', 'debug', 'warning'].include? @@log_level
+          _log "[W] #{message}\n" if ['verbose', 'good', 'debug', 'warning'].include? @@log_level.downcase
         end
 
         def log_fatal(message)
-          _log "[F] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error', 'fatal'].include? @@log_level
+          _log "[F] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error', 'fatal'].include? @@log_level.downcase
         end
 
         private
