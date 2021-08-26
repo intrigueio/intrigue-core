@@ -18,7 +18,7 @@
   "sentry_dsn": null,
   "browser_enabled": true,
   "intrigue_task_log_location": "database",
-  "intrigue_task_log_level": "fatal",
+  "intrigue_task_log_level": "error",
   "intrigue_load_paths": [],
   "intrigue_handler_processing_wait_time": 60,
   "intrigue_notifiers": {
