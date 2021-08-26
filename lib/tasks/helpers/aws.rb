@@ -39,6 +39,15 @@ module Intrigue
         client
       end
 
+      def add_objects_to_s3_entity(entity, new_objects)
+        objects = entity.get_detail('found_objects')
+        uniq_objects = new_objects - objects
+        return if uniq_objects.empty?
+
+        (objects << uniq_objects).flatten!
+        entity.set_detail('found_objects', objects)
+      end
+
       # extracts the bucket_name from a URL
       # there can be different types of naming schemes - virtual hosted & path_style
       def extract_bucket_name_from_uri(bucket_url)
@@ -99,7 +108,6 @@ module Intrigue
         concat_regex = Regexp.union(virtual_style_regex, path_style_regex)
 
         str.scan(concat_regex).flatten.compact.last
-
       end
 
     end

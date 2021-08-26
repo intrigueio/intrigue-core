@@ -21,7 +21,7 @@ class Gitrob < BaseTask
   def run
     super
 
-    github_account = _get_entity_name
+    github_account = extract_github_account_name(_get_entity_name)
     token = initialize_gh_client&.fetch('access_token')
     return if token.nil?
 

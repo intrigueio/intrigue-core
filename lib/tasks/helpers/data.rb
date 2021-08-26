@@ -11,6 +11,50 @@ module Data
     ] # possibly too aggressive
   end
 
+  def common_dns_permuation_list
+    [
+      { type: "both", :permutation => "0" },
+      { type: "both", :permutation => "1" },
+      { type: "both", :permutation => "2" },
+      { type: "both", :permutation => "3" },
+      { type: "both", :permutation => "4" },
+      { type: "both", :permutation => "5" },
+      { type: "both", :permutation => "6" },
+      { type: "both", :permutation => "7" },
+      { type: "both", :permutation => "8" },
+      { type: "both", :permutation => "9" },
+      { type: "both", :permutation => "w" },
+      { type: "both", :permutation => "x" },
+      { type: "both", :permutation => "www" },
+      { type: "both", :permutation => "dev" },
+      { type: "both", :permutation => "prd" },
+      { type: "both", :permutation => "prod" },
+      { type: "both", :permutation => "production" },
+      { type: "both", :permutation => "stg" },
+      { type: "both", :permutation => "stage" },
+      { type: "both", :permutation => "staging" },
+      { type: "both", :permutation => "test" },
+      # prefix-only
+      { type: "prefix", :permutation => "dev-" },
+      { type: "prefix", :permutation => "prd-" },
+      { type: "prefix", :permutation => "prod-" },
+      { type: "prefix", :permutation => "production-" },
+      { type: "prefix", :permutation => "stg-" },
+      { type: "prefix", :permutation => "stage-" },
+      { type: "prefix", :permutation => "staging-" },
+      { type: "prefix", :permutation => "test-" },
+      # suffix-only
+      { type: "suffix", :permutation => "-dev" },
+      { type: "suffix", :permutation => "-prd" },
+      { type: "suffix", :permutation => "-prod" },
+      { type: "suffix", :permutation => "-production" },
+      { type: "suffix", :permutation => "-stg" },
+      { type: "suffix", :permutation => "-stage" },
+      { type: "suffix", :permutation => "-staging" },
+      { type: "suffix", :permutation => "-test" }
+    ]
+  end
+
   def _service_name_for(port_num,proto)
     service_name = nil
     file = File.open("#{$intrigue_basedir}/data/service-names-port-numbers.csv","r")
