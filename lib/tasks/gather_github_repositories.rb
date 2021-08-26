@@ -92,9 +92,9 @@ module Intrigue
 
       def client_api_request(client, name)
         return client.repos if name.nil? # no github account specified; return all repos belonging to token
-        return nil unless account_exists?(name) # github account specified; check if account exists
+        return nil unless account_exists?(name, client.access_token) # github account specified; check if account exists
 
-        repositories = if org?(name) # if github account is an org; need to make a different API call
+        repositories = if org?(name, client.access_token) # if github account is an org; need to make a different API call
                          client.org_repos(name, { 'type' => 'all' })
                        else
                          # when calling client.repos and passing in a name, it will return only public repositories
@@ -107,8 +107,9 @@ module Intrigue
         repositories
       end
 
-      def http_get_json_body(url)
-        r = http_get_body(url)
+      def http_get_json_body(url, access_token = nil)
+        headers = access_token ? { 'Authorization' => "Bearer #{access_token}" } : {}
+        r = http_request(:get, url, nil, headers).body
         return nil if http_rate_limiting?(r)
 
         begin
@@ -127,8 +128,8 @@ module Intrigue
         rate_limiting
       end
 
-      def account_exists?(name)
-        response = http_get_json_body("https://api.github.com/users/#{name}")
+      def account_exists?(name, access_token = nil)
+        response = http_get_json_body("https://api.github.com/users/#{name}", access_token)
 
         exists = response['message'] != 'Not Found' if response
         _log_error "#{name} is not a valid Github user/repository; exiting." unless exists
@@ -136,8 +137,8 @@ module Intrigue
         exists
       end
 
-      def org?(name)
-        response = http_get_json_body("https://api.github.com/users/#{name}")
+      def org?(name, access_token)
+        response = http_get_json_body("https://api.github.com/users/#{name}", access_token)
         response['type'].eql? 'Organization'
       end
 
