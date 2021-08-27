@@ -25,9 +25,6 @@ class SearchSpyse < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
-
-
-
     # Make sure the key is set
     api_key = _get_task_config("spyse_api_key")
     # Set the headers
@@ -52,7 +49,7 @@ class SearchSpyse < BaseTask
     headers['Content-Type'] = 'application/json'
 
     until ip_addresses.empty?
-      ip_set = ip_addresses.pop(20)
+      ip_set = ip_addresses.pop(100)
       post_body = JSON.dump({ 'ip_list': ip_set })
       r = http_request(:post, 'https://api.spyse.com/v4/data/bulk-search/ip', nil, headers, post_body)
 
@@ -68,7 +65,7 @@ class SearchSpyse < BaseTask
         results << { 'ip' => ip_address, 'ports' => ports&.compact }
       end
     end
-
+    
     _create_result_entities(results)
   end
 
