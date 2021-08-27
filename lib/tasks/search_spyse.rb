@@ -11,7 +11,7 @@ class SearchSpyse < BaseTask
       :references => ["https://spyse.com/apidocs"],
       :type => "discovery",
       :passive => true,
-      :allowed_types => ["IpAddress","String", "Domain"],
+      :allowed_types => ["IpAddress","String", "Domain", "NetBlock"],
       :example_entities => [{"type" => "String", "details" => {"name" => "1.1.1.1"}}],
       :allowed_options => [],
       :created_types => ["DnsRecord","IpAddress","Organization","PhysicalLocation"]
@@ -25,21 +25,51 @@ class SearchSpyse < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
+    require 'pry'; binding.pry
+
+
+
     # Make sure the key is set
     api_key = _get_task_config("spyse_api_key")
     # Set the headers
     headers = { "Accept" =>  "application/json", 
-      "Authorization" => "Bearer #{api_key}" }
+      "Authorization" => "Bearer #{api_key}"}
 
-    if entity_type == "IpAddress"
-      #search Ip for reputation, Open ports, related information
-      #search_ip_reputation entity_name,headers
-      search_open_ports entity_name,headers
+    case entity_type
+    when 'IpAddress'
+      search_open_ports(entity_name, headers)
+    when 'NetBlock'
+      search_ip_via_netblock(entity_name, headers)
     else
-      _log_error "Unsupported entity type"
+      _log_error 'Entity not supported'
     end
 
   end #end
+
+  def search_ip_via_netblock(entity_name, headers)
+    ip_addresses = expand_netblock(entity_name)
+    headers['Content-Type'] = 'application/json'
+
+    ip_addresses.pop(20).each do |i|
+      post_body = {'ip_list': i }
+      require 'pry'; binding.pry
+      r = http_request(:post, 'https://api.spyse.com/v4/data/bulk-search/ip', headers, post_body)
+
+      begin
+        json_parsed = JSON.parse(r)
+      rescue JSON::ParserError
+        _log_error 'Issue parsing JSON'
+        nil 
+      end
+
+      next unless json_parsed['data']
+      next unless json_parsed['data']['items']
+
+      ports = json_parsed['data']['items'].map { |j| j['port']}
+      ip_entity = _create_entity("IpAddress", { "name" => host.ip } )
+
+    end
+  end
 
   # Search IP reputation and gathering data
   def search_ip_reputation(entity_name, headers)
