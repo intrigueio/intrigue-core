@@ -70,7 +70,7 @@ class Masscan < BaseTask
       masscan_string = "sudo #{masscan_string}" unless Process.uid == 0
 
       _log "Running... #{masscan_string}"
-      _unsafe_system(masscan_string)
+      _unsafe_system(masscan_string, 6000)
 
       f = File.open(temp_file_path).each_line do |line|
 
