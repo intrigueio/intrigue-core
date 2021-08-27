@@ -25,7 +25,6 @@ class SearchSpyse < BaseTask
     entity_name = _get_entity_name
     entity_type = _get_entity_type_string
 
-    require 'pry'; binding.pry
 
 
 
@@ -47,28 +46,46 @@ class SearchSpyse < BaseTask
   end #end
 
   def search_ip_via_netblock(entity_name, headers)
+    results = []
+
     ip_addresses = expand_netblock(entity_name)
     headers['Content-Type'] = 'application/json'
 
-    ip_addresses.pop(20).each do |i|
-      post_body = {'ip_list': i }
-      require 'pry'; binding.pry
-      r = http_request(:post, 'https://api.spyse.com/v4/data/bulk-search/ip', headers, post_body)
+    until ip_addresses.empty?
+      ip_set = ip_addresses.pop(20)
+      post_body = JSON.dump({ 'ip_list': ip_set })
+      r = http_request(:post, 'https://api.spyse.com/v4/data/bulk-search/ip', nil, headers, post_body)
 
-      begin
-        json_parsed = JSON.parse(r)
-      rescue JSON::ParserError
-        _log_error 'Issue parsing JSON'
-        nil 
-      end
+      json_parsed = _parse_json_response(r.body)
+      next if json_parsed.nil?
 
       next unless json_parsed['data']
       next unless json_parsed['data']['items']
 
-      ports = json_parsed['data']['items'].map { |j| j['port']}
-      ip_entity = _create_entity("IpAddress", { "name" => host.ip } )
-
+      json_parsed['data']['items'].each do |item|
+        ip_address = item['ip']
+        ports = item['ports']&.map { |port| port['port'] }
+        results << { 'ip' => ip_address, 'ports' => ports&.compact }
+      end
     end
+
+    _create_result_entities(results)
+  end
+
+  def _create_result_entities(results)
+    results.each do |r|
+      e = _create_entity 'IpAddress', { 'name' => r['ip'] }
+      next if r['ports'].nil?
+
+      r['ports'].each { |pr| _create_network_service_entity(e, pr, 'tcp') }
+    end
+  end
+
+
+  def _parse_json_response(response)
+    JSON.parse(response)
+  rescue JSON::ParserError
+    _log_error 'Issue parsing JSON'
   end
 
   # Search IP reputation and gathering data
