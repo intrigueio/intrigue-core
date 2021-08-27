@@ -69,6 +69,11 @@ class Masscan < BaseTask
       masscan_string = "masscan --ports #{port_string} --rate #{opt_send_rate} -oL #{temp_file_path} --range #{to_scan}"
       masscan_string = "sudo #{masscan_string}" unless Process.uid == 0
 
+      # if we have a router ip, append it 
+      if ENV["NODE_IP"]
+        masscan_string = "#{masscan_string} --router-ip #{ENV["NODE_IP"]}"
+      end
+
       _log "Running... #{masscan_string}"
       _unsafe_system(masscan_string, 6000)
 
