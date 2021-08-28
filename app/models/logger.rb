@@ -12,6 +12,8 @@ module Intrigue
 
         @@log_level = Intrigue::Core::System::Config.config['intrigue_task_log_level'] || 'fatal'
 
+        @@log_level = @@log_level.downcase
+
         def self.scope_by_project(name)
           named_project_id = Intrigue::Core::Model::Project.first(name: name).id
           where(project_id: named_project_id)
@@ -31,24 +33,24 @@ module Intrigue
         end
 
         def log_debug(message)
-          p ['verbose', 'debug'].include? @@log_level.downcase
-          _log "[D] #{message}\n" if ['verbose', 'debug'].include? @@log_level.downcase
+          p ['verbose', 'debug'].include? @@log_level
+          _log "[D] #{message}\n" if ['verbose', 'debug'].include? @@log_level
         end
 
         def log_good(message)
-          _log "[+] #{message}\n" if ['verbose', 'good', 'debug'].include? @@log_level.downcase
+          _log "[+] #{message}\n" if ['verbose', 'good', 'debug'].include? @@log_level
         end
 
         def log_error(message)
-          _log "[E] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error'].include? @@log_level.downcase
+          _log "[E] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error'].include? @@log_level
         end
 
         def log_warning(message)
-          _log "[W] #{message}\n" if ['verbose', 'good', 'debug', 'warning'].include? @@log_level.downcase
+          _log "[W] #{message}\n" if ['verbose', 'good', 'debug', 'warning'].include? @@log_level
         end
 
         def log_fatal(message)
-          _log "[F] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error', 'fatal'].include? @@log_level.downcase
+          _log "[F] #{message}\n" if ['verbose', 'good', 'debug', 'warning', 'error', 'fatal'].include? @@log_level
         end
 
         private
