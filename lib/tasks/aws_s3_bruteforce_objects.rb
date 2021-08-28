@@ -39,6 +39,7 @@ module Intrigue
         readable_objects = filter_readable_objects(s3_client, bucket_name, objects_list)
         return if readable_objects.empty?
 
+        add_objects_to_s3_entity(@entity, readable_objects)
         create_issue(bucket_name, readable_objects)
       end
 

@@ -39,6 +39,15 @@ module Intrigue
         client
       end
 
+      def add_objects_to_s3_entity(entity, new_objects)
+        objects = entity.get_detail('found_objects')
+        uniq_objects = new_objects - objects
+        return if uniq_objects.empty?
+
+        (objects << uniq_objects).flatten!
+        entity.set_detail('found_objects', objects)
+      end
+
       # extracts the bucket_name from a URL
       # there can be different types of naming schemes - virtual hosted & path_style
       def extract_bucket_name_from_uri(bucket_url)
@@ -48,12 +57,12 @@ module Intrigue
         # https://bucketname.s3.us-west-2.amazonaws.com
         # bucketname.s3.amazonaws.com
         # bucketname.s3-region.amazonaws.com
-        virtual_style_regex = /(?:https:\/\/)?(.+)\.s3(?:-|.+)?\.amazonaws.com/ 
+        virtual_style_regex = /(?:https:\/\/)?^(?=.*-)[a-zA-Z0-9-]+\.s3(?:-|.+)?\.amazonaws\.com/ 
 
         ## Path Style -> being deprecated soon; adding in for legacy support
         # https://s3.amazonaws.com/bucketname
         # s3.amazonaws.com/bucketname
-        path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/(.+)\/(?:.+)?/
+        path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/([\w\.\-]+)/
 
         case bucket_url
         when virtual_style_regex
@@ -61,11 +70,44 @@ module Intrigue
         when path_style_regex
           bucket_name = bucket_url.scan(path_style_regex).last.first
         else
-          _log_error 'Unable to extract bucket name from URL.'
+          # log_error 'Unable to extract bucket name from URL.'
+          # rather print error in task which calls this helper
           bucket_name = nil
         end
 
         bucket_name
+      end
+
+
+      def get_aws_keys_from_entity_type(entity_type)
+        if entity_type == "AwsCredential"
+          aws_access_key = _get_entity_sensitive_detail 'aws_access_key_id'
+          aws_secret_key = _get_entity_sensitive_detail 'aws_secret_access_key'
+        elsif entity_type == "String"
+          aws_access_key = _get_task_config('aws_access_key_id')
+          aws_secret_key = _get_task_config('aws_secret_access_key')
+        else
+          aws_access_key = nil
+          aws_secret_key = nil
+        end
+
+        # if empty string return nil
+        if aws_access_key == ""
+          aws_access_key = nil
+        end
+        if aws_secret_key == ""
+          aws_secret_key = nil
+        end
+
+        return aws_access_key, aws_secret_key
+      end
+
+      def extract_bucket_name_from_string(str)
+        virtual_style_regex = /(?:https:\/\/)?([a-z0-9\-\.]+)\.s3(?:-|.+)?\.amazonaws\.com/i
+        path_style_regex = /(?:https:\/\/)?s3\.amazonaws\.com\/([\w\.\-]+)/i
+        concat_regex = Regexp.union(virtual_style_regex, path_style_regex)
+
+        str.scan(concat_regex).flatten.compact.last
       end
 
     end

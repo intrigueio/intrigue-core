@@ -5,6 +5,7 @@
 ###
 begin  # try to load runtime deps
   require 'aws-sdk-iam'
+  require 'aws-sdk-ecs'
   require 'aws-sdk-ec2'
   require 'aws-sdk-route53'
   require 'aws-sdk-s3'
@@ -20,13 +21,13 @@ begin  # try to load runtime deps
   require 'flareon'
   require 'ip_ranger'
   require 'ipaddr'
-  require 'maxminddb'
   require 'net-http2'
   require 'net/dns'
   require 'net/ftp'
   require 'neutrino_api'
   require 'nmap/xml'
   require 'nokogiri'
+  require 'octokit'
   require 'open3'
   require 'open-uri'
   require 'opencorporates'
@@ -77,4 +78,8 @@ Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
 
 # Load all checks
 tasks_folder = File.expand_path('../checks', __FILE__) # get absolute directory
+Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }
+
+# Load bruteforce tasks
+tasks_folder = File.expand_path('../tasks/vuln/bruteforce', __FILE__) # get absolute directory
 Dir["#{tasks_folder}/*.rb"].each { |file| require_relative file }

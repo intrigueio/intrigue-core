@@ -11,6 +11,50 @@ module Data
     ] # possibly too aggressive
   end
 
+  def common_dns_permuation_list
+    [
+      { type: "both", :permutation => "0" },
+      { type: "both", :permutation => "1" },
+      { type: "both", :permutation => "2" },
+      { type: "both", :permutation => "3" },
+      { type: "both", :permutation => "4" },
+      { type: "both", :permutation => "5" },
+      { type: "both", :permutation => "6" },
+      { type: "both", :permutation => "7" },
+      { type: "both", :permutation => "8" },
+      { type: "both", :permutation => "9" },
+      { type: "both", :permutation => "w" },
+      { type: "both", :permutation => "x" },
+      { type: "both", :permutation => "www" },
+      { type: "both", :permutation => "dev" },
+      { type: "both", :permutation => "prd" },
+      { type: "both", :permutation => "prod" },
+      { type: "both", :permutation => "production" },
+      { type: "both", :permutation => "stg" },
+      { type: "both", :permutation => "stage" },
+      { type: "both", :permutation => "staging" },
+      { type: "both", :permutation => "test" },
+      # prefix-only
+      { type: "prefix", :permutation => "dev-" },
+      { type: "prefix", :permutation => "prd-" },
+      { type: "prefix", :permutation => "prod-" },
+      { type: "prefix", :permutation => "production-" },
+      { type: "prefix", :permutation => "stg-" },
+      { type: "prefix", :permutation => "stage-" },
+      { type: "prefix", :permutation => "staging-" },
+      { type: "prefix", :permutation => "test-" },
+      # suffix-only
+      { type: "suffix", :permutation => "-dev" },
+      { type: "suffix", :permutation => "-prd" },
+      { type: "suffix", :permutation => "-prod" },
+      { type: "suffix", :permutation => "-production" },
+      { type: "suffix", :permutation => "-stg" },
+      { type: "suffix", :permutation => "-stage" },
+      { type: "suffix", :permutation => "-staging" },
+      { type: "suffix", :permutation => "-test" }
+    ]
+  end
+
   def _service_name_for(port_num,proto)
     service_name = nil
     file = File.open("#{$intrigue_basedir}/data/service-names-port-numbers.csv","r")
@@ -276,48 +320,6 @@ module Data
 
   tcp_ports.split(",")
   end
-
-  def geolocate_ip(ip)
-
-    return nil unless File.exist? "#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb"
-
-    begin
-      db = MaxMindDB.new("#{$intrigue_basedir}/data/geolitecity/GeoLite2-City.mmdb",MaxMindDB::LOW_MEMORY_FILE_READER)
-
-      _log "looking up location for #{ip}"
-
-      #
-      # This call attempts to do a lookup
-      #
-      location = db.lookup(ip)
-
-      #translate the hash to remove some of the multiingual stuff
-      hash = {}
-
-      hash[:city] = location.to_hash["city"]["names"]["en"] if location.to_hash["city"]
-      hash[:continent] = location.to_hash["continent"]["names"]["en"] if location.to_hash["continent"]
-      hash[:continent_code] = location.to_hash["continent"]["code"] if location.to_hash["continent"]
-      hash[:country] = location.to_hash["country"]["names"]["en"] if location.to_hash["country"]
-      hash[:country_code] = location.to_hash["country"]["iso_code"] if location.to_hash["country"]
-      hash.merge(location.to_hash["location"].map { |k,v| [k.to_sym,v] }.to_h) if location.to_hash["location"]
-      hash[:postal] = location.to_hash["postal"]["code"] if location.to_hash["postal"]
-      hash[:registered_country] = location.to_hash["registered_country"]["names"]["en"] if location.to_hash["registered_country"]
-      hash[:registered_country_code] = location.to_hash["registered_country"]["iso_code"] if location.to_hash["registered_country"]
-      hash[:subdivisions] = location.to_hash["subdivisions"].map{|s| s["names"]["en"] } if location.to_hash["subdivisions"]
-
-    rescue RuntimeError => e
-      _log "Error reading file: #{e}"
-    rescue ArgumentError => e
-      _log "Argument Error #{e}"
-    rescue Encoding::InvalidByteSequenceError => e
-      _log "Encoding error: #{e}"
-    rescue Encoding::UndefinedConversionError => e
-      _log "Encoding error: #{e}"
-    end
-
-  hash
-  end
-
 
 end
 end

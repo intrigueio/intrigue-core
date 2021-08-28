@@ -17,11 +17,11 @@ class DnsBruteSub < BaseTask
       :example_entities =>  [{"type" => "DnsRecord", "details" => {"name" => "intrigue.io"}}],
       :allowed_options => [
         {:name => "brute_list", :regex => "alpha_numeric_list", :default => [
-            "admin", "admin", "dl", "doc", "docs", "download", "email", "en", 
-            "firewall", "ftp", "fw", "gateway", "help", "hr", "intranet", "it", 
-            "mail", "mickey", "mx", "mx1", "mx2", "my", "network", "ns1", "ns2", 
-            "ns3", "owa", "photos", "portal", "private", "pub", "public", "safe", 
-            "search", "secure", "service", "sharepoint", "staging", "test", "time", 
+            "admin", "admin", "dl", "doc", "docs", "download", "email", "en",
+            "firewall", "ftp", "fw", "gateway", "help", "hr", "intranet", "it",
+            "mail", "mickey", "mx", "mx1", "mx2", "my", "network", "ns1", "ns2",
+            "ns3", "owa", "photos", "portal", "private", "pub", "public", "safe",
+            "search", "secure", "service", "sharepoint", "staging", "test", "time",
             "tools", "vpn", "web", "ww2", "www", "zeus" ] },
         {:name => "use_mashed_domains", :regex => "boolean", :default => false },
         {:name => "use_permutations", :regex => "boolean", :default => true },
@@ -134,7 +134,7 @@ class DnsBruteSub < BaseTask
                   found_count += 1
                   _log_good "Resolved address #{resolved_address} for #{fqdn}!"
 
-                  # create it!                  
+                  # create it!
                   create_dns_entity_from_string fqdn
 
                   #
@@ -206,6 +206,7 @@ class DnsBruteSub < BaseTask
       "#{subdomain}-city",
       "#{subdomain}-client",
       "#{subdomain}-customer",
+      "#{subdomain}-dev",
       "#{subdomain}-edge",
       "#{subdomain}-guest",
       "#{subdomain}-host",
@@ -223,7 +224,13 @@ class DnsBruteSub < BaseTask
       "#{subdomain}-vpn",
       "#{subdomain}-wifi",
       "#{subdomain}-wireless",
-      "#{subdomain}-www"
+      "#{subdomain}-www",
+      "#{subdomain}dev",
+      "#{subdomain}prod",
+      "#{subdomain}staging",
+      "#{subdomain}stage",
+      "#{subdomain}test",
+      "#{subdomain}tst"
     ]
 
     # test to first make sure we don't have a subdomain specific wildcard

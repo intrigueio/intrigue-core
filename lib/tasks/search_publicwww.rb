@@ -50,7 +50,7 @@ module Intrigue
       end
 
       # store links as an extended detail
-      _set_entity_detail("public_www_results", { entity_name => download.split("\n") } )
+      _set_entity_detail("public_www_results", { entity_name => download.split("\n")[1..30] } )
 
     end
 

@@ -10,6 +10,10 @@ class CoreCli < Thor
 
   include Intrigue::Core::System
 
+  def _log(msg)
+    puts "[Log] - #{msg}"
+  end 
+
   def initialize(*args)
     super
     $intrigue_basedir = File.dirname(__FILE__)
@@ -134,7 +138,7 @@ class CoreCli < Thor
   desc "local_handle_project [Project] [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
   def local_handle_project(project, handler_type, prefix=nil)
     puts "Working on project #{project}..."
-    Intrigue::Core::Model::Project.first(:name => project).handle(handler_type, prefix)
+    Intrigue::Core::Model::Project.first(:name => project).handle_synchronous(handler_type, prefix)
   end
 
   desc "local_handle_scan_results [Project] [Handler] [Prefix (optional)]", "Manually run a handler on a project's scan results"
@@ -267,30 +271,33 @@ private
 
   # parse out entity from the cli
   def _parse_entity(entity_string)
-    # check and return nil if the first char is a "#"
-    return nil if entity_string[0] == "#"
+    if entity_string.class == Hash
+      return Intrigue::Core::System::Bootstrap::_parse_entity_hash(entity_string)
+    else
+      # check and return nil if the first char is a "#"
+      return nil if entity_string[0] == "#"
 
-    # otherwise split on our delimiter
-    split_string = entity_string.split(@delim)
-    entity_type = split_string[0]
-    entity_name = split_string[1]
+      # otherwise split on our delimiter
+      split_string = entity_string.split(@delim)
+      entity_type = split_string[0]
+      entity_name = split_string[1]
 
-    # if a project name is specified, grab it
-    if split_string.count > 2
-      project_name = split_string[2]
+      # if a project name is specified, grab it
+      if split_string.count > 2
+        project_name = split_string[2]
+      end
+
+      # create the hash we'll return
+      entity_hash = {
+        "project_name" => project_name,
+        "type" => entity_type,
+        "name" => entity_name,
+        "details" => { "name" => entity_name }
+      }
+
+      puts "Got entity: #{entity_hash}" if @debug
+      return entity_hash
     end
-
-    # create the hash we'll return
-    entity_hash = {
-      "project_name" => project_name,
-      "type" => entity_type,
-      "name" => entity_name,
-      "details" => { "name" => entity_name }
-    }
-
-    puts "Got entity: #{entity_hash}" if @debug
-
-  entity_hash
   end
 
   # Parse out options from cli

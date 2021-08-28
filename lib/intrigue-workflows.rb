@@ -6,7 +6,6 @@ module Intrigue
       @hash = hash
     end
 
-
     def definition
       @hash[:definition]
     end
@@ -196,21 +195,19 @@ module Intrigue
       load_paths.each do |path|
         Dir.glob("#{path}/*.yml").each do |f|
           template = YAML.load_file(f)
-          out << template.symbolize_keys
+          out << template.symbolize_keys!
         end
       end
 
       #
       # pull user workflows (requires core)
       #
-      begin
-        mod = Required::Module::const_get "Intrigue::Core::Model"
-        out.concat(Intrigue::Core::Model::Workflow.all.map{|x| x.to_h })
-      rescue NameError
-        #Doesn't exist, dont try to load them again
+      
+      if defined?(Intrigue::Core::Model)
+        out.concat(Intrigue::Core::Model::Workflow.all.map{|x| x.to_h })   
       end
 
-    out
+      out
     end
 
     # loads both system and user defined

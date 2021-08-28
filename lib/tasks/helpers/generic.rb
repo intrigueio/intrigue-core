@@ -145,8 +145,12 @@ module Generic
     @entity.set_detail(detail_name, detail_value)
   end
 
-  def _get_entity_details
-    @entity.get_details
+  def _get_entity_sensitive_detail(detail_name)
+    @entity.get_sensitive_detail(detail_name)
+  end
+
+  def _set_entity_sensitive_detail(detail_name, detail_value)
+    @entity.set_sensitive_detail(detail_name, detail_value)
   end
 
   def _get_and_set_entity_details(hash)
@@ -175,6 +179,7 @@ module Generic
     #   url = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["uri"]
     #   access_key = Intrigue::Core::System::Config.config["intrigue_global_machine_config"]["platform_credentials_api_key"]["value"]
 
+    # collection_id, key_name, collection_run_session_token (in header), ENGINE_KEY (in header)
     #   res = http_request :get,"#{url}?access_key=#{access_key}&key=#{key}"
     #   if res.response_code == 200
     #     return res.body_utf8

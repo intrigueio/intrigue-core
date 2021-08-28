@@ -39,8 +39,16 @@ class Uri < Intrigue::Task::BaseTask
     _log "Making initial requests, following redirect"
     # Grab the full response
     response = http_request :get, uri
+    response2 = http_request :get, uri
 
-    unless response && response.body_utf8
+    if [response.code, response2.code].all? { |code| code == '0' }
+      _log_error "Unable to reach #{uri}, bailing"
+      @entity.hidden = true
+      @entity.save_changes
+      return # no point in doing additional logic
+    end
+
+    unless response && response2 && response.body_utf8
       _log_error "Unable to receive a response for #{uri}, bailing"
       return
     end
@@ -315,9 +323,21 @@ class Uri < Intrigue::Task::BaseTask
     ### TODO ... move to whois!!!!
     ###
     if resolved_ip_address.is_ip_address?
+      # if we found an IP from the previous attempt at resolving, create the entity.
+      _log 'Creating IPAddress entity.'
+      _create_entity 'IpAddress', { name: resolved_ip_address }
+      
       resp = cymru_ip_whois_lookup(resolved_ip_address)
       net_geo = resp[:net_country_code]
       net_name = resp[:net_name]
+
+      _log "Geolocating..."
+      location_hash = geolocate_ip(resolved_ip_address)
+      if location_hash.nil? 
+        _log "Unable to retrieve Gelocation."
+      else
+        _set_entity_detail("geolocation", location_hash)
+      end
     end
 
     # get the hashed dom structure
@@ -345,7 +365,6 @@ class Uri < Intrigue::Task::BaseTask
       "forms" => contains_forms,
       "generator" => generator_string,
       "headers" => headers,
-      "hidden_response_data" => response.body_utf8,
       "redirect_chain" => redirects[:chain].flatten.uniq || [],
       "response_data_hash" => response_data_hash,
       "dom_sha1" => dom_sha1,
@@ -400,7 +419,7 @@ class Uri < Intrigue::Task::BaseTask
 
         # if we made it this far, parse them & compare them
         # TODO ... is this overkill?
-        their_doc = e.details["hidden_response_data"]
+        their_doc = e.details["extended_response_body"]
         diffs = parse_html_diffs(our_doc, their_doc)
         their_doc = nil
 
@@ -474,7 +493,7 @@ class Uri < Intrigue::Task::BaseTask
   # checks to see if we had an auth config return true
   def check_auth_by_type(configuration, auth_type)
     configuration.each do |c|
-      if "#{c["name"]}" == auth_type && "#{c["value"]}".to_bool
+      if "#{c["name"]}" == auth_type && "#{c["result"]}".to_bool
         return true
       end
     end

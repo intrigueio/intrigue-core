@@ -259,7 +259,7 @@
       "editable": "true",
       "comment": ""
     },
-    "gitrob_access_token": {
+    "github_access_token": {
       "value": "",
       "uri": "https://github.com/settings/tokens",
       "editable": "true",
@@ -355,9 +355,19 @@
       "editable": "true",
       "comment": ""
     },
-    "ipinfo_api_key": {
+    "ipdata_api_key": {
+      "value": "CHANGE_ME",
+      "uri": "api.ipdata.co"
+    },
+    "ipqs_api_key": {
       "value": "",
-      "uri": "https://ipinfo.io/developers",
+      "uri": "https://www.ipqualityscore.com/documentation/fraud-prevention-api-use-cases",
+      "editable": "true",
+      "comment": ""
+    },
+    "leak_lookup_api_key": {
+      "value": "",
+      "uri": "https://leak-lookup.com/api",
       "editable": "true",
       "comment": ""
     },
@@ -484,6 +494,12 @@
     "twitter_access_token_secret": {
       "value": "",
       "uri": "https://dev.twitter.com",
+      "editable": "true",
+      "comment": ""
+    },
+    "urlscan_api_key": {
+      "value": "",
+      "uri": "https://urlscan.io/",
       "editable": "true",
       "comment": ""
     },

@@ -7,7 +7,7 @@ class SslCertificate < Intrigue::Core::Model::Entity
       name: "SslCertificate",
       description: "An SSL Certificate",
       user_creatable: false,
-      example: "test.intrigue.io (3695285271625093099202351562148679716)"
+      example: "intrigue.io (311448f91da5668ce8e4c1a7b49615e83f19c14ce7f7dd4088f32a6f97f56707)"
     }
   end
 
@@ -23,6 +23,7 @@ class SslCertificate < Intrigue::Core::Model::Entity
   # "subject": "#{cert.subject}",
   # "issuer": "#{cert.issuer}",
   # "algorithm": "#{cert.signature_algorithm}",
+  # "fingerprint_sha256" => "#{cert_sha256_fingerprint}",
   # "text": "#{cert.to_text}" }
   def detail_string
     "#{details["not_after"]} | #{details["subject"]} | #{details["issuer"]}"

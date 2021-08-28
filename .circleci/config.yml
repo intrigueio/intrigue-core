@@ -9,6 +9,15 @@ workflows:
       - build-core:
           context:
               - Build Context (Low Security)
+      - security-scan-core:
+          requires:
+            - build-core
+          context:
+              - SecurityTesting Context
+          filters:
+              branches:
+                only:
+                  - develop 
 
 jobs:
   build-core:
@@ -55,5 +64,17 @@ jobs:
                   }
                 }
               ]
-            }  
+            }
+  security-scan-core:
+    docker:
+      - image: circleci/ruby:2.7.2-browsers
+    steps:
+      - checkout
+      - run:
+          name: Run whitesource
+          command:  | 
+            bundle install
+            curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
+            echo Unified Agent downloaded successfully
+            java -jar wss-unified-agent.jar -project intrigue-core -d ./
     
