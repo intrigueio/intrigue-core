@@ -16,7 +16,7 @@ module Model
     end
 
     def before_create
-      self.location = Intrigue::Core::System::Config.config["intrigue_task_log_location"] || "database"
+      self.location = Intrigue::Core::System::Config.config["intrigue_task_log_location"] || "none"
       super
     end
 
@@ -57,14 +57,10 @@ module Model
       encoded_out = message.sanitize_unicode
 
       if location == "database"
-        begin
-          # any other value, log to the database
-          update(:full_log => "#{full_log}#{encoded_out}")
-          save_changes
-        rescue Sequel::DatabaseError => e
-          puts "ERROR WRITING LOG FOR #{self}: #{e}"
-        end
-
+        # any other value, log to the database
+        update(:full_log => "#{full_log}#{encoded_out}")
+        save_changes
+        
       elsif location == "file"
         File.open("#{$intrigue_basedir}/log/#{task_result.id}.log","a"){|f| f.puts "#{encoded_out}"; } 
       else
