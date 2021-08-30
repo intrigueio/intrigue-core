@@ -65,15 +65,14 @@ class SearchSpyse < BaseTask
         results << { 'ip' => ip_address, 'ports' => ports&.compact }
       end
     end
-    
     _create_result_entities(results)
   end
 
   def _create_result_entities(results)
     results.each do |r|
-      e = _create_entity 'IpAddress', { 'name' => r['ip'] }
       next if r['ports'].nil?
 
+      e = _create_entity 'IpAddress', { 'name' => r['ip'] }
       r['ports'].each { |pr| _create_network_service_entity(e, pr, 'tcp') }
     end
   end
