@@ -145,6 +145,7 @@ module Data
       "edlio.net", # https://edlio.com/
       "fastly.net",
       "freshdesk.com",
+      "googlevideo.com",
       "helloworld.com",
       "hexagon-cdn.com",# TODO - worth revisiting,may include related hosts
       "incapsula.com",
