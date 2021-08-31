@@ -57,8 +57,10 @@ module Ident
         tags << fp["tags"]
         if  t.match(/^Admin Panel$/i)
           issues_to_create << ["exposed_admin_panel_unauthenticated", fp]
-        elsif t.match(/^RDP/i)
+        elsif t.match(/^RDP$/i)
           issues_to_create << ["open_rdp_port", fp]
+        elsif t.match(/^SMB$/i)
+          issues_to_create << ["exposed_smb_service", fp]
         elsif t.match(/^Database$/i)
           issues_to_create << ["exposed_database_service", fp]
         elsif t.match(/^DefaultPage$/i)
