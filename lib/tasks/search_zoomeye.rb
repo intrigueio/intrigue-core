@@ -15,8 +15,10 @@ module Intrigue
             { 'type' => 'IpAddres', 'details' => { 'name' => '1.1.1.1' } }
           ],
           allowed_options: [],
-          created_types: ['DnsRecord', 'IpAddress', 'NetworkService']
+          created_types: ['DnsRecord', 'IpAddress', 'NetworkService'],
+          queue: 'task_scan'
         }
+
       end
 
       ## Default method, subclasses must override this
