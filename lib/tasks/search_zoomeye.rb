@@ -26,6 +26,7 @@ module Intrigue
         super
 
         results_json = get_zoomeye_results
+        _log_error 'Unable to obtain results from API call; aborting.' if results_json.nil?
         return if results_json.nil?
 
         results = parse_results(results_json)
@@ -56,6 +57,7 @@ module Intrigue
 
         response = make_zoomeye_api_call(1)
         return if response.nil?
+        return if response['matches'].nil?
 
         all_json << response['matches'] # concat matches into array
         total_pages = (response['total'].to_i / 20.to_f).ceil # get amount of total pages rounded up
@@ -65,7 +67,7 @@ module Intrigue
         # not multithreaded so rate limit is not reached
         pagination(total_pages, all_json) # array passed by reference so pagination will fill it in
 
-        all_json.flatten
+        all_json.flatten.compact
       end
 
       def pagination(max_pages, output)
@@ -73,6 +75,7 @@ module Intrigue
           _log "Getting results from page #{i}"
           response = make_zoomeye_api_call(i)
           next if response.nil?
+          next if response['matches'].nil?
 
           output << response['matches']
           sleep(1) # do not upset zoomeye
