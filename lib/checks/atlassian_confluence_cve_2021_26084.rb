@@ -18,7 +18,7 @@ module Intrigue
           ],
           references: [
             { type: 'description', uri: 'https://jira.atlassian.com/browse/CONFSERVER-67940' },
-            { type: 'description', uri: 'https://cve.mitre.org/cgi-bin/cvename.cgi?name=2021-21087' }
+            { type: 'description', uri: 'https://cve.mitre.org/cgi-bin/cvename.cgi?name=2021-26084' }
           ],
           authors: %w[SnowyOwl dhiyaneshDk maxim]
         }.merge!(instance_details)
