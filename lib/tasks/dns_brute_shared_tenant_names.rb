@@ -145,7 +145,7 @@ module Intrigue
           #basename[place] = "#{current_number.to_i + 1000}"
           increment = {
             :permutation_details => p,
-            :generated_permutation => "#{basename}",
+            :generated_permutation => "#{basename}.#{brute_domain}",
             :depth => 1
           }
           work_q.push(increment)
@@ -159,7 +159,7 @@ module Intrigue
           #basename[place] = "#{current_number.to_i - 1000}"
           decrement = {
             :permutation_details => p,
-            :generated_permutation => "#{basename}",
+            :generated_permutation => "#{basename}.#{brute_domain}",
             :depth => 1
           }
           work_q.push(decrement)
