@@ -27,9 +27,10 @@ module Intrigue
 
         gh_client = initialize_gh_client
 
-        require 'pry'; binding.pry
         account = extract_github_account_name(_get_entity_name) if _get_entity_type_string == 'GithubAccount'
         repos = retrieve_repositories(gh_client, account)
+        _log "Results obtained: #{repos.size}"
+        return if repos.empty?
 
         repos.each { |r| create_github_repo_entity(r) }
       end
@@ -41,7 +42,7 @@ module Intrigue
         empty_check, repo_parser = determine_parser(name)
 
         (1..10).each do |i|
-          r = _http_get_json_body(return_api_uri.call(i), client.access_token)
+          r = _http_get_json_body(return_api_uri.call(i), client&.access_token)
           break if r.equal?('rate_exhaustion')
           next if r.nil? || r.empty?
 
@@ -79,12 +80,12 @@ module Intrigue
 
       def _http_get_json_body(url, access_token = nil)
         headers = access_token ? { 'Authorization' => "Bearer #{access_token}" } : {}
-        r = http_request(:get, url, nil, headers).body
+        r = http_request(:get, url, nil, headers)
 
-        exhausted = _check_rate_limiting(response)
+        exhausted = _check_rate_limiting(r)
         return exhausted if exhausted
         
-        _parse_json_response(r)
+        _parse_json_response(r.body)
       end
 
       def _check_rate_limiting(response)
@@ -99,13 +100,13 @@ module Intrigue
       end
 
       def _api_requests_exhausted?(response)
-        parsed_body = _parse_json_response(response)
+        parsed_body = _parse_json_response(response.body)
         parsed_body['message']&.include?('API rate limit exceeded') &&
           response.headers['X-RateLimit-Remaining'].zero?
       end
 
       def _secondary_rate_limit?(response)
-        parsed_body = _parse_json_response(response)
+        parsed_body = _parse_json_response(response.body)
         parsed_body['message']&.include?('You have exceeded a secondary rate limit and have been temporarily blocked')
       end
 

@@ -36,7 +36,7 @@ module Intrigue
       end
 
       def extract_full_repo_name(repo)
-        repo.scan(/https:\/\/github\.com\/([\w|\-]+\/[\w|\-]+)/i).flatten.first
+        repo.scan(/https:\/\/github\.com\/([\w|\-]+\/[\w|\-|\.]+)/i).flatten.first
       end
 
       ### Single threaded version
