@@ -78,6 +78,7 @@ gem 'pg'
 gem 'async-dns'
 
 # Tasks
+gem 'aws-sdk-ecs'
 gem 'aws-sdk-ec2'
 gem 'aws-sdk-iam'
 gem 'aws-sdk-route53'

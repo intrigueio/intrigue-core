@@ -26,10 +26,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 5aa8670bac0919333e4de36eea13033b14b0f1c2
+  revision: 16395560d00f5473c04787eb303cd82253bb2fdb
   branch: main
   specs:
-    intrigue-ident (5.6.6)
+    intrigue-ident (5.6.9)
       dnsruby
       mongo
       murmurhash3
@@ -132,13 +132,16 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.1.1)
-    aws-partitions (1.489.0)
+    aws-partitions (1.491.0)
     aws-sdk-core (3.119.1)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-ec2 (1.257.0)
+    aws-sdk-ec2 (1.259.0)
+      aws-sdk-core (~> 3, >= 3.119.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-ecs (1.84.0)
       aws-sdk-core (~> 3, >= 3.119.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-iam (1.59.0)
@@ -215,7 +218,7 @@ GEM
       command_lion (= 2.0.1)
       httparty (~> 0.16.2)
       parallel (~> 1.12.1)
-    fog-aws (3.11.0)
+    fog-aws (3.12.0)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
       fog-xml (~> 0.1)
@@ -256,7 +259,7 @@ GEM
       google-apis-core (>= 0.4, < 2.a)
       google-apis-discovery_v1 (~> 0.5)
       thor (>= 0.20, < 2.a)
-    google-apis-iamcredentials_v1 (0.6.0)
+    google-apis-iamcredentials_v1 (0.7.0)
       google-apis-core (>= 0.4, < 2.a)
     google-apis-storage_v1 (0.6.0)
       google-apis-core (>= 0.4, < 2.a)
@@ -313,7 +316,7 @@ GEM
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.0704)
-    mini_mime (1.1.0)
+    mini_mime (1.1.1)
     minitest (5.14.4)
     mongo (2.15.0)
       bson (>= 4.8.2, < 5.0.0)
@@ -328,9 +331,9 @@ GEM
       http-2 (~> 0.11)
     netrc (0.11.0)
     nio4r (2.5.8)
-    nokogiri (1.12.3-x86_64-darwin)
+    nokogiri (1.12.4-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.12.3-x86_64-linux)
+    nokogiri (1.12.4-x86_64-linux)
       racc (~> 1.4)
     octokit (4.21.0)
       faraday (>= 0.9)
@@ -345,7 +348,7 @@ GEM
     power_assert (2.0.0)
     protocol-hpack (1.4.2)
     protocol-http (0.22.5)
-    protocol-http1 (0.14.1)
+    protocol-http1 (0.14.2)
       protocol-http (~> 0.22)
     protocol-http2 (0.14.2)
       protocol-hpack (~> 1.4)
@@ -412,7 +415,7 @@ GEM
       rspec-support (~> 3.10.0)
     rspec-support (3.10.2)
     ruby2_keywords (0.0.5)
-    ruby_smb (2.0.10)
+    ruby_smb (2.0.11)
       bindata
       openssl-ccm
       openssl-cmac
@@ -428,7 +431,7 @@ GEM
     sequel (5.47.0)
     shodan (1.0.0)
       json (>= 1.4.6)
-    sidekiq (6.2.1)
+    sidekiq (6.2.2)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -496,6 +499,7 @@ PLATFORMS
 DEPENDENCIES
   async-dns
   aws-sdk-ec2
+  aws-sdk-ecs
   aws-sdk-iam
   aws-sdk-route53
   aws-sdk-s3

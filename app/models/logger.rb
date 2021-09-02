@@ -5,23 +5,22 @@ module Intrigue
         plugin :serialization, :json
         plugin :validation_helpers
         plugin :timestamps
-
+        
         one_to_one :task_result
         one_to_one :scan_result
         many_to_one :project
 
-        @@log_level = Intrigue::Core::System::Config.config['intrigue_task_log_level'] || 'fatal'
+        def before_create
+          self.location = Intrigue::Core::System::Config.config["intrigue_task_log_location"] || "none"
+          super
+        end
 
+        @@log_level = Intrigue::Core::System::Config.config['intrigue_task_log_level'] || 'fatal'
         @@log_level = @@log_level.downcase
 
         def self.scope_by_project(name)
           named_project_id = Intrigue::Core::Model::Project.first(name: name).id
           where(project_id: named_project_id)
-        end
-
-        def before_create
-          self.location = Intrigue::Core::System::Config.config['intrigue_task_log_location'] || 'database'
-          super
         end
 
         def validate
@@ -76,6 +75,7 @@ module Intrigue
             raise "Fatal! Unknown value for intrigue_task_log_location: #{intrigue_task_log_location}"
           end
         end
+        
       end
     end
   end

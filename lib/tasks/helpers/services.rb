@@ -297,6 +297,13 @@ module Services
   true
   end
 
+  def expand_netblock(netblock)
+    converted = IPAddr.new(netblock)
+    converted.to_range.to_a[1..-1].map(&:to_s)
+  rescue IPAddr::InvalidPrefixError
+    _log_error 'Invalid NetBlock!'
+  end
+
 
   def _gather_http_response(uri)
 
