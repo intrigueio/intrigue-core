@@ -30,6 +30,7 @@ module Intrigue
         require 'pry'; binding.pry
         account = extract_github_account_name(_get_entity_name) if _get_entity_type_string == 'GithubAccount'
         repos = retrieve_repositories(gh_client, account)
+
         repos.each { |r| create_github_repo_entity(r) }
       end
 
@@ -37,12 +38,14 @@ module Intrigue
         repositories = []
 
         return_api_uri = determine_api_route(name)
+        empty_check, repo_parser = determine_parser(name)
 
         (1..10).each do |i|
           r = _http_get_json_body(return_api_uri.call(i), client.access_token)
-          empty_check, repo_parser = determine_parser(name)
+          break if r.equal?('rate_exhaustion')
+          next if r.nil? || r.empty?
 
-          break if empty_check.call(r)
+          break if empty_check.call(r) # no more responses
 
           repositories << repo_parser.call(r)
         end
@@ -77,9 +80,33 @@ module Intrigue
       def _http_get_json_body(url, access_token = nil)
         headers = access_token ? { 'Authorization' => "Bearer #{access_token}" } : {}
         r = http_request(:get, url, nil, headers).body
-        # return nil if http_rate_limiting?(r)
 
+        exhausted = _check_rate_limiting(response)
+        return exhausted if exhausted
+        
         _parse_json_response(r)
+      end
+
+      def _check_rate_limiting(response)
+        if _api_requests_exhausted?(response)
+          _log_error 'Exhausted the maximum amount of requests per hour; aborting.'
+          'rate_exhaustion'
+        elsif _secondary_rate_limit?(response)
+          _log_error 'Rate limiting hit; will take a break before firing off additional requests.'
+          sleep(300)
+          'temp_rate_limit'
+        end
+      end
+
+      def _api_requests_exhausted?(response)
+        parsed_body = _parse_json_response(response)
+        parsed_body['message']&.include?('API rate limit exceeded') &&
+          response.headers['X-RateLimit-Remaining'].zero?
+      end
+
+      def _secondary_rate_limit?(response)
+        parsed_body = _parse_json_response(response)
+        parsed_body['message']&.include?('You have exceeded a secondary rate limit and have been temporarily blocked')
       end
 
       def _parse_json_response(response)
@@ -87,6 +114,7 @@ module Intrigue
       rescue JSON::ParserError
         _log_error 'Cannot parse JSON.'
       end
+
     end
   end
 end
