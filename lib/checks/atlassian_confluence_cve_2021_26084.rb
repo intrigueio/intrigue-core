@@ -3,7 +3,7 @@ module Intrigue
     class AtlassianConfluence202126084 < BaseIssue
       def self.generate(instance_details = {})
         {
-          added: '2021-03-30',
+          added: '2021-09-01',
           name: 'atlassian_confluence_cve_2021_26084',
           pretty_name: 'Atlassian Confluence Server Arbitrary Code Execution (CVE-2021-26084)',
           severity: 1,
