@@ -5,6 +5,7 @@
 ###
 begin  # try to load runtime deps
   require 'aws-sdk-iam'
+  require 'aws-sdk-ecs'
   require 'aws-sdk-ec2'
   require 'aws-sdk-route53'
   require 'aws-sdk-s3'

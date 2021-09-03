@@ -46,3 +46,9 @@ def initialize(msg="Missing system resource")
   super
 end
 end
+
+class TaskTimeoutError < StandardError
+  def initialize(msg="ECS task timed out")
+    super
+  end
+end

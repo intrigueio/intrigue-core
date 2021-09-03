@@ -1,16 +1,16 @@
 module Intrigue
   module Issue
-  class ExposedDatabase < BaseIssue
+  class ExposedSmbService < BaseIssue
 
     def self.generate(instance_details={})
       {
-        added: "2020-01-01",
-        name: "exposed_database",
-        pretty_name: "Exposed Database",
+        added: "2021-08-30",
+        name: "exposed_smb_service",
+        pretty_name: "Exposed SMB Service",
         severity: 2,
         status: "confirmed",
         category: "leak",
-        description: "A database was found exposed.",
+        description: "An SMB service was found exposed.",
         remediation: "Investigate and determine if this system should be exposed to anonymous users.",
         references: [ # types: description, remediation, detection_rule, exploit, threat_intel
         ],

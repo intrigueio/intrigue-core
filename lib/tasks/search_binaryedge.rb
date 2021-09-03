@@ -12,7 +12,7 @@ module Intrigue
         :references => [],
         :type => "discovery",
         :passive => true,
-        :allowed_types => ["IpAddress", "DnsRecord", "Domain", "EmailAddress"],
+        :allowed_types => ["IpAddress", "DnsRecord", "Domain", "EmailAddress", "NetBlock"],
         :example_entities => [
           {"type" => "Domain", "details" => { "name" => "intrigue.io"}}
         ],
@@ -120,6 +120,22 @@ module Intrigue
           })
         end
 
+      elsif entity_type == "NetBlock"
+        #do the right thing
+        events = search_binaryedge_netblock(_get_entity_name, api_key, 0)
+        events.each do |e|
+          begin  
+            port = e["target"]["port"]
+            target = e["target"]["ip"]
+            protocol = e["target"]["protocol"]
+            _create_entity "NetworkService", {"name" => "#{target}:#{port}/#{protocol}"}
+            
+          rescue NoMethodError, KeyError
+            # pass it on
+            next
+          end
+        end
+        
       else
         _log_error "Unsupported entity type"
       end
