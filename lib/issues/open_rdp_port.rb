@@ -6,8 +6,8 @@ class OpenRdpPort < BaseIssue
     to_return = {
       added: "2020-01-01",
       name: "open_rdp_port",
-      pretty_name: "Open RDP Port",
-      severity: 3,
+      pretty_name: "Exposed RDP Service",
+      severity: 2,
       status: "confirmed",
       category: "misconfiguration",
       description: "A system exposing RDP to the Internet was identified.",
