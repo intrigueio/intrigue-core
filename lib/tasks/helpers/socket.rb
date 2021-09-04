@@ -69,6 +69,23 @@ module Socket
     raise RuntimeError, "Invalid address format"
   end
 
+  def is_port_open?(entity, port)
+    begin
+      Timeout::timeout(2) do
+        begin
+          s = TCPSocket.new(entity, port)
+          s.close
+          return true
+        rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
+          return false
+        end
+      end
+    rescue Timeout::Error
+    end
+  
+    return false
+  end
+
 end 
 end
 end

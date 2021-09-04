@@ -151,9 +151,9 @@ module Services
         else 
           _log "Skipping Page grab, entity: #{ip_entity.name} already exists"
         end
-
+      # This should handel closed ports 
       # otherwise, create a network service on the IP, either UDP or TCP - fail otherwise
-      elsif protocol == "tcp" && h.name.strip.is_ip_address?
+      elsif protocol == "tcp" && h.name.strip.is_ip_address? && is_port_open?(h.name.strip, port_num)
 
         service_specific_details = {}
         service = _map_tcp_port_to_name(port_num)
@@ -172,14 +172,15 @@ module Services
         entity_details = entity_details.merge!(service_specific_details)
 
         # now we have all the details we need, create it
-        _create_entity("NetworkService", entity_details)
+          _create_entity("NetworkService", entity_details)
 
-        # if its a weak service, file an issue
-        if weak_tcp_services.include?(port_num)
-          _create_weak_service_issue(h.name.strip, port_num, service, 'tcp')
-        end
 
-      elsif protocol == "udp" && h.name.strip.is_ip_address?
+          # if its a weak service, file an issue
+          if weak_tcp_services.include?(port_num)
+            _create_weak_service_issue(h.name.strip, port_num, service, 'tcp')
+          end
+
+      elsif protocol == "udp" && h.name.strip.is_ip_address? && is_port_open?(h.name.strip, port_num)
 
         service_specific_details = {}
         service = _map_udp_port_to_name(port_num)
@@ -210,7 +211,7 @@ module Services
       end
 
     true
-    end
+    end 
 
     # use a generic threaded iteration method to create them,
     # with the desired number of threads
