@@ -13,9 +13,9 @@ module Intrigue
         token if _gitlab_token_valid?(token, host)
       end
 
-      def group?(name, token)
+      def is_gitlab_group?(host, name, token)
         headers = { 'PRIVATE-TOKEN' => token }
-        r = http_request(:get, "https://gitlab.com/api/v4/groups/#{name}", nil, headers)
+        r = http_request(:get, "#{host}/api/v4/groups/#{name}", nil, headers)
 
         r.code == '200'
       end

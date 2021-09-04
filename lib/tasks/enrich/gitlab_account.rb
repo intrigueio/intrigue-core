@@ -29,7 +29,6 @@ module Intrigue
         end
 
 
-
       end
     end
   end
