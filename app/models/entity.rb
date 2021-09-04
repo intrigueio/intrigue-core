@@ -463,7 +463,7 @@ module Model
         :detail_string => detail_string,
         :details => export_details,
         :ancestors => ancestors.map{|x| { "type" => x.type, "name" => x.name }},
-        :task_results => task_results.map{ |t|
+        :task_results => task_results.first(25).map{ |t|
           { :id => t.id,
             :name => t.name,
             #:task_type => t.task_type,
