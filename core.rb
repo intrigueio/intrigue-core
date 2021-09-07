@@ -43,10 +43,11 @@ require_relative 'lib/initialize/exceptions'
 require_relative 'lib/initialize/hash'
 require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/queue'
+require_relative 'lib/initialize/resolv'
 require_relative 'lib/initialize/sidekiq_profiler'
 require_relative 'lib/initialize/string'
+require_relative 'lib/initialize/symbol'
 require_relative 'lib/initialize/typhoeus'
-require_relative 'lib/initialize/resolv'
 
 # load up our system config
 require_relative 'lib/system/config'
