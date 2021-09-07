@@ -70,11 +70,7 @@ module VulnCheck
       ruclei = Ruclei::Ruclei.new
       ruclei.load_template("#{$intrigue_basedir}/data/nuclei-templates/#{template}.yaml")
       res = ruclei.run(uri)
-
-      # if we got a result, let's return it!
-      return res.to_hash if res
-
-
+      return { proof: res.template_info } unless res.nil?
     rescue Ruclei::Exceptions::MissingTemplateError # cannot find template
       _log_error 'ERROR: Cannot find template at specified path.'
     rescue Ruclei::Exceptions::InvalidTemplateError
@@ -91,10 +87,7 @@ module VulnCheck
       ruclei = Ruclei::Ruclei.new
       ruclei.parse_template template_string
       res = ruclei.run(uri)
-
-      # if we got a result, let's return it!
-      return res.to_hash if res
-
+      return { proof: res.template_info } unless res.nil?
     rescue Ruclei::Exceptions::InvalidTemplateError
       _log_error 'ERROR: Specified template does not appear to be in YAML format.'
     end
