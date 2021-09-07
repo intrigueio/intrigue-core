@@ -72,15 +72,8 @@ module VulnCheck
       res = ruclei.run(uri)
 
       # if we got a result, let's return it!
-      if res
-        proof_hash = { # construct a hash with safe details
-          proof: {
-            url: res.url,
-            template_info: res.template_info
-          }
-        }
-        return proof_hash
-      end
+      return res.to_hash if res
+
 
     rescue Ruclei::Exceptions::MissingTemplateError # cannot find template
       _log_error 'ERROR: Cannot find template at specified path.'
@@ -98,7 +91,10 @@ module VulnCheck
       ruclei = Ruclei::Ruclei.new
       ruclei.parse_template template_string
       res = ruclei.run(uri)
-      return { proof: res.results } unless res.nil?
+
+      # if we got a result, let's return it!
+      return res.to_hash if res
+
     rescue Ruclei::Exceptions::InvalidTemplateError
       _log_error 'ERROR: Specified template does not appear to be in YAML format.'
     end
