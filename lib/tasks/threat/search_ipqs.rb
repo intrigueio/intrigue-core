@@ -56,8 +56,8 @@ class SearchIPQS < BaseTask
       if result["success"] and result["fraud_score"] > 0
         _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
-          description: "This ip was flagged by IPQualtiyScore for fraud activites",
-          IpQulaityScore_details: result,
+          description: "This ip was flagged by IpQualityScore for fraud activites",
+          proof: result,
           source: "IpQualityScore.com"
         })
 

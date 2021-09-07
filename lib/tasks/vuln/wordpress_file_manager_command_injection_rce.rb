@@ -56,7 +56,11 @@ module Intrigue
 
       if res.body_utf8 =~ /SERVER_NAME/
         _log "Vulnerable!"
-        _create_linked_issue "wordpress_file_manager_command_injection_rce", {"response" => res.body_utf8}
+        _create_linked_issue("wordpress_file_manager_command_injection_rce", {
+          proof: {
+            response: res.body_utf8
+          }
+        })
       else
         _log "Not Vulnerable!"
       end

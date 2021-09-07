@@ -94,7 +94,7 @@
               name: "Suspicious IP Flagged by OTX: #{_get_entity_name}",
               severity: result["reputation"]["threat_score"],
               detailed_description: "Alienvault OTX has this IP flagged as suspicious.",
-              details: u
+              proof: u
             })
           end
 
