@@ -38,12 +38,15 @@ module Intrigue
       def check
         # run a nuclei
         uri = _get_entity_name
+        _log "Running on #{uri}"
+
         template = 'cves/2021/CVE-2021-26084'
 
         # if this returns truthy value, an issue will be raised
         # the truthy value will be added as proof to the issue
-        run_nuclei_template uri, template
+      run_nuclei_template uri, template
       end
+
     end
   end
 end
