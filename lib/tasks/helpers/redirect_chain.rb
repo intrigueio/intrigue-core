@@ -3,8 +3,7 @@ module Intrigue
     module RedirectChain
       include Intrigue::Task::Web
 
-      def find_and_log_excessive_redirects(fingerprints)
-
+      def find_and_log_excessive_redirects(responses)
         redirect_complete_chain = []
         redirect_total_count = 0
 
@@ -13,14 +12,27 @@ module Intrigue
           max_redirect_count = Intrigue::Core::System::Config.config['redirect_issue_trigger_count']
 
           max_redirect_count = 10 if max_redirect_count.nil? || max_redirect_count.to_s.empty?
-  
+
           _log_debug "Max redirect count: #{max_redirect_count}"
 
-
-          fingerprints.each do |r|
+          responses.each do |r|
             next unless r
 
+            temp = []
+            # this is to fix the ordering when saving to the DB.
+            # If we change ident to return the hash props as "source" and "destination".
+            # We can then remove this code.
+            r[:redirect_chain].each do |x|
+              temp << {
+                'source' => x[:from].to_s,
+                'destination' => x[:to].to_s
+              }
+            end
+
+            r[:redirect_chain] = temp
+
             redirect_complete_chain.append(r[:redirect_chain]) unless r[:redirect_chain].empty?
+            
             redirect_total_count += r[:redirect_count]
 
             # raise an issue when a response redirected more than the max redirect count.
