@@ -30,7 +30,7 @@ module Intrigue
         _log "Gathered #{projects.size} projects!"
         return if projects.empty?
 
-        projects.each { |r| _create_entity('GitlabProject', { 'name' => "#{parameters['host']}/#{r}" }) }
+        projects.each { |r| _create_entity('GitlabProject', { 'name' => r }) }
       end
 
       def _create_parameters_from_gitlab_uri
@@ -47,30 +47,36 @@ module Intrigue
 
       def gather_gitlab_projects(parameters_h)
         projects = []
+
         access_token = parameters_h['access_token']
         headers = { 'PRIVATE-TOKEN' => access_token } if access_token
         uri = _generate_gitlab_api_uri(parameters_h['host'], parameters_h['account'], access_token)
 
-        page = 1
-        while page <= 100 # max 100 pages in case something goes wrong
+        total_requests = _total_requests(uri, headers)
+        return projects if total_requests.nil?
+
+        _log "There are a total of #{total_requests} pages which will be queried."
+        (1..total_requests).each do |page| # max 100 pages in ca  se something goes wrong
           _log "Getting results from Page #{page}"
           r = http_request(:get, "#{uri}?page=#{page}&per_page=100&simple=true", nil, headers)
 
-          break if api_request_limit_exhausted?(r) # exhausted total number of requests
-
-          if page == 1
-            result = _first_request_checklist(r)
-            break unless result
-          end
+          break if _api_request_limit_exhausted?(r) # exhausted total number of requests
 
           parsed_response = _parse_json_response(r.body)
           break if parsed_response.nil? || parsed_response.empty?
-
+          
           projects << parsed_response&.map { |j| j['web_url'] } # in case any random response returned; use safe nil nav
-          page += 1
+          sleep(2) # sleep to avoid triggering rate limiting
         end
 
         projects.flatten.compact
+      end
+
+      def _total_requests(uri, headers)
+        r = http_request(:get, "#{uri}?page=1&per_page=100&simple=true", nil, headers)
+        return unless _first_request_checklist(r)
+
+        r.headers.fetch('x-total-pages')&.to_i
       end
 
       def _first_request_checklist(request)
@@ -88,7 +94,7 @@ module Intrigue
         outcome
       end
 
-      def api_request_limit_exhausted?(response)
+      def _api_request_limit_exhausted?(response)
         exhausted = response.headers['RateLimit-Remaining']&.eql?('0')
         _log_error 'Request limited exhausted; aborting task.' if exhausted
 
