@@ -25,6 +25,20 @@ GIT
       async-rest (~> 0.12.3)
 
 GIT
+  remote: https://github.com/intrigueio/intrigue-ident.git
+  revision: a9b75518482e739f977aafeef1602e2850ec5f3b
+  branch: main
+  specs:
+    intrigue-ident (5.6.93)
+      dnsruby
+      mongo
+      murmurhash3
+      recog-intrigue
+      snmp
+      socketry
+      typhoeus
+
+GIT
   remote: https://github.com/intrigueio/ip_ranger
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
@@ -78,34 +92,6 @@ GIT
   revision: e143ac84c6b1baf72ea7cb8a3d8bdfb260f96e36
   specs:
     whoisology (0.1.0)
-
-PATH
-  remote: ../../../../intrigue/core-private
-  specs:
-    intrigue-core-private (1.8.5)
-
-PATH
-  remote: ../../../../intrigue/ident-private
-  specs:
-    intrigue-ident-private (5.6.92)
-
-PATH
-  remote: ../../../../intrigue/ident
-  specs:
-    intrigue-ident (5.6.93)
-      dnsruby
-      mongo
-      murmurhash3
-      recog-intrigue
-      snmp
-      socketry
-      typhoeus
-
-PATH
-  remote: ../../../../intrigue/ruclei
-  specs:
-    ruclei (1.0.12)
-      typhoeus
 
 PATH
   remote: api_client
@@ -565,9 +551,7 @@ DEPENDENCIES
   googleauth
   http-2
   iconv
-  intrigue-core-private!
   intrigue-ident!
-  intrigue-ident-private!
   intrigue_api_client!
   ip_ranger!
   ipaddr
@@ -597,7 +581,6 @@ DEPENDENCIES
   ruby-nmap!
   ruby_smb
   rubyzip
-  ruclei!
   sentry-ruby
   sentry-sidekiq
   sequel
