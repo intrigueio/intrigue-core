@@ -276,11 +276,13 @@ require_relative "lib/all"
 ###
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
-  require "raven"
+  require "sentry-ruby"
+  require "sentry-sidekiq"
   puts "!!! Configuring Sentry error reporting to: #{Intrigue::Core::System::Config.config["sentry_dsn"]}"
-  Raven.configure do |config|
+  Sentry.init do |config|
     config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
+    config.breadcrumbs_logger = [:sentry_logger, :http_logger]
+    config.traces_sample_rate = 0.2
   end
 end
-
 
