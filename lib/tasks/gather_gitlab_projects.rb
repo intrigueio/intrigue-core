@@ -20,7 +20,7 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        
+
         parameters = _create_parameters_from_gitlab_uri
         return if parameters.nil?
 
@@ -64,7 +64,7 @@ module Intrigue
 
           parsed_response = _parse_json_response(r.body)
           break if parsed_response.nil? || parsed_response.empty?
-          
+
           projects << parsed_response&.map { |j| j['web_url'] } # in case any random response returned; use safe nil nav
           sleep(2) # sleep to avoid triggering rate limiting
         end
