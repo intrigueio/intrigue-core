@@ -2,7 +2,7 @@ module Intrigue
   module Task
     module Enrich
       class AwsS3Bucket < Intrigue::Task::BaseTask
-        
+
         def self.metadata
           {
             name: 'enrich/aws_s3_bucket',
@@ -25,7 +25,7 @@ module Intrigue
         def run
           # TODO bug fix: when entity is created from task; name detail is not stored
           bucket_name = _get_entity_detail('name') || _get_entity_detail('bucket_name')
-          
+
           if region = bucket_exists?(bucket_name)
             _set_entity_detail('bucket_name', bucket_name)
             _set_entity_detail('found_objects', []) unless _get_entity_detail('found_objects')
@@ -49,14 +49,14 @@ module Intrigue
           return if s3_client.nil?
 
           begin
-            result = client.list_buckets['buckets'].collect(&:name).include? bucket
+            result = s3_client.list_buckets['buckets'].collect(&:name).include? bucket_name
           rescue Aws::S3::Errors::AccessDenied, Aws::S3::Errors::AllAccessDisabled
             _log 'AWS Keys do not have permission to list the buckets belonging to the account; defaulting to false.'
           end
 
           return unless result
 
-          _log 'Bucket belongs to API Key.' 
+          _log 'Bucket belongs to API Key.'
           _set_entity_detail 'source', 'configuration'
         end
 
