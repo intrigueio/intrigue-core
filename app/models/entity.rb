@@ -463,13 +463,13 @@ module Model
         :detail_string => detail_string,
         :details => export_details,
         :ancestors => ancestors.map{|x| { "type" => x.type, "name" => x.name }},
-        :task_results => task_results.map{ |t|
+        :task_results => task_results.select{|x| !x.name =~ /^enrich/ }.first(100).map{ |t|
           { :id => t.id,
             :name => t.name,
             #:task_type => t.task_type,
             :base_entity_name => t.base_entity.name,
             :base_entity_type => t.base_entity.type  }
-        },
+          },
         :enrichment_tasks => enrichment_tasks,
         :generated_at => Time.now.utc.iso8601
       }
