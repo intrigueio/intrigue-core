@@ -30,7 +30,7 @@ module Intrigue
         _log "Gathered #{projects.size} projects!"
         return if projects.empty?
 
-        projects.each { |r| _create_entity('GitlabProject', { 'name' => "#{host}/#{r}" }) }
+        projects.each { |r| _create_entity('GitlabProject', { 'name' => "#{parameters['host']}/#{r}" }) }
       end
 
       def _create_parameters_from_gitlab_uri
@@ -46,26 +46,46 @@ module Intrigue
       end
 
       def gather_gitlab_projects(parameters_h)
-        results = []
+        projects = []
         access_token = parameters_h['access_token']
         headers = { 'PRIVATE-TOKEN' => access_token } if access_token
         uri = _generate_gitlab_api_uri(parameters_h['host'], parameters_h['account'], access_token)
 
         page = 1
-        loop do
+        while page <= 100 # max 100 pages in case something goes wrong
           _log "Getting results from Page #{page}"
           r = http_request(:get, "#{uri}?page=#{page}&per_page=100&simple=true", nil, headers)
-          break if r.body.empty? || r.body.nil? || r.code.to_i.zero?
 
           break if api_request_limit_exhausted?(r) # exhausted total number of requests
 
-          parsed_response = _parse_json_response(r.body)
-          break if parsed_response.nil?
+          if page == 1
+            result = _first_request_checklist(r)
+            break unless result
+          end
 
-          results << parsed_response&.map { |j| j['web_url'] } # in case any random response returned; use safe nil nav
+          parsed_response = _parse_json_response(r.body)
+          break if parsed_response.nil? || parsed_response.empty?
+
+          projects << parsed_response&.map { |j| j['web_url'] } # in case any random response returned; use safe nil nav
+          page += 1
         end
 
         projects.flatten.compact
+      end
+
+      def _first_request_checklist(request)
+        outcome = true
+
+        case request.code
+        when '404'
+          _log_error 'User/Project does not exist; aborting.'
+          outcome = false
+        when '401'
+          _log_error 'Lack of authorization; aborting.'
+          outcome = false
+        end
+
+        outcome
       end
 
       def api_request_limit_exhausted?(response)
