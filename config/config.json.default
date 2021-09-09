@@ -528,6 +528,12 @@
       "editable": "true",
       "comment": ""
     },
+    "zoomeye_api_key": {
+      "value": "",
+      "uri": "https://zoomeye.com/docs",
+      "editable": "true",
+      "comment": ""
+    },
     "zetalytics_api_key": {
       "value": "",
       "uri": "https://zetalytics.com/",

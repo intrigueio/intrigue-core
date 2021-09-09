@@ -98,8 +98,8 @@ gem 'google_search_results'
 gem 'ip_ranger',              :git => "https://github.com/intrigueio/ip_ranger"
 gem 'ipaddr'
 gem 'net-dns'                 # dns_cache_snoop
-gem 'net-http2'               
-gem 'http-2'               # http2 client support
+gem 'net-http2'
+gem 'http-2'                  # http2 client support
 gem 'neutrino_api',           :git => 'https://github.com/intrigueio/NeutrinoAPI-Ruby.git'
 gem 'opencorporates',         :git => 'https://github.com/pentestify/opencorporates.git'
 gem 'openssl'
@@ -133,6 +133,10 @@ gem 'fog-aws'
 # production process management
 gem 'god'
 
+# Error tracking (disabled by default)
+gem "sentry-ruby"
+gem "sentry-sidekiq"
+
 # Development
 group :development, :test do
   gem 'gem-licenses'
@@ -140,7 +144,6 @@ group :development, :test do
   gem 'pry'                     # Debugging
   gem 'pry-byebug'              # Debugging
   gem 'yard'
-  gem "sentry-raven"            # Error tracking (disabled by default)
   gem 'rake'                    # Testing
   gem 'rspec'                   # Testing
   gem 'rack-test'               # Testing
