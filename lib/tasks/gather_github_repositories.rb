@@ -15,7 +15,7 @@ module Intrigue
           allowed_types: ['String', 'GithubAccount'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } },
                              { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'https://github.com/intrigueio' } }],
-          allowed_options: [{ name: 'ignore_forked', regex: 'boolean', default: false }],
+          allowed_options: [{ name: 'ignore_forks', regex: 'boolean', default: false }],
           created_types: ['GithubRepository'],
           queue: 'task_github'
         }
@@ -26,68 +26,82 @@ module Intrigue
         super
 
         gh_client = initialize_gh_client
-
-        account = extract_github_account_name(_get_entity_name) if _get_entity_type_string == 'GithubAccount'
-        repos = retrieve_repositories(gh_client, account)
+        repos = retrieve_repositories(gh_client)
         _log "Results obtained: #{repos.size}"
         return if repos.empty?
 
         repos.each { |r| create_github_repo_entity(r) }
       end
 
-      def retrieve_repositories(client, name)
+      def retrieve_repositories(client)
         repositories = []
 
-        return_api_uri = determine_api_route(name)
-        empty_check, repo_parser = determine_parser(name)
+        create_api_uri = determine_api_route(_get_entity_type_string)
+        parser = create_parsers
 
         (1..10).each do |i|
-          r = _http_get_json_body(return_api_uri.call(i), client&.access_token)
-          break if r.equal?('rate_exhaustion')
-          next if r.nil? || r.empty?
+          r = _github_api_call(create_api_uri.call(i), client&.access_token)
+          preflight = preflight_check(r) if i == 1
+          break unless preflight
 
-          break if empty_check.call(r) # no more responses
+          parsed_r = _parse_json_response(r.body)
+          break if parsed_r.nil? || parsed_r.equal?('rate_exhaustion')
 
-          repositories << repo_parser.call(r)
+          parsed_r = parsed_r['items'] if _get_entity_type_string == 'GithubAccount' # dont like this
+          break if parser.empty_checker.call(parsed_r) # no more resp
+
+          parsed_r = parser.del_forks.call(parsed_r) if _get_option('ignore_forks')
+
+          repositories << parser.repo_parser.call(parsed_r)
+          sleep(2)
         end
-        repositories.flatten!
+        repositories.flatten
       end
 
-      def determine_api_route(name)
-        if name.nil?
+      def preflight_check(response)
+        good = true
+        case response.code
+        when '401'
+          _log_error 'Authentication is required when using a String entity.'
+          good = false
+        when '422'
+          _log_error 'Github Account does not exist; aborting.'
+          good = false
+        end
+        good
+      end
+
+      # comment this
+      def determine_api_route(entity_type)
+        if entity_type == 'String'
           ->(x) { "https://api.github.com/user/repos?type=all&per_page=100&page=#{x}" }
-        else
-          use_fork = _get_option('ignore_forked') == false
-          ->(x) { "https://api.github.com/search/repositories?page=#{x}&per_page=100&q=user:#{name}+fork:#{use_fork}" }
+        elsif entity_type == 'GithubAccount'
+          account_name = extract_github_account_name(_get_entity_name)
+          ->(x) { "https://api.github.com/search/repositories?page=#{x}&per_page=100&q=user:#{account_name}+fork:true" }
         end
       end
 
-      def determine_parser(name)
-        if name.nil?
-         return ->(x) { x.empty? }, ->(x) { x.map { |item| item['html_url']} }
-        else
-         return ->(x) { x['items'].empty? }, ->(x) { x['items'].map { |item| item['html_url'] } }
-        end
+      # comment that
+      def create_parsers
+        empty_checker = ->(x) { x.empty? }
+        repo_parser = ->(x) { x.map { |item| item['html_url'] } }
+        forks_parser = ->(x) { x.reject { |item| item['fork'] } }
+
+        Struct.new(:empty_checker, :repo_parser, :del_forks).new(empty_checker, repo_parser, forks_parser)
       end
 
-      def _github_account_exists?(name, access_token = nil)
-        r = _http_get_json_body("https://api.github.com/users/#{name}", access_token)
-        exists = response['message'] != 'Not Found' if r
-
-        _log_error "#{name} is not a valid Github user/repository; exiting." unless exists
-        exists
-      end
-
-      def _http_get_json_body(url, access_token = nil)
+      # comment this
+      def _github_api_call(url, access_token = nil)
         headers = access_token ? { 'Authorization' => "Bearer #{access_token}" } : {}
         r = http_request(:get, url, nil, headers)
 
         exhausted = _check_rate_limiting(r)
         return exhausted if exhausted
 
-        _parse_json_response(r.body)
+        r
       end
 
+      # comment that
       def _check_rate_limiting(response)
         if _api_requests_exhausted?(response)
           _log_error 'Exhausted the maximum amount of requests per hour; aborting.'
@@ -99,15 +113,18 @@ module Intrigue
         end
       end
 
+      # comment this
       def _api_requests_exhausted?(response)
         remaining = response.headers.transform_keys(&:downcase)['x-ratelimit-remaining']&.to_i
         remaining&.zero?
       end
 
+      # comment that
       def _secondary_rate_limit?(response)
         response.body.include?('You have exceeded a secondary rate limit and have been temporarily blocked')
       end
 
+      # comment this
       def _parse_json_response(response)
         JSON.parse(response)
       rescue JSON::ParserError
