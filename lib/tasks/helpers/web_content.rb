@@ -15,7 +15,7 @@ module WebContent
   dom_string
   end
 
-  # compare_html response.body_utf8.sanitize_unicode, e.details["hidden_response_data"]  
+  # compare_html response.body_utf8.sanitize_unicode, e.details["extended_response_body"]  
   def parse_html_diffs(texta, textb)
     # parse our content with Nokogiri
     our_doc = Nokogiri::HTML(texta)

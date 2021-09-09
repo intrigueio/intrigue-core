@@ -7,7 +7,7 @@ class Gitrob < BaseTask
       :name => "gitrob",
       :pretty_name => "Gitrob",
       :authors => ["michenriksen", "jcran"],
-      :description => "Uses the excellent Gitrob by Michael Henriksen to search a given Github Account for committed secrets",
+      :description => "Uses Gitrob to search a given GithubAccount's repositories for secrets",
       :type => "discovery",
       :references => ["https://github.com/michenriksen/gitrob"],
       :passive => true,
@@ -21,15 +21,16 @@ class Gitrob < BaseTask
   def run
     super
 
-    github_account = _get_entity_name
-    token = _get_task_config "gitrob_access_token"
+    github_account = extract_github_account_name(_get_entity_name)
+    token = initialize_gh_client&.fetch('access_token')
+    return if token.nil?
 
     # output file
     temp_file = "#{Dir::tmpdir}/gitrob_#{rand(1000000000000)}.json"
 
     # task assumes gitrob is in our path and properly configured
     _log "Starting Gitrob on #{github_account}, saving to #{temp_file}!"
-    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 10 --threads 20 -in-mem-clone #{github_account}"
+    command_string = "gitrob -github-access-token #{token} -save #{temp_file} -exit-on-finish -no-expand-orgs -commit-depth 10 --threads 10 -in-mem-clone #{github_account}"
     # gitrob tends to hang so we set a timeout of 10 minutes (600 seconds)
     # the gitrob fork we use requires two files in the current working directory, hence setting working dir to ~/bin/data/gitrob
     _log "Running Command:"
@@ -76,7 +77,7 @@ class Gitrob < BaseTask
     if output["Repositories"]
       output["Repositories"].each do |r|
         repo_entities << _create_entity("GithubRepository", {
-          "name" => "#{r["FullName"]}",
+          "name" => "#{r["URL"]}",
           "uri" => "#{r["URL"]}",
           "description" => "#{r["description"]}",
           "raw" => r
@@ -127,6 +128,8 @@ class Gitrob < BaseTask
     end
 
   end # end run
+
+
 
 end
 end

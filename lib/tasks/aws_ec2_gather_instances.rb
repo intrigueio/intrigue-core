@@ -10,7 +10,7 @@ module Intrigue
           references: [],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String'],
+          allowed_types: ['String', 'AwsCredential'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
           allowed_options: [
             { name: 'region', regex: 'alpha_numeric', default: 'us-east-1' }
@@ -24,8 +24,8 @@ module Intrigue
         super
 
         # Get the AWS Credentials
-        aws_access_key = _get_task_config('aws_access_key_id')
-        aws_secret_key = _get_task_config('aws_secret_access_key')
+        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_access_key && aws_secret_key
         aws_region = _get_option 'region'
 
         ec2 = Aws::EC2::Resource.new(region: aws_region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
@@ -35,10 +35,10 @@ module Intrigue
           instances.first # force to authenticate to ensure creds are valid
         rescue Aws::EC2::Errors::AuthFailure
           _log_error 'Invalid AWS Keys.'
-          nil
+          return nil
         rescue Aws::EC2::Errors::UnauthorizedOperation
           _log_error 'API Key lacks permission to list instances.'
-          nil
+          return nil
         rescue Seahorse::Client::NetworkingError
           _log_error "Unable to connect to the AWS EC2 API, this is most likely because #{aws_region} is an invalid region."
           return nil

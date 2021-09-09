@@ -41,7 +41,7 @@ class SearchPsbdmp < BaseTask
     entity_name = _get_entity_name
 
     #headers
-    headers = { "Accept" =>  "application/json"}
+    headers = { "Accept" =>  "application/json" }
 
     # Get responce
     response = http_get_body("https://psbdmp.ws/api/v3/search/#{entity_name}",nil,headers)
@@ -67,16 +67,15 @@ class SearchPsbdmp < BaseTask
       # Create an issue if we have visible data
       if !response_body.include? "Forbidden (#403)" and !response_body.include? "Not Found (#404)"
 
-        issue_hash = { source: paste_uri,  proof: response_body}
+        issue_hash = { source: paste_uri, proof: response_body }
 
         # Check for specific keyword if it is included in the paste to increase the severity level
         if !high_severity_keywords.select{|x| response_body =~ x }.empty?
           # create linked issue with a higher severity
-          issue_hash.merge!( severity: 3 )
+          issue_hash.merge!(severity: 3)
         end
 
-        # create linked issue
-        _create_linked_issue "suspicious_pastebin",  {proof: issue_hash}
+        _create_linked_issue("suspicious_pastebin", issue_hash)
 
       end
     end

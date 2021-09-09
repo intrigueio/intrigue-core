@@ -23,8 +23,13 @@ class SslCertificate < Intrigue::Task::BaseTask
             "subject" => "example",
             "issuer" => "example cert issuer",
             "algorithm" => "SHA256",
+<<<<<<< HEAD
             "hidden_text" => "blah blah blah",
             "list_of_domains_sharing_same_certificate" => "[example1.com, example2.com]"
+=======
+            "fingerprint_sha256" => "b3d1c464976e725e599d3548180cb56311818f224e701f9d56f22e8079a7b396",
+            "hidden_text" => "blah blah blah"
+>>>>>>> 168b945acc256628617cb6a27421682ac503da44
           }
         }
       ],

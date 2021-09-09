@@ -9,7 +9,7 @@ class ExposedDebuggingInterface < BaseIssue
       pretty_name: "Exposed Debugging Interface",
       severity: 2,
       status: "confirmed",
-      category: "vulnerability",
+      category: "misconfiguration",
       description: "A development debugging interface was found exposed, allowing untrusted and authenticated users to perform authenticated actions.",
       remediation: "Disable the interface.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel

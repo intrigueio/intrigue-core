@@ -18,8 +18,8 @@ module Services
     begin 
       # connect
       socket = connect_ssl_socket(hostname,port,timeout)
-    rescue OpenSSL::SSL::SSLError => e 
-      _log_error "Unable to connnect ssl certificate"
+    rescue OpenSSL::SSL::SSLError, Errno::ECONNRESET
+      _log_error 'Unable to connnect to ssl certificate'
     end
     
     return nil unless socket && socket.peer_cert
@@ -63,7 +63,7 @@ module Services
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
       cert = get_certificate(ip_entity.name,port_num)
-
+      
       if cert 
         
         # grabs cert names, if not a universal cert 
@@ -295,6 +295,13 @@ module Services
     # Check to see if masscan is in the path, and raise an error if not
     return false unless _unsafe_system("masscan").match(/^usage/i)
   true
+  end
+
+  def expand_netblock(netblock)
+    converted = IPAddr.new(netblock)
+    converted.to_range.to_a[1..-1].map(&:to_s)
+  rescue IPAddr::InvalidPrefixError
+    _log_error 'Invalid NetBlock!'
   end
 
 

@@ -15,7 +15,7 @@ module Model
 
   class Entity < Sequel::Model
     plugin :validation_helpers
-    plugin :serialization, :json, :enrichment_tasks_completed
+    plugin :serialization, :json, :enrichment_tasks_completed, :sensitive_details
     plugin :single_table_inheritance, :type
     plugin :timestamps
 
@@ -105,6 +105,10 @@ module Model
     def seed?
       true if project.seeds.first(:name => self.name)
     false
+    end
+
+    def sensitive?
+      self.class.metadata[:sensitive] || false
     end
 
     def validate
@@ -258,6 +262,11 @@ module Model
       details[key]
     end
 
+    def get_sensitive_detail(key)
+      return nil unless self.sensitive_details
+      sensitive_details[key]
+    end
+
     def set_detail(key, value)
       begin
         $db.transaction do
@@ -272,8 +281,18 @@ module Model
       end
     end
 
-    def get_details
-      details
+    def set_sensitive_detail(key, value)
+      begin
+        $db.transaction do
+          refresh
+          self.set(:sensitive_details => sensitive_details.merge({key => value}.sanitize_unicode))
+          save
+        end
+      rescue Sequel::NoExistingObject => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      rescue Sequel::DatabaseError => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      end
     end
 
     def get_and_set_details(new_details={})
@@ -290,6 +309,20 @@ module Model
         $db.transaction do
           refresh
           self.set(:details => new_details.sanitize_unicode)
+          save_changes
+        end
+      rescue Sequel::NoExistingObject => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      rescue Sequel::DatabaseError => e
+        puts "Error saving details for #{self}: #{e}, deleted?"
+      end
+    end
+
+    def set_sensitive_details(new_details)
+      begin
+        $db.transaction do
+          refresh
+          self.set(:sensitive_details => new_details.sanitize_unicode)
           save_changes
         end
       rescue Sequel::NoExistingObject => e
@@ -389,7 +422,7 @@ module Model
 
     def to_v1_api_hash(full=false)
       if full
-        export_hash
+        export_hash(full)
       else
         {
           :id => id,
@@ -430,20 +463,20 @@ module Model
         :detail_string => detail_string,
         :details => export_details,
         :ancestors => ancestors.map{|x| { "type" => x.type, "name" => x.name }},
-        :task_results => task_results.map{ |t|
+        :task_results => task_results.select{|x| !x.name =~ /^enrich/ }.first(100).map{ |t|
           { :id => t.id,
             :name => t.name,
             #:task_type => t.task_type,
             :base_entity_name => t.base_entity.name,
             :base_entity_type => t.base_entity.type  }
-        },
+          },
         :enrichment_tasks => enrichment_tasks,
         :generated_at => Time.now.utc.iso8601
       }
     end
 
-    def export_json
-      export_hash.to_json
+    def export_json(extended=false)
+      export_hash(extended).to_json
     end
 
     def export_csv

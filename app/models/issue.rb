@@ -30,7 +30,6 @@ module Model
       Digest::SHA2.hexdigest(out)
     end
 
-
     def to_s
       "#{name} on #{entity.type} #{entity.name}"
     end
@@ -72,7 +71,7 @@ module Model
         :references =>  details["references"],
         :entity_type => entity.type,
         :entity_name => entity.name,
-        :entity_aliases => entity.aliases.map{|a| {"type" => a.type, "name" => a.name} },
+        #:entity_aliases => entity.aliases.map{|a| {"type" => a.type, "name" => a.name} },
         :entity_alias_group_id => entity.alias_group_id,
         :details => details,
         :task_result => "#{task_result.name if task_result}",

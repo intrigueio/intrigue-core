@@ -20,6 +20,9 @@ module Ident
       _log "Getting checks for #{vendor_string} #{product_string}"
       checks_to_be_run = Intrigue::Issue::IssueFactory.checks_for_vendor_product(vendor_string, product_string)
 
+      _log "Appending login bruteforce checks for #{vendor_string} #{product_string}"
+      checks_to_be_run << Intrigue::TaskFactory.checks_for_vendor_product(vendor_string, product_string)
+
       all_checks << checks_to_be_run
     end
 
@@ -52,15 +55,23 @@ module Ident
       next unless fp && fp["tags"]
       fp["tags"].each do |t|
         tags << fp["tags"]
-        if  t.match(/Admin Panel/i) || t.match(/Login Panel/i)
+        if  t.match(/^Admin Panel$/i)
           issues_to_create << ["exposed_admin_panel_unauthenticated", fp]
-        elsif t.match(/DatabaseService/i) || t.match(/Database/i)
+        elsif t.match(/^RDP$/i)
+          issues_to_create << ["open_rdp_port", fp]
+        elsif t.match(/^SMB$/i)
+          issues_to_create << ["exposed_smb_service", fp]
+        elsif t.match(/^Database$/i)
           issues_to_create << ["exposed_database_service", fp]
-        elsif t.match(/DefaultPage/i)
+        elsif t.match(/^DefaultPage$/i)
           issues_to_create << ["default_web_server_page_exposed", fp]
-        elsif t.match(/Printer/i)
+        elsif t.match(/^FTP Server$/i) || t.match(/^TelnetServer/i)
+          issues_to_create << ["weak_service_identified", fp]
+        elsif t.match(/^SNMPServer$/i)
+          issues_to_create << ["exposed_snmp_service", fp]
+        elsif t.match(/^Printer$/i)
           issues_to_create << ["exposed_printer_control_panel", fp]
-        elsif t.match(/Webcam/i)
+        elsif t.match(/^Webcam$/i)
           issues_to_create << ["exposed_webcam_interface", fp]
         end
       end

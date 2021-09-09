@@ -35,6 +35,7 @@ module Intrigue
 
         # get it, make sure we don't have an empty response
         output = JSON.parse(http_get_body(search_uri))
+        _log 'Unable to find any results.' unless output
         return unless output
 
         output['buckets'].each do |b|
@@ -42,10 +43,10 @@ module Intrigue
           # {"id"=>137, "bucket"=>"abteststore.blob.core.windows.net", "fileCount"=>2, "type"=>"azure", "container"=>"files"}
           if b['type'] == 'aws'
             _create_entity 'AwsS3Bucket', {
-              'name' => "https://#{b["bucket"]}",
-              'uri' => "https://#{b["bucket"]}",
-              'fileCount' =>  b['fileCount'],
-              'type' =>  b['type']
+              'name' => extract_bucket_name_from_uri(b['bucket']),
+              'bucket_name' => extract_bucket_name_from_uri(b['bucket']),
+              'bucket_uri' => "https://#{b["bucket"]}",
+              'objects' =>  b['fileCount'],
             }
           elsif b['type'] == 'azure'
             _create_entity 'AzureBlob', {

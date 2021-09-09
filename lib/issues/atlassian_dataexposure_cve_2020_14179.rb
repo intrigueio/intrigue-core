@@ -8,7 +8,9 @@ module Intrigue
           name: "atlassian_dataexposure_cve_2020_14179",
           pretty_name: "Atlassian Sensitive Data Exposure CVE-2020-14179",
           identifiers: [
-            { type: "CVE", name: "CVE-2020-14179" }
+            { type: "CVE", name: "CVE-2020-14179" },
+            { type: "CWE", name: "CWE-425" },
+            { type: "CAPEC", name: "CAPEC-87" }
           ],
           severity: 3,
           category: "vulnerability",

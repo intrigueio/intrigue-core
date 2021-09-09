@@ -6,6 +6,7 @@ class BaseTask
   sidekiq_options queue: "task", backtrace: true
 
   # include default helpers
+  include Intrigue::Task::AwsHelper
   include Intrigue::Task::Popen
   include Intrigue::Task::Generic
   include Intrigue::Task::BinaryEdge
@@ -14,6 +15,7 @@ class BaseTask
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
+  include Intrigue::Task::Github
   include Intrigue::Task::Ident
   include Intrigue::Task::Issue
   include Intrigue::Task::Regex
@@ -26,7 +28,7 @@ class BaseTask
   include Intrigue::Task::WebContent
   include Intrigue::Task::WebAccount
   include Intrigue::Task::Whois
-
+  include Intrigue::Task::Geolocation
 
   def self.inherited(base)
     ::Intrigue::TaskFactory.register(base)
@@ -217,15 +219,15 @@ class BaseTask
         # do this in a transaction so we don't accidentally miss one completing in another thread
         $db.transaction do
           # get it
+          @entity = Intrigue::Core::Model::Entity.find(:id => @entity.id)
           etc = @entity.enrichment_tasks_completed
           etc << @task_result.task_name
           # set it
-          @entity.enrichment_tasks_completed = etc
+          @entity.enrichment_tasks_completed = etc.uniq
           @entity.save
         end
-
         # now check it
-        is_fully_enriched = @entity.enrichment_tasks_completed.count == @entity.enrichment_tasks.count
+        is_fully_enriched = @entity.enrichment_tasks_completed.count == @entity.enrichment_tasks.uniq.count
         puts "DEBUG: Checking if fully enriched: #{@task_result.task_name} (#{is_enrichment_task})"
         puts "DEBUG: #{@entity.name}, Completed: #{@entity.enrichment_tasks_completed} (#{@entity.enrichment_tasks_completed.count}), #{@entity.enrichment_tasks.count}"
       end

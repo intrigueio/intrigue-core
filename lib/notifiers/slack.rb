@@ -10,13 +10,11 @@ module Notifier
     end
 
     def initialize(config_hash)
-      #puts "Creating new slack notifier with config: #{config_hash}"
-
 
       # Assumes amazon...
       if config_hash["system_base_uri"] == "AMAZON"
-        # use the standard endpoint to grab info 
-        hostname = `curl -s http://instance-data.ec2.internal/latest/meta-data/public-hostname`.strip
+        # use the standard endpoint to grab info
+        hostname = http_get_body "http://instance-data.ec2.internal/latest/meta-data/public-hostname"
         @system_base_uri = "https://#{hostname}:7777"
       else # use as is
         hostname = `hostname`
@@ -38,13 +36,13 @@ module Notifier
         response = RestClient.post @hook_url,{
           :text => constructed_message
         }.to_json,{content_type: :json, accept: :json}
-    
+
       rescue RestClient::TooManyRequests => e
         puts "ERROR! #{e}"
       rescue RestClient::BadRequest => e
         puts "ERROR! #{e}"
       rescue SocketError => e
-        puts "ERROR! #{e}"    
+        puts "ERROR! #{e}"
       rescue Errno::EADDRNOTAVAIL => e
         puts "ERROR! #{e}"
       rescue RestClient::Exceptions::OpenTimeout => e

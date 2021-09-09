@@ -53,7 +53,7 @@ class EntityManager
   ###
   ### Use this when creating the first entity (without a task)
   ###
-  def self.create_first_entity(project_name,type_string,name,details_hash={})
+  def self.create_first_entity(project_name,type_string,name,details_hash={}, sensitive_details_hash={})
     # get type of entity
     type = resolve_type_from_string(type_string)
 
@@ -73,6 +73,7 @@ class EntityManager
     if entity # already exists, but now it's created by us... let's clean it up
 
       entity.set_details(details_hash.to_h.deep_merge(entity.details.to_h))
+      entity.set_sensitive_details(sensitive_details_hash.to_h.deep_merge(entity.sensitive_details.to_h))
 
       # always scoped
       entity.set_scoped!(true, "first_entity")
@@ -93,6 +94,7 @@ class EntityManager
         project: project,
         type: type,
         details: details_hash,
+        sensitive_details: sensitive_details_hash,
         hidden: false, # first entity should NEVER be hidden - it was intentional
         scoped: true,  # first entity should ALWAYS be in scope - it was intentional
         allow_list: true,
@@ -122,7 +124,7 @@ class EntityManager
   ###
   ### Use this when creating an entity with an associated task result
   ###
-  def self.create_or_merge_entity(task_result_id, type_string, name, details_hash={}, primary_entity=nil)
+  def self.create_or_merge_entity(task_result_id, type_string, name, details_hash={}, primary_entity=nil, sensitive_details_hash={})
     # get type of entity
     type = resolve_type_from_string(type_string)
 
@@ -155,7 +157,7 @@ class EntityManager
     if entity
 
       entity.set_details(details_hash.to_h.deep_merge(entity.details.to_h))
-
+      entity.set_sensitive_details(sensitive_details_hash.to_h.deep_merge(entity.sensitive_details.to_h))
       # if it already exists, it'll have an alias group ID and we'll
       # want to use that to preserve pre-existing relatiohships
       # also... prevents an enrichment loop
@@ -184,6 +186,7 @@ class EntityManager
             type: type.to_s,
             project_id: project.id,
             details: details_hash,
+            sensitive_details: sensitive_details_hash,
             alias_group_id: alias_group_id
           })
 

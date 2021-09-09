@@ -1,7 +1,7 @@
 module Intrigue
   module Issue
   class PulseSecureInfoLeak < BaseIssue
-  
+
     def self.generate(instance_details={})
       {
         added: "2020-01-01",
@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "Pulse Secure Info Leak (Version and Configuration)",
         identifiers: [],
         severity: 3,
-        category: "vulnerability",
+        category: "misconfiguration",
         status: "confirmed",
         description: "A file exposed publicly on the Pulse Secure VPN server exposes specific version and configuration information.",
         remediation: "Remove the file or block access.",
@@ -20,11 +20,10 @@ module Intrigue
         task: "uri_brute_focused_content"
       }.merge!(instance_details)
     end
-  
+
   end
   end
   end
-  
-  
-          
-  
+
+
+
