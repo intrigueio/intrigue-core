@@ -343,7 +343,7 @@ class Uri < Intrigue::Task::BaseTask
     # get the hashed dom structure
     dom_sha1 = Digest::SHA1.hexdigest(html_dom_to_string(response.body_utf8))
 
-    redirects = find_and_log_excessive_redirects(ident_responses)
+    redirects = find_and_log_excessive_redirects(ident_responses, hostname)
 
     # set up the new details
     new_details = {

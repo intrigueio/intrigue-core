@@ -3,7 +3,7 @@ module Intrigue
     module RedirectChain
       include Intrigue::Task::Web
 
-      def find_and_log_excessive_redirects(responses)
+      def find_and_log_excessive_redirects(responses, hostname)
         redirect_complete_chain = []
         redirect_total_count = 0
 
@@ -16,30 +16,26 @@ module Intrigue
           _log_debug "Max redirect count: #{max_redirect_count}"
 
           responses.each do |r|
-            next unless r
+            next unless r || !r[:redirect_chain].empty?
 
-            temp = []
             # this is to fix the ordering when saving to the DB.
             # If we change ident to return the hash props as "source" and "destination".
             # We can then remove this code.
             r[:redirect_chain].each do |x|
-              temp << {
+              redirect_complete_chain << {
                 'source' => x[:from].to_s,
                 'destination' => x[:to].to_s
               }
             end
+            redirect_complete_chain = redirect_complete_chain.uniq
+          end
 
-            r[:redirect_chain] = temp
+          redirect_total_count = redirect_complete_chain.count
 
-            redirect_complete_chain.append(r[:redirect_chain]) unless r[:redirect_chain].empty?
-            
-            redirect_total_count += r[:redirect_count]
-
-            # raise an issue when a response redirected more than the max redirect count.
-
-            if r[:redirect_count] > max_redirect_count
-              _create_execessive_redirects_issue(hostname, r[:redirect_chain], r[:redirect_count])
-            end
+          # raise an issue when the entity redirected more than the max redirect count.
+          if redirect_total_count > max_redirect_count
+            _log_debug "Detected #{redirect_total_count} redirects, creating issue."
+            _create_execessive_redirects_issue(hostname, redirect_complete_chain, redirect_total_count)
           end
         rescue StandardError => e
           _log_error "Unable to fetch redirect chain: #{e}"
