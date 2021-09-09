@@ -33,22 +33,26 @@ module Intrigue
         repos.each { |r| create_github_repo_entity(r) }
       end
 
+      ## returns a list of github repositories
       def retrieve_repositories(client)
         repositories = []
 
-        create_api_uri = determine_api_route(_get_entity_type_string)
+        construct_api_uri = determine_api_route(_get_entity_type_string)
         parser = create_parsers
 
         (1..10).each do |i|
-          r = _github_api_call(create_api_uri.call(i), client&.access_token)
+          r = _github_api_call(construct_api_uri.call(i), client&.access_token)
           preflight = preflight_check(r) if i == 1
           break unless preflight
 
           parsed_r = _parse_json_response(r.body)
-          break if parsed_r.nil? || parsed_r.equal?('rate_exhaustion')
+          break if parsed_r.nil? || parsed_r.equal?('rate_exhaustion') 
+          # if the secondary api rate limit is triggered, the response will contain the error message
+          # after the task sleeps for 180 seconds, it will need to redo the api call in order to get the actual results
+          redo if parsed_r.equal?('temp_rate_limit')
 
           parsed_r = parsed_r['items'] if _get_entity_type_string == 'GithubAccount' # dont like this
-          break if parser.empty_checker.call(parsed_r) # no more resp
+          break if parsed_r.empty? # no more responses
 
           parsed_r = parser.del_forks.call(parsed_r) if _get_option('ignore_forks')
 
@@ -58,6 +62,8 @@ module Intrigue
         repositories.flatten
       end
 
+      ## verifies that github account exists and whether the respective api route requires authentication
+      ## technically not really 'preflight' but called on the first request's response
       def preflight_check(response)
         good = true
         case response.code
@@ -71,7 +77,8 @@ module Intrigue
         good
       end
 
-      # comment this
+      ## returns a lambda when passed a page number will construct the appropriate api route
+      ## the api route is based on whether task is ran directly on key or a githubaccount entity
       def determine_api_route(entity_type)
         if entity_type == 'String'
           ->(x) { "https://api.github.com/user/repos?type=all&per_page=100&page=#{x}" }
@@ -81,50 +88,55 @@ module Intrigue
         end
       end
 
-      # comment that
+      ## returns a struct that contains two lambdas
+      ## the repo_parser lambda retrieves the repository urls from the json
+      ## the del_forks lambda deletes any repositories which may be forks
       def create_parsers
-        empty_checker = ->(x) { x.empty? }
         repo_parser = ->(x) { x.map { |item| item['html_url'] } }
-        forks_parser = ->(x) { x.reject { |item| item['fork'] } }
+        del_forks = ->(x) { x.reject { |item| item['fork'] } }
 
-        Struct.new(:empty_checker, :repo_parser, :del_forks).new(empty_checker, repo_parser, forks_parser)
+        Struct.new(:repo_parser, :del_forks).new(repo_parser, del_forks)
       end
 
-      # comment this
+      ## invokes the Github API call and returns the results
       def _github_api_call(url, access_token = nil)
         headers = access_token ? { 'Authorization' => "Bearer #{access_token}" } : {}
         r = http_request(:get, url, nil, headers)
 
         exhausted = _check_rate_limiting(r)
+        # if _check_rate_limiting() returns any form of value this means that
+        # some form of rate limiting is occuring thus the response does not contain results
+        # as such return the value from _check_rate_limiting()
+        # if the value is 'rate_exhaustation' the loop will break in the caller function thus ending the script
         return exhausted if exhausted
 
         r
       end
 
-      # comment that
+      ## determines whether any form of rate limiting is occuring
       def _check_rate_limiting(response)
         if _api_requests_exhausted?(response)
           _log_error 'Exhausted the maximum amount of requests per hour; aborting.'
           'rate_exhaustion'
         elsif _secondary_rate_limit?(response)
           _log_error 'Rate limiting hit; will take a break before firing off additional requests.'
-          sleep(300)
+          sleep(180)
           'temp_rate_limit'
         end
       end
 
-      # comment this
+      ## submethod which checks whether the amount of api calls per hour were exhausted
       def _api_requests_exhausted?(response)
         remaining = response.headers.transform_keys(&:downcase)['x-ratelimit-remaining']&.to_i
         remaining&.zero?
       end
 
-      # comment that
+      ## submethod which checks whether the request triggered a secondary rate limit
       def _secondary_rate_limit?(response)
         response.body.include?('You have exceeded a secondary rate limit and have been temporarily blocked')
       end
 
-      # comment this
+      ## helper which parses the http json response and returns a dict
       def _parse_json_response(response)
         JSON.parse(response)
       rescue JSON::ParserError
