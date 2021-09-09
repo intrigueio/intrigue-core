@@ -27,7 +27,7 @@ class DnsPermute < BaseTask
 
     # Set the basename
     basename = _get_entity_name
-    thread_count = _get_options "threads"
+    thread_count = _get_option "threads"
 
     # gracefully decline to permute these..
     skip_regexes = [ /^.*s3.*\.amazonaws.com$/,  ]

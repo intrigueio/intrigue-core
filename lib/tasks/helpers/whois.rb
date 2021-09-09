@@ -432,6 +432,8 @@ module Whois
       _log_error "Unable to parse attribute: #{e}"
     rescue ::Whois::ParserError => e
       _log_error "Unable to parse attribute: #{e}"
+    rescue ::Whois::ResponseIsThrottled
+      _log_error "We're too fast and being throttled"
     end
   contacts
   end
