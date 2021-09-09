@@ -44,9 +44,12 @@ class SaasGoogleGroupsCheck < BaseTask
       _create_normalized_webaccount(service_name, domain, uri)
 
       _create_linked_issue("google_groups_leak", {
-        "uri" => uri,
-        "username" => "#{domain}",
-        "service" => service_name})
+        proof: {
+          uri: uri,
+          username: "#{domain}",
+          service: service_name
+        }
+      })
         
     elsif text =~ /This group is on a private domain/
       # good

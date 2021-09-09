@@ -49,10 +49,14 @@ module Intrigue
         # request 1
         _log "Testing entity for exposed admin interface"
         response = http_get_body uri
-        if  is_vuln(response)
-            _log "Vulnerable!"
-            _create_linked_issue "kong_exposed_admin_interface", {"response" => JSON.parse(response)}
-            return
+        if is_vuln(response)
+          _log "Vulnerable!"
+          _create_linked_issue("kong_exposed_admin_interface", {
+            proof: {
+              response: JSON.parse(response)
+            }
+          })
+          return
         end
   
         # if original URI didn't work, lets try the default port 8001
@@ -61,9 +65,13 @@ module Intrigue
         endpoint = "#{uri_obj.scheme}://#{uri_obj.hostname}:8001"
         response = http_get_body endpoint
         if  is_vuln(response)
-            _log "Vulnerable!"
-            _create_linked_issue "kong_exposed_admin_interface", {"response" => JSON.parse(response)}
-            return
+          _log "Vulnerable!"
+          _create_linked_issue("kong_exposed_admin_interface", {
+            proof: {
+              response: JSON.parse(response)
+            }
+          })
+          return
         end
       end
     end

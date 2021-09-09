@@ -47,7 +47,11 @@ class MobileIronCve202015506 < BaseTask
 
     if ::Versionomy.parse(our_version) <= ::Versionomy.parse("10.6")
       _log_good "Vulnerable!"
-      _create_linked_issue "mobileiron_multiple_cves"
+      _create_linked_issue("mobileiron_multiple_cves", {
+        proof: {
+          detected_version: our_version
+        }
+      })
     else
       _log "Not vulnerable!"
     end

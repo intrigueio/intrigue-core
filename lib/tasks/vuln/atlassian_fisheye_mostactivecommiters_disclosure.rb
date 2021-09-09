@@ -38,7 +38,11 @@ class AtlassianFisheyeMostactivecommitersDisclosure < BaseTask
 
     begin
       j = JSON.parse(http_get_body("#{uri}/fe/mostActiveCommitters.do?path=&repname=#{project_name}&maxCommitters=9&numDays=90"))
-      _create_linked_issue("atlassian_fisheye_mostactivecommiters_cve_2017_9512")
+      _create_linked_issue("atlassian_fisheye_mostactivecommiters_cve_2017_9512", {
+        proof: {
+          response_body: j
+        }
+      })
     rescue JSON::ParserError => e
       _log_error "Unable to parse response. Not vulnerable?"
     end

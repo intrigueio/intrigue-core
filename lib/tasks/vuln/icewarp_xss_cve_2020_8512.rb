@@ -55,7 +55,11 @@ module Intrigue
       # log if vulnerable
       if is_vuln
         _log "Vulnerable!"
-        _create_linked_issue "icewarp_xss_cve_2020_8512", {"response" => response}
+        _create_linked_issue("icewarp_xss_cve_2020_8512", {
+          proof: {
+            response: response
+          }
+        })
       else
         _log "Not Vulnerable!"
       end

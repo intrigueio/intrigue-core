@@ -44,7 +44,7 @@ class SearchFraudGuard < BaseTask
         _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
           description: "This ip was flagged by fraudguard.io for #{response["threat"]} threat with risk level: #{response["risk_level"]} ",
-          fraudguard_details: response,
+          proof: response,
           source: "FraudGuard.io"
         })
         # Also store it on the entity

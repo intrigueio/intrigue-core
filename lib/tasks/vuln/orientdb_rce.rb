@@ -45,7 +45,11 @@ module Intrigue
     
         if compare_versions_by_operator(our_version, "2.2.2", ">=") && compare_versions_by_operator(our_version, "2.2.22", "<=")
           _log_good "Vulnerable!"
-          _create_linked_issue "orientdb_rce", {"vulnerable_version" => our_version}
+          _create_linked_issue("orientdb_rce", {
+            proof: {
+              detected_version: our_version
+            }
+          })
         else
           _log "Not vulnerable!"
         end

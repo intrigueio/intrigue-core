@@ -32,7 +32,11 @@ class AtlassianJiraOauthPluginSsrf < BaseTask
     html = http_get_body("https://URL/plugins/servlet/oauth/users/icon-uri?consumerUri=https://www.whatismyip.com/")
     
     if html =~ /<title>What Is My IP/ 
-      _create_linked_issue("atlassian_jira_oauth_plugin_ssrf")
+      _create_linked_issue("atlassian_jira_oauth_plugin_ssrf", {
+        proof: {
+          response_body: html
+        }
+      })
     end
     
   end

@@ -63,9 +63,12 @@ class SaasGoogleCalendarCheck < BaseTask
       _create_normalized_webaccount(service_name, domain, uri)
 
       _create_linked_issue("google_calendar_leak", {
-        "uri" => uri,
-        "username" => "#{domain}",
-        "service" => service_name})
+        proof: {
+          uri: uri,
+          username: "#{domain}",
+          service: service_name
+        }
+      })
 
     elsif response && response.code == "404"
      _log "404, doesnt exist or not public..."

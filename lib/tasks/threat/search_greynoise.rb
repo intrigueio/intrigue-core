@@ -60,7 +60,7 @@ class SearchGreynoisie < BaseTask
           _create_linked_issue("suspicious_activity_detected",{
              status: "confirmed",
              classification: result["classification"],
-             details: result
+             proof: result
           })
       end
     end

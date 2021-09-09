@@ -47,7 +47,11 @@ module Intrigue
     
         if ::Versionomy.parse(our_version) < ::Versionomy.parse("1.6.4")
           _log_good "Vulnerable!"
-          _create_linked_issue "wordpress_loginizer_cve_2020_27615"
+          _create_linked_issue("wordpress_loginizer_cve_2020_27615", {
+            proof: {
+              detected_version: our_version
+            }
+          })
         else
           _log "Not vulnerable!"
         end
