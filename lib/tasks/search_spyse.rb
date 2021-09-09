@@ -128,8 +128,12 @@ class SearchSpyse < BaseTask
       if json["data"] && json["data"]["items"]
         json["data"]["items"].each do |result|
           _log_good "Creating service on #{entity_name}: #{result["port"]}"
-          _create_network_service_entity(@entity, result["port"], protocol="tcp", 
-            {"extended_spyse" => result})
+          begin
+            _create_network_service_entity(@entity, result["port"], protocol="tcp", 
+              {"extended_spyse" => result})
+          rescue Errno::ETIMEDOUT
+            _log_error "Unable to create network service entity. Connection timed out."
+          end
         end
       else
         _log "Got empty result, returning!"
