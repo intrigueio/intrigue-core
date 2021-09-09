@@ -84,7 +84,7 @@ module Intrigue
 
         exhausted = _check_rate_limiting(r)
         return exhausted if exhausted
-        
+
         _parse_json_response(r.body)
       end
 
@@ -100,14 +100,12 @@ module Intrigue
       end
 
       def _api_requests_exhausted?(response)
-        parsed_body = _parse_json_response(response.body)
-        parsed_body['message']&.include?('API rate limit exceeded') &&
-          response.headers['X-RateLimit-Remaining'].zero?
+        remaining = response.headers.transform_keys(&:downcase)['x-ratelimit-remaining']&.to_i
+        remaining&.zero?
       end
 
       def _secondary_rate_limit?(response)
-        parsed_body = _parse_json_response(response.body)
-        parsed_body['message']&.include?('You have exceeded a secondary rate limit and have been temporarily blocked')
+        response.body.include?('You have exceeded a secondary rate limit and have been temporarily blocked')
       end
 
       def _parse_json_response(response)
