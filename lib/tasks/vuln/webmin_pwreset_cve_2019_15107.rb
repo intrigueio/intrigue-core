@@ -69,7 +69,13 @@ class  WebminPwresetCve201915107 < BaseTask
         end
 
         ### okay if we made it this far, create an issue
-        _create_linked_issue( "vulnerability_webmin_cve_2019_15107")
+        _create_linked_issue("vulnerability_webmin_cve_2019_15107", {
+          proof: {
+            detected_version: our_version,
+            response_code: res.code,
+            response_body: res.body
+          }
+        })
       else
         _log "Version #{our_version} is newer than vulnerable version: #{vulnerable_version}"
 

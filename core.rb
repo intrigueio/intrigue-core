@@ -43,10 +43,11 @@ require_relative 'lib/initialize/exceptions'
 require_relative 'lib/initialize/hash'
 require_relative 'lib/initialize/json_export_file'
 require_relative 'lib/initialize/queue'
+require_relative 'lib/initialize/resolv'
 require_relative 'lib/initialize/sidekiq_profiler'
 require_relative 'lib/initialize/string'
+require_relative 'lib/initialize/symbol'
 require_relative 'lib/initialize/typhoeus'
-require_relative 'lib/initialize/resolv'
 
 # load up our system config
 require_relative 'lib/system/config'
@@ -275,11 +276,13 @@ require_relative "lib/all"
 ###
 #configure sentry.io error reporting (only if a key was provided)
 if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.config["sentry_dsn"])
-  require "raven"
+  require "sentry-ruby"
+  require "sentry-sidekiq"
   puts "!!! Configuring Sentry error reporting to: #{Intrigue::Core::System::Config.config["sentry_dsn"]}"
-  Raven.configure do |config|
+  Sentry.init do |config|
     config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
+    config.breadcrumbs_logger = [:sentry_logger, :http_logger]
+    config.traces_sample_rate = 0.2
   end
 end
-
 

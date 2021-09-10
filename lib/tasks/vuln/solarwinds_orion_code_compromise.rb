@@ -49,7 +49,11 @@ module Intrigue
         # affected versions are 2019.4 through 2020.2.1 HF1
         if compare_versions_by_operator(our_version, "2019.4", ">=") && compare_versions_by_operator(our_version, "2020.2.1 HF1", "<=")
           _log_good "Vulnerable!"
-          _create_linked_issue "solarwinds_orion_code_compromise"
+          _create_linked_issue("solarwinds_orion_code_compromise", {
+            proof: {
+              detected_version: our_version
+            }
+          })
           return
         else
           _log "Version does not appear to be vulnerable"

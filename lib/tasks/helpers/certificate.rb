@@ -46,8 +46,12 @@ module Intrigue
   
     # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
     def connect_ssl_socket(hostname, port, timeout=10)
-      
-      s = Intrigue::SSLSocketWithTimeout.new(hostname, port,  timeout, timeout=10, ssl_context=nil)
+      begin
+        s = Intrigue::SSLSocketWithTimeout.new(hostname, port,  timeout, timeout=10, ssl_context=nil)
+      rescue Errno::EADDRNOTAVAIL, Errno::ENETUNREACH
+        # we can't connect to the ip address for some reason
+        return nil
+      end
   
       # fail if we can't connect
       ssl_socket = s.ssl_socket

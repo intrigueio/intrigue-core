@@ -40,7 +40,7 @@ class SearchAlienvaultOtxHashes < BaseTask
         name: "File detected as suspicious in #{source}",
         references: result["pulse_info"]["references"],
         description: "#{e["description"]}",
-        details: e
+        proof: e
       })
     end
 

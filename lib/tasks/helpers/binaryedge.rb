@@ -228,6 +228,7 @@ module BinaryEdge
     result.each do |service|
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
       _create_linked_issue("open_database",{
+        proof: service,
         source: "binaryedge",
         description: "
         Link: http://#{service['target']['ip']}:#{service['target']['port']}\n

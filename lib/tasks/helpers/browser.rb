@@ -30,6 +30,7 @@ module Task
 
         to_return = {
           "extended_screenshot_contents" => browser_response["encoded_screenshot"],
+          "screenshot_exists" => (browser_response["encoded_screenshot"] ? true : false),
           "request_hosts" => browser_response["requests"].map{|x| x["hostname"] }.compact.uniq.sort,
           "extended_browser_request_urls" => browser_response["requests"].map{|x| x["url"] }.compact.uniq.sort,
           "extended_browser_requests" => browser_response["requests"],
