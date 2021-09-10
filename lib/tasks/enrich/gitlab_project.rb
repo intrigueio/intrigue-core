@@ -27,9 +27,9 @@ module Intrigue
         def run
           parsed_project_uri = parse_gitlab_uri(_get_entity_name)
 
-          _set_entity_detail('project_name', parsed_project_uri['project'])
+          _set_entity_detail('project_name', parsed_project_uri.project)
           _set_entity_detail('project_uri', _get_entity_name)
-          _set_entity_detail('project_account', parsed_project_uri['account'])
+          _set_entity_detail('project_account', parsed_project_uri.account)
           _set_entity_detail('repository_public', repo_public?(_get_entity_name))
         end
 

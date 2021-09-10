@@ -24,7 +24,7 @@ module Intrigue
         parameters = _create_parameters_from_gitlab_uri
         return if parameters.nil?
 
-        parameters['access_token'] = retrieve_gitlab_token(parameters['host']) || ''
+        parameters.token = retrieve_gitlab_token(parameters.host) || ''
 
         projects = gather_gitlab_projects(parameters)
         _log "Gathered #{projects.size} projects!"
@@ -35,9 +35,9 @@ module Intrigue
 
       def _create_parameters_from_gitlab_uri
         parsed_uri = parse_gitlab_uri(_get_entity_name, 'account')
-        parsed_uri['account'].gsub!('/', '%2f') # urlencode / if its a project name
+        parsed_uri.account.gsub!('/', '%2f') # urlencode / if its a project name
 
-        if [parsed_uri['host'], parsed_uri['account']].include?(nil) 
+        if [parsed_uri.host, parsed_uri.account].include?(nil)
           _log_error 'Error parsing Gitlab Account; ensure the format is \'https://gitlab.intrigue.io/username\''
           return
         end
@@ -45,12 +45,11 @@ module Intrigue
         parsed_uri
       end
 
-      def gather_gitlab_projects(parameters_h)
+      def gather_gitlab_projects(parameters)
         projects = []
 
-        access_token = parameters_h['access_token']
-        headers = { 'PRIVATE-TOKEN' => access_token } if access_token
-        uri = _generate_gitlab_api_uri(parameters_h['host'], parameters_h['account'], access_token)
+        headers = { 'PRIVATE-TOKEN' => parameters.token } if parameters.token
+        uri = _generate_gitlab_api_uri(parameters.host, parameters.account, parameters.token)
 
         total_requests = _total_requests(uri, headers)
         return projects if total_requests.nil?

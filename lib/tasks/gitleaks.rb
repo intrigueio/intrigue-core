@@ -35,7 +35,7 @@ module Intrigue
           when 'GithubRepository'
             access_token = initialize_gh_client&.fetch('access_token')
           when 'GitlabProject'
-            access_token = retrieve_gitlab_token(parse_gitlab_uri(repo_uri)['host'])
+            access_token = retrieve_gitlab_token(parse_gitlab_uri(repo_uri).host)
           end
         end
 

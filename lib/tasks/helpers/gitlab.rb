@@ -32,7 +32,7 @@ module Intrigue
         account = gitlab_instance.scan(r).flatten.first
         project = gitlab_instance.scan(/#{host}\/#{account}\/([\d\w\-\.]{1,255}+)/i).flatten.first
 
-        { 'host' => host, 'account' => account, 'project' => project }
+        Struct.new(:host, :account, :project, :token).new(host, account, project)
       end
 
       private

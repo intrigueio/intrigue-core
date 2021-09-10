@@ -1,6 +1,7 @@
 module Intrigue
   module Entity
     class GitlabProject < Intrigue::Core::Model::Entity
+      include Intrigue::Task::Gitlab # in order to use gitlab helper method
       def self.metadata
         {
           name: 'GitlabProject',
@@ -11,8 +12,12 @@ module Intrigue
       end
 
       def validate_entity
-        # match generic uri has gitlab instances can be self-hosted...
-        name.match(/^https?:\/\/.*$/)
+        parsed = parse_gitlab_uri(name, 'project')
+        parsed.project
+      end
+
+      def enrichment_tasks
+        ['enrich/gitlab_project']
       end
 
       def scoped?
