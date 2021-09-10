@@ -37,6 +37,11 @@ module Intrigue
         end
 
         geolocation_data = JSON.parse(response.body_utf8)
+        
+        unless geolocation_data.key?("ip") && geolocation_data.key?("asn") && geolocation_data.key?("country_code") 
+          _log_error "Missing required hash keys in geolocation information"
+          return nil
+        end
 
         geolocation_data.except!('currency', 'threat', 'time_zone')
 
