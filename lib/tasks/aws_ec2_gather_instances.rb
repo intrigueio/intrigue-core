@@ -24,11 +24,13 @@ module Intrigue
         super
 
         # Get the AWS Credentials
-        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
-        return unless aws_access_key && aws_secret_key
+        aws_keys = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_keys.access_key && aws_keys.secret_key
+
         aws_region = _get_option 'region'
 
-        ec2 = Aws::EC2::Resource.new(region: aws_region, access_key_id: aws_access_key, secret_access_key: aws_secret_key)
+        ec2 = Aws::EC2::Resource.new(region: aws_region, access_key_id: aws_keys.access_key,
+                                     secret_access_key: aws_keys.secret_key, session_token: aws_keys.session_token)
 
         begin
           instances = ec2.instances

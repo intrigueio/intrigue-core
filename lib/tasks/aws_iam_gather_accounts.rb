@@ -22,11 +22,12 @@ module Intrigue
         super
 
         # Get the AWS Credentials
-        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
-        return unless aws_access_key && aws_secret_key
+        aws_keys = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_keys.access_key && aws_keys.secret_key
 
         # IAM is global so region is not needed
-        iam = Aws::IAM::Client.new({ region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key })
+        iam = Aws::IAM::Client.new({ region: 'us-east-1', access_key_id: aws_keys.access_key,
+                                     secret_access_key: aws_keys.secret_key, session_token: aws_keys.session_token })
 
         begin
           groups = iam.list_groups
