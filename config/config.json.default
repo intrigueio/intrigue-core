@@ -266,6 +266,12 @@
       "editable": "true",
       "comment": ""
     },
+    "gitlab_access_token": {
+      "value": "",
+      "uri": "https://gitlab.com/-/profile/personal_access_tokens",
+      "editable": "true",
+      "comment": ""
+    },
     "greynoise_api_key": {
       "value": "",
       "uri": "https://docs.greynoise.io/#greynoise-api",
@@ -441,6 +447,12 @@
     "shodan_api_key": {
       "value": "",
       "uri": "https://account.shodan.io/login",
+      "editable": "true",
+      "comment": ""
+    },
+    "searchcode_api_key": {
+      "value": "",
+      "uri": "https://searchcode.com/api/",
       "editable": "true",
       "comment": ""
     },

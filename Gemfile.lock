@@ -518,6 +518,7 @@ GEM
       json
 
 PLATFORMS
+  ruby
   x86_64-darwin-20
   x86_64-linux
 
