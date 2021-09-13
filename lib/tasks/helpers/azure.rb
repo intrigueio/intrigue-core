@@ -2,11 +2,11 @@ module Intrigue
   module Task
     module Azure
 
-      def extract_storage_account_from_string(str)
+      def extract_azure_storage_account_from_string(str)
         str.scan(/(?:https:\/\/)?(\w+)\.blob\.core\.windows\.net/i).flatten.first
       end
 
-      def extract_storage_container_from_string(str)
+      def extract_azure_storage_container_from_string(str)
         str.scan(/(?:https:\/\/)?\w+\.blob\.core\.windows\.net\/([\w|\-]+)\/?/i).flatten.first
       end
 
@@ -54,7 +54,7 @@ module Intrigue
 
       def create_azure_storage_entity(name)
         _create_entity 'AzureStorageAccount', {
-          'name' => name,
+          'name' => "#{name}.blob.core.windows.net",
           'storage_account_name' => name,
           'uri' => "https://#{name}.blob.core.windows.net"
         }

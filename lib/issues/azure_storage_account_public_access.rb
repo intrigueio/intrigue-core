@@ -4,7 +4,7 @@ module Intrigue
       def self.generate(instance_details = {})
         {
           added: '2020-09-01',
-          name: 'azure_storage_acc_public_access',
+          name: 'azure_storage_account_public_acccess',
           pretty_name: 'Azure Storage Account Allows Public Access',
           severity: 5,
           status: 'potential',

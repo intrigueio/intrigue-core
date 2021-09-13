@@ -91,8 +91,8 @@ module Intrigue
 
       def create_entity(account)
         _create_entity 'AzureStorageAccount', {
-          'name' => account,
-          'storage_account_name' => account,
+          'name' => "#{account}.blob.core.windows.net",
+          'storage_account_name' => "#{account}.blob.core.windows.net",
           'uri' => "https://#{account}.blob.core.windows.net"
         }
       end
@@ -100,7 +100,7 @@ module Intrigue
       def check_for_public_blob_access(account)
         return unless http_request(:get, "https://#{account}.blob.core.windows.net").code == '400'
 
-        _create_linked_issue('azure_storage_acc_public_access', {
+        _create_linked_issue('azure_storage_account_public_acccess', {
                                proof: "This following storage account: #{account} allows public access to its containers.",
                                source: "https://#{account}.blob.core.windows.net",
                                status: 'confirmed'

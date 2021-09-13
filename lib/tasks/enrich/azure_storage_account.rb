@@ -13,7 +13,7 @@ module Intrigue
             passive: true,
             allowed_types: ['AzureStorageAccount'],
             example_entities: [
-              { 'type' => 'AzureStorageAccount', 'details' => { 'name' => 'storageaccount' } }
+              { 'type' => 'AzureStorageAccount', 'details' => { 'name' => 'intrigue.blob.core.windows.net' } }
             ],
             allowed_options: [],
             created_types: []
@@ -25,6 +25,7 @@ module Intrigue
           name = _get_entity_detail('name') || _get_entity_detail('storage_account_name')
           if storage_account_exists?(name)
             # list of empty containers which other task will populate unless another task already populated
+            _set_entity_detail('account_name', extract_azure_storage_account_from_string(name))
             _set_entity_detail('containers', []) unless _get_entity_detail('containers')
             _set_entity_detail('blobs', []) unless _get_entity_detail('blobs')
             _set_entity_detail('public_access_allowed', public_access_allowed?(name))
@@ -37,15 +38,17 @@ module Intrigue
 
         ## confirm the bucket exists by extracting the region from the response headers
         def storage_account_exists?(storage_account)
+          account = extract_azure_storage_account_from_string(storage_account)
           _log 'Verifying whether Storage Account exists.'
-          r = http_request(:get, "https://#{storage_account}.blob.core.windows.net", nil, {}, nil, true, 10)
+          r = http_request(:get, "https://#{account}.blob.core.windows.net", nil, {}, nil, true, 10)
           # if the storage account does not exist, its a non existent host therefore 0 status code
           r.code != '0'
         end
 
         def public_access_allowed?(storage_account)
+          account = extract_azure_storage_account_from_string(storage_account)
           _log 'Verifying whether Storage Account allows for public access.'
-          r = http_request(:get, "https://#{storage_account}.blob.core.windows.net", nil, {}, nil, true, 10)
+          r = http_request(:get, "https://#{account}.blob.core.windows.net", nil, {}, nil, true, 10)
           r.code == '400' && r.body.include?('InvalidQueryParameterValue')
         end
 

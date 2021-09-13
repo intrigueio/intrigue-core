@@ -27,7 +27,7 @@ module Intrigue
       def run
         super
 
-        name = _get_entity_name
+        name = extract_azure_storage_account_from_string(_get_entity_name)
         return unless azure_storage_account_exists?(@entity)
 
         return unless azure_storage_container_pub_access?(@entity)

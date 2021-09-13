@@ -17,16 +17,12 @@ module Intrigue
           name: 'AzureStorageAccount',
           description: 'An Azure Storage Account',
           user_creatable: true,
-          example: 'storageaccount'
+          example: 'https://intrigue.blob.core.windows.net'
         }
       end
 
-      ## only care about the name of the literal storage account
-      # as the enrich task will populate the URI and verify it in fact exists
-      # if this wasn't done, then the same storage account with different schemes could be created
-      # http://storaccount.blob.core.windows.net; smb://storaccount.blob.core.windows.net, etc.
       def validate_entity
-        name.match(/^\w{3,63}$/)
+        name.match(/\w+\.blob\.core\.windows\.net/)
       end
 
       def detail_string

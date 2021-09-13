@@ -41,9 +41,10 @@ module Intrigue
       end
 
       def create_azure_storage_account(azure)
+        account = extract_azure_storage_account_from_string(azure['bucket'])
         _create_entity 'AzureStorageAccount', {
-          'name' => extract_storage_account_from_string(azure['bucket']),
-          'storage_account_name' => extract_storage_account_from_string(azure['bucket']),
+          'name' => "#{account}.blob.core.windows.net",
+          'storage_account_name' => "#{account}.blob.core.windows.net",
           'uri' => azure['bucket'],
           'fileCount' => azure['fileCount'],
           'containers' => [azure['container']]

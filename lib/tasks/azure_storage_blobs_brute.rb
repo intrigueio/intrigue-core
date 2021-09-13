@@ -54,7 +54,9 @@ module Intrigue
                      end
 
         _log_error 'Entity has no containers associated with it / nor was one provided.' if containers.empty?
-        containers.map { |c| "https://#{_get_entity_name}.blob.core.windows.net/#{c}" } unless containers.empty?
+
+        account_name = extract_azure_storage_account_from_string(_get_entity_name)
+        containers.map { |c| "https://#{account_name}.blob.core.windows.net/#{c}" } unless containers.empty?
       end
 
       def prepare_blobs_list
@@ -122,7 +124,7 @@ module Intrigue
         # add URIS to azurestorageaccountentity 
         results.each do |r|
           add_blob_uri_to_entity_details(@entity, r)
-          add_container_to_entity_details(@entity, extract_storage_container_from_string(r))
+          add_container_to_entity_details(@entity, extract_azure_storage_container_from_string(r))
         end
 
         mapped_results = map_container_names_to_uri(results)
@@ -131,8 +133,8 @@ module Intrigue
       end
 
       def map_container_names_to_uri(results)
-        container_names_only = results.map { |r| extract_storage_container_from_string(r) }
-        match_uri_with_containers = ->(c) { results.find_all { |r| extract_storage_container_from_string(r) == c } }
+        container_names_only = results.map { |r| extract_azure_storage_container_from_string(r) }
+        match_uri_with_containers = ->(c) { results.find_all { |r| extract_azure_storage_container_from_string(r) == c } }
 
         container_names_only.uniq.map { |name| { name => match_uri_with_containers.call(name) } }
       end
@@ -141,8 +143,8 @@ module Intrigue
         name, blobs = m_hash.first
         _create_linked_issue 'azure_storage_blob_public', {
           proof: "Azure Storage Container #{name} contains blobs which can be accessed by anonymous users.",
-          source: "https://#{extract_storage_account_from_string(blobs.first)}.blob.core.windows.net/#{name}",
-          uri: "https://#{extract_storage_account_from_string(blobs.first)}.blob.core.windows.net/#{name}",
+          source: "https://#{extract_azure_storage_account_from_string(blobs.first)}.blob.core.windows.net/#{name}",
+          uri: "https://#{extract_azure_storage_account_from_string(blobs.first)}.blob.core.windows.net/#{name}",
           status: 'confirmed',
           details: {
             public_blobs: blobs
