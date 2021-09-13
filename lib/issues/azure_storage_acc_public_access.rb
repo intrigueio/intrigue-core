@@ -9,9 +9,8 @@ module Intrigue
           severity: 5,
           status: 'potential',
           category: 'misconfiguration',
-          # TODO: change the wording in description because it makes it sound like the access is implicit
           # the container can still dictate whether or not acesss blobs & their contents should be public
-          description: 'An Azure Storage Account was found to allow public access to its containers and their respective blobs.',
+          description: 'An Azure Storage Account was found giving its containers permission to allow public access.',
           remediation: 'Investigate whether public access should be allowed.',
           references: [ # types: description, remediation, detection_rule, exploit, threat_intel
             { type: 'description', uri: 'https://docs.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-configure?tabs=portal' }
