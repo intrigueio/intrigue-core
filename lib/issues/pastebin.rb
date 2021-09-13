@@ -12,7 +12,9 @@ class Pastebin < BaseIssue
       category: "leak",
       description: "Related account found in pastebin page",
       remediation: "Mention in pastebin should be investigated by your team it might contain leaked data or some private data related to your company",
-      references: []
+      references: [
+        { type: "description", uri: "https://www.authentic8.com/blog/how-to-use-pastebin-for-cyber-threat-intelligence-research" }
+      ]
     }.merge!(instance_details)
 
   to_return

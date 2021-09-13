@@ -6,7 +6,7 @@ class VulnerableTomcatJmxConsole < BaseIssue
     {
       added: "2020-01-01",
       name: "vulnerable_tomcat_jmx_console",
-      pretty_name: "Apached Tomcat JMX Console Exposed",
+      pretty_name: "Apache Tomcat JMX Console Exposed",
       identifiers: [],
       severity: 1,
       category: "misconfiguration",
@@ -16,7 +16,9 @@ class VulnerableTomcatJmxConsole < BaseIssue
       affected_software: [
         { :vendor => "Apache", :product => "Tomcat" }
       ],
-      references: [],
+      references: [
+        { type: "description", uri: "https://tomcat.apache.org/tomcat-8.5-doc/security-howto.html#JMX" }
+      ],
       task: "uri_brute_focused_content"
     }.merge!(instance_details)
   end
