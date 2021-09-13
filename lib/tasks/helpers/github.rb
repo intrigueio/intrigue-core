@@ -31,11 +31,18 @@ module Intrigue
 
       # called in two tasks - thus warranting it a helper
       def create_github_repo_entity(repo_full_name)
+        repo_full_name = "https://github.com/#{repo_full_name}" unless repo_full_name.include? 'https://github.com'
         _create_entity 'GithubRepository', {
-          'name' => "https://github.com/#{repo_full_name}",
-          'repository_name' => repo_full_name,
-          'owner' => repo_full_name.split('/').first
+          'name' => repo_full_name
         }
+      end
+
+      def extract_github_account_name(repo)
+        repo.scan(/https:\/\/github\.com\/([\w|\-]+)\/?/i).flatten.first
+      end
+
+      def extract_full_repo_name(repo)
+        repo.scan(/https:\/\/github\.com\/([\w|\-]+\/[\w|\-]+)/i).flatten.first
       end
 
       ### Single threaded version

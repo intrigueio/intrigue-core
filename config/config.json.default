@@ -18,6 +18,7 @@
   "sentry_dsn": null,
   "browser_enabled": true,
   "intrigue_task_log_location": "database",
+  "intrigue_task_log_level": "error",
   "intrigue_load_paths": [],
   "intrigue_handler_processing_wait_time": 60,
   "intrigue_notifiers": {
@@ -265,6 +266,12 @@
       "editable": "true",
       "comment": ""
     },
+    "gitlab_access_token": {
+      "value": "",
+      "uri": "https://gitlab.com/-/profile/personal_access_tokens",
+      "editable": "true",
+      "comment": ""
+    },
     "greynoise_api_key": {
       "value": "",
       "uri": "https://docs.greynoise.io/#greynoise-api",
@@ -365,6 +372,12 @@
       "editable": "true",
       "comment": ""
     },
+    "leak_lookup_api_key": {
+      "value": "",
+      "uri": "https://leak-lookup.com/api",
+      "editable": "true",
+      "comment": ""
+    },
     "mailbox_layer_apikey": {
       "value": "",
       "uri": "https://mailboxlayer.com/dashboard",
@@ -434,6 +447,12 @@
     "shodan_api_key": {
       "value": "",
       "uri": "https://account.shodan.io/login",
+      "editable": "true",
+      "comment": ""
+    },
+    "searchcode_api_key": {
+      "value": "",
+      "uri": "https://searchcode.com/api/",
       "editable": "true",
       "comment": ""
     },
@@ -521,11 +540,18 @@
       "editable": "true",
       "comment": ""
     },
+    "zoomeye_api_key": {
+      "value": "",
+      "uri": "https://zoomeye.com/docs",
+      "editable": "true",
+      "comment": ""
+    },
     "zetalytics_api_key": {
       "value": "",
       "uri": "https://zetalytics.com/",
       "editable": "true",
       "comment": ""
     }
-  }
+  },
+  "redirect_issue_trigger_count": 10
 }

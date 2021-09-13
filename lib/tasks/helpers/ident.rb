@@ -46,6 +46,8 @@ module Ident
 
   def create_issues_from_fingerprint_tags(fingerprint, entity)
 
+    return unless fingerprint && entity
+
     issues_to_create = []
     tags = []
 
@@ -57,10 +59,18 @@ module Ident
         tags << fp["tags"]
         if  t.match(/^Admin Panel$/i)
           issues_to_create << ["exposed_admin_panel_unauthenticated", fp]
-        elsif t.match(/^DatabaseService/i) || t.match(/^Database$/i)
+        elsif t.match(/^RDP$/i)
+          issues_to_create << ["open_rdp_port", fp]
+        elsif t.match(/^SMB$/i)
+          issues_to_create << ["exposed_smb_service", fp]
+        elsif t.match(/^Database$/i)
           issues_to_create << ["exposed_database_service", fp]
         elsif t.match(/^DefaultPage$/i)
           issues_to_create << ["default_web_server_page_exposed", fp]
+        elsif t.match(/^FTP Server$/i) || t.match(/^TelnetServer/i)
+          issues_to_create << ["weak_service_identified", fp]
+        elsif t.match(/^SNMPServer$/i)
+          issues_to_create << ["exposed_snmp_service", fp]
         elsif t.match(/^Printer$/i)
           issues_to_create << ["exposed_printer_control_panel", fp]
         elsif t.match(/^Webcam$/i)

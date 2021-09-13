@@ -77,7 +77,7 @@ class SearchIBMXForce < BaseTask
           severity: 3,
           references: ["https://exchange.xforce.ibmcloud.com/ip/#{entity_name}"],
           source:"IBM X Force #{result["score"]}",
-          details: result
+          proof: result
         })
       end
 
@@ -87,7 +87,7 @@ class SearchIBMXForce < BaseTask
           severity: 2,
           references: ["https://exchange.xforce.ibmcloud.com/ip/#{entity_name}"],
           source:"IBM X Force #{result["score"]}",
-          details: result
+          proof: result
         })
       end
     end

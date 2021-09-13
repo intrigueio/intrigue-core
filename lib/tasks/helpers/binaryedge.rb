@@ -109,6 +109,24 @@ module BinaryEdge
   result["events"]
   end
 
+  def search_binaryedge_netblock(netblock,api_key,page_num = 0)
+    # get the results
+    uri = "https://api.binaryedge.io/v2/query/search?query=\"ip:#{netblock}\"&page=#{page_num}"
+    headers = {"X-Key" =>  "#{api_key}"}
+    begin 
+      result = http_request(:get, uri, nil, headers)
+      result_json = JSON.parse(result.body_utf8)
+    rescue JSON::ParserError => e 
+      _log_error "unable to parse results"
+    end    
+
+    if result.response_code == 403
+      raise InvalidTaskConfigurationError, "Got message: #{result_json}"
+    end
+
+  result_json["events"]
+  end
+
   ###
   ### Parsing for results 
   ### 
@@ -210,6 +228,7 @@ module BinaryEdge
     result.each do |service|
       e =_create_entity("IpAddress", {"name" => "#{service['target']['ip']}" })
       _create_linked_issue("open_database",{
+        proof: service,
         source: "binaryedge",
         description: "
         Link: http://#{service['target']['ip']}:#{service['target']['port']}\n

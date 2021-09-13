@@ -11,8 +11,13 @@ class GithubRepository < Intrigue::Core::Model::Entity
     }
   end
 
+  def enrichment_tasks
+    ['enrich/github_repository']
+  end
+
+
   def validate_entity
-    name.match /^https:\/\/github.com\/[\d\w\-]{1,39}+\/[\d\w\-]{1,100}+/
+    name.match /^https:\/\/github.com\/[\w\-]{1,39}+\/[\w\-]{1,100}+/
   end
 
   def scoped?

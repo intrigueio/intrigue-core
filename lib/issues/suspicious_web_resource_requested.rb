@@ -1,14 +1,14 @@
 module Intrigue
   module Issue
   class SuspiciousWebResourceRequested < BaseIssue
-  
+
     def self.generate(instance_details={})
       {
         added: "2020-01-01",
         name: "suspicious_web_resource_requested",
         pretty_name: "Suspicious Web Resource Requested",
         severity: 5,
-        category: "threat",
+        category: "compromise",
         status: "confirmed",
         description: "When a browser requested the resource, a suspicious request was made.",
         remediation: "Investigate the request.",
@@ -18,8 +18,7 @@ module Intrigue
         ]
       }.merge!(instance_details)
     end
-  
+
   end
   end
   end
-  

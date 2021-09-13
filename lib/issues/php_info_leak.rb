@@ -1,7 +1,7 @@
 module Intrigue
   module Issue
   class PhpInfoLeak < BaseIssue
-  
+
     def self.generate(instance_details)
       to_return = {
         added: "2020-01-01",
@@ -9,7 +9,7 @@ module Intrigue
         pretty_name: "PHP Info Leak",
         severity: 3,
         status: "confirmed",
-        category: "vulnerability",
+        category: "misconfiguration",
         description: "This server is exposing a phpinfo.php file, which provides detailed information about the configuration of the server.",
         remediation: "Remove the file from the server.",
         affected_software: [
@@ -19,11 +19,10 @@ module Intrigue
         ],
         # task: handled in ident
       }.merge!(instance_details)
-  
+
     to_return
     end
-  
+
   end
   end
   end
-  

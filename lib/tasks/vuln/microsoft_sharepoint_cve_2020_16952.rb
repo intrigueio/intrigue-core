@@ -32,17 +32,21 @@ module Intrigue
 
         # exit if no respone
         unless res
-            _log_error "No response received. Exiting."
-            return
+          _log_error "No response received. Exiting."
+          return
         end
-        
+
         # check response for match
         if res.code == "200" && res.body =~ /16\.0\.10364\.20001/i
-            _log "Target is  vulnerable! Creating issue."
-            _create_linked_issue( "microsoft_sharepoint_cve_2020_16952")
-            return
+          _log "Target is  vulnerable! Creating issue."
+          _create_linked_issue("microsoft_sharepoint_cve_2020_16952", {
+            proof: {
+              response_body: res.body
+            }
+          })
+          return
         else
-            _log "Not vulnerable, exiting!"
+          _log "Not vulnerable, exiting!"
         end
 
       end

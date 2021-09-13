@@ -19,11 +19,12 @@ module Intrigue
   
       # Parse the cert
       cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
+      cert_sha256_fingerprint = OpenSSL::Digest::SHA256.new(cert.to_der).to_s
   
       # Create an SSL Certificate entity
       key_size = "#{cert.public_key.n.num_bytes * 8}" if cert.public_key && cert.public_key.respond_to?(:n)
       certificate_details = {
-        "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert.serial})",
+        "name" => "#{cert.subject.to_s.split("CN=").last} (#{cert_sha256_fingerprint})",
         "version" => cert.version,
         "serial" => "#{cert.serial}",
         "not_before" => "#{cert.not_before}",
@@ -32,6 +33,7 @@ module Intrigue
         "issuer" => "#{cert.issuer}",
         "key_length" => key_size,
         "signature_algorithm" => "#{cert.signature_algorithm}",
+        "fingerprint_sha256" => "#{cert_sha256_fingerprint}",
         "hidden_text" => "#{cert.to_text}"
       }
   
@@ -44,8 +46,12 @@ module Intrigue
   
     # See: https://raw.githubusercontent.com/zendesk/ruby-kafka/master/lib/kafka/ssl_socket_with_timeout.rb
     def connect_ssl_socket(hostname, port, timeout=10)
-      
-      s = Intrigue::SSLSocketWithTimeout.new(hostname, port,  timeout, timeout=10, ssl_context=nil)
+      begin
+        s = Intrigue::SSLSocketWithTimeout.new(hostname, port,  timeout, timeout=10, ssl_context=nil)
+      rescue Errno::EADDRNOTAVAIL, Errno::ENETUNREACH
+        # we can't connect to the ip address for some reason
+        return nil
+      end
   
       # fail if we can't connect
       ssl_socket = s.ssl_socket

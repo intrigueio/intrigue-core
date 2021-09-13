@@ -28,17 +28,23 @@ class MicrosoftExchangeCve202016875 < BaseTask
     fingerprint = _get_entity_detail("fingerprint")
 
     if is_product?(fingerprint, "Exchange Server")
-      if is_vulnerable_version?(fingerprint)
-          _create_linked_issue("microsoft_exchange_cve_2020_16875")
+
+      # check the fingerprints
+      fp = fingerprint.select{|v| v['product'] == "Exchange Server" }.first
+      return "No fingerprint found for the product in question" unless fp
+      
+      if is_vulnerable_version?(fp)
+        _create_linked_issue("microsoft_exchange_cve_2020_16875", {
+          proof: {
+            detected_version: fp["version"],
+            detected_update: fp["update"]
+          }
+        })
       end
     end
   end
 
-  def is_vulnerable_version?(fingerprint)
-    # check the fingerprints
-    fp = fingerprint.select{|v| v['product'] == "Exchange Server" }.first
-    return false unless fp
-
+  def is_vulnerable_version?(fp)
     vulnerable_versions.include?({version: fp["version"], update: fp["update"]})
   end
 

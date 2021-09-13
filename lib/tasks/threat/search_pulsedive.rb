@@ -66,7 +66,7 @@ module Intrigue
               source: "Pulsedive",
               severity: sev ,
               detailed_description: detailed_description,
-              details: u
+              proof: u
             })
 
           end
@@ -82,7 +82,7 @@ module Intrigue
               source: "Pulsedive",
               severity: sev ,
               detailed_description: detailed_description,
-              details: json
+              proof: json
             })
           end
         end

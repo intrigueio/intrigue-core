@@ -14,7 +14,7 @@ module Intrigue
           passive: true,
           allowed_types: ['String', 'GithubAccount'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } },
-                             { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'intrigueio' } }],
+                             { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'https://github.com/intrigueio' } }],
           allowed_options: [{ name: 'ignore_forked', regex: 'boolean', default: false }],
           created_types: ['GithubRepository'],
           queue: 'task_github'
@@ -28,7 +28,7 @@ module Intrigue
         # use safe nav operator as initialize_gh_client can be nil
         # however if token is valid, a hash will be returned
         gh_client = initialize_gh_client&.fetch('client')
-        account = _get_entity_name if _get_entity_type_string == 'GithubAccount'
+        account = extract_github_account_name(_get_entity_name) if _get_entity_type_string == 'GithubAccount'
         repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
 
         _log 'No repositories discovered.' if repos.nil?
@@ -64,9 +64,9 @@ module Intrigue
           end
 
           break
-        rescue Octokit::AbuseDetected => e
-          _log_error "#{e}\nRate limiting hit on attempt #{i}. Retrying."
-          sleep 300 # sleep 5 mins to reset 
+        rescue Octokit::AbuseDetected, Octokit::Forbidden
+          _log_error "Rate limiting hit on attempt #{i}; Retrying in 5 minutes."
+          sleep 300
           next
         rescue Octokit::TooManyRequests
           # exhausted the max amount of requests per hour/ just return to not lag other tasks
@@ -92,9 +92,9 @@ module Intrigue
 
       def client_api_request(client, name)
         return client.repos if name.nil? # no github account specified; return all repos belonging to token
-        return nil unless account_exists?(name) # github account specified; check if account exists
+        return nil unless account_exists?(name, client.access_token) # github account specified; check if account exists
 
-        repositories = if org?(name) # if github account is an org; need to make a different API call
+        repositories = if org?(name, client.access_token) # if github account is an org; need to make a different API call
                          client.org_repos(name, { 'type' => 'all' })
                        else
                          # when calling client.repos and passing in a name, it will return only public repositories
@@ -107,8 +107,9 @@ module Intrigue
         repositories
       end
 
-      def http_get_json_body(url)
-        r = http_get_body(url)
+      def http_get_json_body(url, access_token = nil)
+        headers = access_token ? { 'Authorization' => "Bearer #{access_token}" } : {}
+        r = http_request(:get, url, nil, headers).body
         return nil if http_rate_limiting?(r)
 
         begin
@@ -127,17 +128,17 @@ module Intrigue
         rate_limiting
       end
 
-      def account_exists?(name)
-        response = http_get_json_body("https://api.github.com/users/#{name}")
+      def account_exists?(name, access_token = nil)
+        response = http_get_json_body("https://api.github.com/users/#{name}", access_token)
 
-        exists = response['message'] != 'Not Found'
+        exists = response['message'] != 'Not Found' if response
         _log_error "#{name} is not a valid Github user/repository; exiting." unless exists
 
         exists
       end
 
-      def org?(name)
-        response = http_get_json_body("https://api.github.com/users/#{name}")
+      def org?(name, access_token)
+        response = http_get_json_body("https://api.github.com/users/#{name}", access_token)
         response['type'].eql? 'Organization'
       end
 

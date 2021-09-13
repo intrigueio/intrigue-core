@@ -3,6 +3,8 @@ module Task
 module Enrich
 class Uri < Intrigue::Task::BaseTask
 
+  include Intrigue::Task::RedirectChain
+
   def self.metadata
     {
       :name => "enrich/uri",
@@ -321,6 +323,10 @@ class Uri < Intrigue::Task::BaseTask
     ### TODO ... move to whois!!!!
     ###
     if resolved_ip_address.is_ip_address?
+      # if we found an IP from the previous attempt at resolving, create the entity.
+      _log 'Creating IPAddress entity.'
+      _create_entity 'IpAddress', { name: resolved_ip_address }
+      
       resp = cymru_ip_whois_lookup(resolved_ip_address)
       net_geo = resp[:net_country_code]
       net_name = resp[:net_name]
@@ -336,6 +342,8 @@ class Uri < Intrigue::Task::BaseTask
 
     # get the hashed dom structure
     dom_sha1 = Digest::SHA1.hexdigest(html_dom_to_string(response.body_utf8))
+
+    redirects = find_and_log_excessive_redirects(ident_responses, hostname)
 
     # set up the new details
     new_details = {
@@ -357,7 +365,7 @@ class Uri < Intrigue::Task::BaseTask
       "forms" => contains_forms,
       "generator" => generator_string,
       "headers" => headers,
-      "redirect_chain" => ident_responses.first[:response_urls] || [],
+      "redirect_chain" => redirects[:chain].flatten.uniq || [],
       "response_data_hash" => response_data_hash,
       "dom_sha1" => dom_sha1,
       "title" => title,
@@ -367,7 +375,8 @@ class Uri < Intrigue::Task::BaseTask
       "extended_configuration" => ident_content.uniq,        # new content field
       "extended_full_responses" => ident_responses.uniq,           # includes all the redirects etc
       "extended_favicon_data" => favicon_data,
-      "extended_response_body" => response.body_utf8
+      "extended_response_body" => response.body_utf8,
+      "redirect_count" => redirects[:count]
     }
 
     # Set the details, and make sure raw response data is a hidden (not searchable) detail

@@ -7,7 +7,7 @@ class DefaultWebServerPageExposed < BaseIssue
       added: "2020-01-01",
       name: "default_web_server_page_exposed",
       pretty_name: "Default Web Server Page Exposed",
-      severity: 4,
+      severity: 5,
       status: "confirmed",
       category: "misconfiguration",
       description: "The web server is preseting a default page shown post-install. This is often an indicator that the server has not been hardened for Internet access.",
@@ -23,4 +23,3 @@ class DefaultWebServerPageExposed < BaseIssue
 end
 end
   end
-  

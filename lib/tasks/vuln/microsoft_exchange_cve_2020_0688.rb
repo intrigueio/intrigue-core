@@ -37,7 +37,11 @@ class MicrosoftExchangeCve20200688 < BaseTask
         response = http_request(:get, check_url)
 
         if response.body_utf8 =~ /<title>Exchange Admin Center/
-          _create_linked_issue("vulnerability_exchange_cve_2020_0688")
+          _create_linked_issue("vulnerability_exchange_cve_2020_0688", {
+            proof: {
+              response_body: response.body_utf8
+            }
+          })
         end
 
       end

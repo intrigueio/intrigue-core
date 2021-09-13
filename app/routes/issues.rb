@@ -36,9 +36,18 @@ class CoreApp < Sinatra::Base
 
    end
 
-  get '/:project/issues/:id' do
+   get "/:project/issues/:id.json" do
+    content_type 'application/json'
+    @issue = Intrigue::Core::Model::Issue.scope_by_project(@project_name).first(:id => params[:id].to_i)
+    attachment "#{@project_name}_#{@issue.id}.json"
+    @issue.export_json
+  end
+  
+   get '/:project/issues/:id' do
     @issue = Intrigue::Core::Model::Issue.scope_by_project(@project_name).first(:id => params[:id].to_i)
     erb :'issues/detail'
   end
+
+  
 
 end

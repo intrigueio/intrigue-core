@@ -11,19 +11,18 @@ module System
     out -= ["GithubAccount", "GithubSearchResult", "Mailserver", "Nameserver", "Organization", "PhysicalLocation", "SoftwarePackage", "SslCertificate", "String"]
     end
 
-
     def discern_entity_types_from_name(str)
       if str.is_ip_address?
         ["IpAddress"]
-      elsif str =~ asn_regex 
+      elsif str =~ asn_regex
         ["AutonomousSystem"]
       elsif str =~ dns_regex && (parse_domain_name(str) == str)
         ["Domain"]
-      elsif str =~ dns_regex 
+      elsif str =~ dns_regex
         ["DnsRecord"]
-      elsif str =~ netblock_regex || netblock_regex_two 
+      elsif str =~ netblock_regex || netblock_regex_two
         ["NetBlock"]
-      else 
+      else
         ["UniqueKeyword"]
       end
     end
@@ -43,7 +42,7 @@ module System
     ###
     def start_task(queue, project, existing_scan_result_id, task_name, entity, depth=1,
           options=[], handlers=[], workflow_name=nil, auto_enrich=true, auto_scope=false)
-      
+
       # Create the task result, and associate our entity and options
       logger = Intrigue::Core::Model::Logger.create(:project_id => project.id)
       task_result = Intrigue::Core::Model::TaskResult.create({
