@@ -47,6 +47,7 @@ module Intrigue
           ### Browser-based data grab
           ###
           browser_data_hash = capture_screenshot_and_requests(uri)
+          #require 'pry'; binding.pry
           if browser_data_hash.empty?
             _log 'empty hash, returning w/o setting details'
             return
@@ -135,8 +136,8 @@ module Intrigue
             _log 'Skipping webservice browser responses'
           end
 
-          # now merge them together and set as the new details
-          # _get_and_set_entity_details browser_data_hash
+          # set the screenshot details only, otherwise the entity details become too large for the 
+           _get_and_set_entity_details browser_data_hash.select{|key,_| ['screenshot_exists', 'extended_screenshot_contents'].include? key}
         end
       end
     end
