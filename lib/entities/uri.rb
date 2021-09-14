@@ -52,7 +52,7 @@ class Uri < Intrigue::Core::Model::Entity
   end
 
   def enrichment_tasks
-    ["enrich/uri", "uri_browser_analysis"]
+    ["enrich/uri"]
   end
 
   def scope_verification_list

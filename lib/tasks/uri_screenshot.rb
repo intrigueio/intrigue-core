@@ -14,7 +14,7 @@ module Intrigue
         :references => [],
         :type => "discovery",
         :passive => false,
-        :allowed_types => ["Uri"],
+        :allowed_types => ["ApiEndpoint","Uri"],
         :example_entities => [
           {"type" => "Uri", "details" => {"name" => "http://www.intrigue.io"}}
         ],
