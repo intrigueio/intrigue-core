@@ -1,7 +1,7 @@
 module Intrigue
   module Task
     module VulnDb
-      
+
       #
       # This method assumes we get a list of objects with a CPE we can parse
       # and use for a vuln lookup based on the configured methdo
@@ -17,9 +17,9 @@ module Intrigue
           use_api = false
         end
 
-        # for ech fingerprint, map vulns 
+        # for ech fingerprint, map vulns
         component_list = component_list.map do |fp|
-          next unless fp 
+          next unless fp
 
           vulns = []
           if fp["type"] == "fingerprint" && fp["inference"]
@@ -31,9 +31,9 @@ module Intrigue
               vulns = cpe.query_local_nvd_json
             end
 
-            # merge it in 
+            # merge it in
             fp.merge!({"vulns" => vulns })
-          else 
+          else
             _log "Inference disallowed on: #{fp["cpe"]}" if fp["cpe"]
             _log "Returning un-enriched fps"
             fp if fp["type"] == "fingerprint"
@@ -55,9 +55,9 @@ module VulnDb
     include Intrigue::Task::Web
 
     def initialize(cpe_string)
-      
+
       @cpe = cpe_string
-      
+
       x = _parse_cpe(@cpe)
       return nil unless x
 
@@ -71,14 +71,14 @@ module VulnDb
     def query_intrigue_vulndb_api(api_host, api_key)
 
       #puts "Querying VulnDB API!"
-      #puts "https://intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
+      #puts "https://api.intrigue.io/api/vulndb/match/#{@vendor}/#{@product}/#{@version}"
 
       begin
         uri = "#{api_host}/api/vulndb/match_cpe/#{@cpe}"
         uri << "?key=#{api_key}"
 
         puts "Requesting Vulns for CPE: #{@cpe}"
-        
+
         response = http_request :get, uri
 
         # if the API is down, we'll get a nil response, so handle that case gracefully
@@ -186,7 +186,7 @@ module VulnDb
                   end
 
                   # create a hash with the vuln's data, matches "slim" export from the
-                  # vulndb server  
+                  # vulndb server
                   vuln = {
                     cve: cve_id,
                     cwe: cwe_id,
