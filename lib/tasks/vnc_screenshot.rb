@@ -25,7 +25,7 @@ module Intrigue
 
         port = net_service.split(':').last.split('/').first
 
-        unless port == '5900'
+        unless port.between?(5900,5999)
           _log 'Incorrect VNC port! Will not perform certificate extraction.'
           return
         end
