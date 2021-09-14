@@ -16,7 +16,9 @@ class VulnerablePulseSecure < BaseIssue
       affected_software: [
         { :vendor => "PulseSecure", :product => "Pulse Connect Secure" }
       ],
-      references: [],
+      references: [
+        { type: "description", uri: "https://labs.bishopfox.com/tech-blog/breaching-the-trusted-perimeter" }
+      ],
       task: "uri_brute_focused_content"
     }.merge!(instance_details)
   end
