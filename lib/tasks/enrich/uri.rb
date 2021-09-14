@@ -3,8 +3,6 @@ module Task
 module Enrich
 class Uri < Intrigue::Task::BaseTask
 
-  include Intrigue::Task::RedirectChain
-
   def self.metadata
     {
       :name => "enrich/uri",
