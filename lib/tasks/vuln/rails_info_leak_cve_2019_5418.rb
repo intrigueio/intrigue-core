@@ -51,7 +51,11 @@ class RailsFileExposureCve20195418 < BaseTask
       if response
         if "#{etc_passwd_body}" =~ /root\:x/
           _log "Vulnerable! Partial content of response: #{etc_passwd_body}"
-          _create_linked_issue("rails_information_disclosure_cve_2019_5418",{data: etc_passwd_body })
+          _create_linked_issue("rails_information_disclosure_cve_2019_5418", {
+            proof: {
+              response_data: etc_passwd_body
+            }
+          })
         else
           _log "Got non-vulnerable response: #{response.body_utf8}"
         end

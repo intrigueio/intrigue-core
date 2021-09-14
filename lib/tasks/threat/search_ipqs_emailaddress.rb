@@ -51,8 +51,8 @@ class SearchIPQSEmailAddress < BaseTask
       if result["leaked"]== true or result["suspect"] == true or result["spam_trap_score"] != "none"
         _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
-          description: "This Email Address was flagged by IPQualtiyScore for these reasons: Leak:#{result["leaked"]} // suspicious activity:#{result["suspect"]} // Spam:#{result["spam_trap_score"]} ",
-          IpQualityScore_details: result,
+          description: "This Email Address was flagged by IpQualityScore for these reasons: Leak:#{result["leaked"]} // suspicious activity:#{result["suspect"]} // Spam:#{result["spam_trap_score"]} ",
+          proof: result,
           source: "IpQualityScore.com"
         })
       end

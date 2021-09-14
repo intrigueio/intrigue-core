@@ -38,8 +38,8 @@ class Domain < Intrigue::Task::BaseTask
     ### Create aliased entities
     #### 
     new_entity = create_dns_aliases(results, @entity) if entity_scoped
-
-    if !new_entity.nil? 
+    
+    if !new_entity.nil? && new_entity.length > 0
       _log "Geolocating..."
       location_hash = geolocate_ip(new_entity.first["name"]) unless new_entity.first["name"].nil?
       if location_hash.nil? 

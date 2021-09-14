@@ -42,7 +42,11 @@ module Intrigue
 
       if response =~ /org.apache.catalina.session.FileStore/
         # vulnerable
-        _create_linked_issue "tomcat_persistent_manager_cve_2020_9484"
+        _create_linked_issue("tomcat_persistent_manager_cve_2020_9484", {
+          proof: {
+            response_body: response
+          }
+        })
       else 
         # not vulnerable  
         _log "Not vulnerable or unable to detect a file on disk"

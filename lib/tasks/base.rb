@@ -15,6 +15,7 @@ class BaseTask
   include Intrigue::Task::CloudProviders
   include Intrigue::Task::Data
   include Intrigue::Task::Dns
+  include Intrigue::Task::Gitlab
   include Intrigue::Task::Github
   include Intrigue::Task::Ident
   include Intrigue::Task::Issue

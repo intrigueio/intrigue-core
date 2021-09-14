@@ -41,10 +41,13 @@ module Intrigue
             # todo, set image as entity detail
             screenshot_image = Base64.strict_encode64(File.read("/tmp/scrying_outputs/rdp/#{target}-3389.png"))
             _set_entity_detail "extended_screenshot_contents", screenshot_image
+            _set_entity_detail "screenshot_exists", true
 
     
             # delete temporary screenshot file
             _unsafe_system("rm /tmp/scrying_outputs/rdp/#{target}-3389.png")
+        else
+          _set_entity_detail "screenshot_exists", false
         end
 
       end

@@ -266,6 +266,12 @@
       "editable": "true",
       "comment": ""
     },
+    "gitlab_access_token": {
+      "value": "",
+      "uri": "https://gitlab.com/-/profile/personal_access_tokens",
+      "editable": "true",
+      "comment": ""
+    },
     "greynoise_api_key": {
       "value": "",
       "uri": "https://docs.greynoise.io/#greynoise-api",
@@ -444,6 +450,12 @@
       "editable": "true",
       "comment": ""
     },
+    "searchcode_api_key": {
+      "value": "",
+      "uri": "https://searchcode.com/api/",
+      "editable": "true",
+      "comment": ""
+    },
     "security_trails_api_key": {
       "value": "",
       "uri": "https://securitytrails.com/corp/apidocs",
@@ -528,11 +540,18 @@
       "editable": "true",
       "comment": ""
     },
+    "zoomeye_api_key": {
+      "value": "",
+      "uri": "https://zoomeye.com/docs",
+      "editable": "true",
+      "comment": ""
+    },
     "zetalytics_api_key": {
       "value": "",
       "uri": "https://zetalytics.com/",
       "editable": "true",
       "comment": ""
     }
-  }
+  },
+  "redirect_issue_trigger_count": 10
 }
