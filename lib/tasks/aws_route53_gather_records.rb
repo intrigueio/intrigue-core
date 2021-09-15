@@ -1,9 +1,9 @@
 module Intrigue
   module Task
-    class AwsRoute53 < BaseTask
+    class AwsRoute53GatherRecords < BaseTask
       def self.metadata
         {
-          name: 'aws_route53',
+          name: 'aws_route53_gather_records',
           pretty_name: 'AWS Route53 Gather Records',
           authors: ['Anas Ben Salah', 'maxim'],
           description: 'This task hits the Route53 API for enumerating DNS Records. Please ensure the <i>ListResourceRecordSets</i> permission is set in the policy for which the keys are associated with in order to retrieve records from a Hosted Zone. <br/><br/><b>Please note that if no Hosted Zone ID is provided; this task will retrieve records for all accessible Hosted Zones.</b>',
@@ -25,12 +25,13 @@ module Intrigue
         super
 
         # Get the AWS Credentials
-        aws_access_key, aws_secret_key = get_aws_keys_from_entity_type(_get_entity_type_string)
-        return unless aws_access_key && aws_secret_key
-        hosted_zone_id = _get_option 'Hosted Zone ID'
+        aws_keys = get_aws_keys_from_entity_type(_get_entity_type_string)
+        return unless aws_keys.access_key && aws_keys.secret_key
 
+        hosted_zone_id = _get_option 'Hosted Zone ID'
         # route53 is global; region does not matter. set to us-east-1 to satisfy SDK.
-        r53 = Aws::Route53::Client.new({ region: 'us-east-1', access_key_id: aws_access_key, secret_access_key: aws_secret_key })
+        r53 = Aws::Route53::Client.new({ region: 'us-east-1', access_key_id: aws_keys.access_key,
+                                         secret_access_key: aws_keys.secret_key, session_token: aws_keys.session_token })
 
         return nil unless access_key_valid? r53
 
