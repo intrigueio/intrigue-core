@@ -195,7 +195,7 @@ class SearchAzureBlob < BaseTask
       _create_linked_issue("azure_blob_exposed_files", {
         status: "confirmed",
         detailed_description: "This container #{response.request.base_url} can be accessed publicly and it exposes files",
-        details: {
+        proof: {
           exposed_files: all_files,
           uri: response.request.base_url
           }

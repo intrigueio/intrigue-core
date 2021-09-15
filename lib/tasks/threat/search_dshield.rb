@@ -38,7 +38,7 @@ class SearchDshield < BaseTask
         _create_linked_issue("suspicious_activity_detected", {
           status: "confirmed",
           description: "This ip was flagged by Dshield for malicious activites",
-          fraudguard_details: result,
+          proof: result,
           source: "Dshield.org"
         })
         # Also store it on the entity

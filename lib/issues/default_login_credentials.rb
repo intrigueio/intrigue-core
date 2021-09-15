@@ -11,7 +11,9 @@ module Intrigue
           status: 'potential',
           description: 'This service can be accessed using either the default User/Password combination or well known User/Password combinations.',
           remediation: 'Change access credentials to a more secure User/Password combination.',
-          references: [] 
+          references: [
+            { type: "description", uri: "https://portswigger.net/web-security/authentication/password-based" }
+          ] 
         }.merge!(instance_details)
       end
     end

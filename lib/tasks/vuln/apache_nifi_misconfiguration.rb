@@ -51,7 +51,11 @@ module Intrigue
         response = http_get_body uri
         if  is_vuln(response)
             _log "Vulnerable!"
-            _create_linked_issue "apache_nifi_misconfiguration", {"response" => JSON.parse(response)}
+            _create_linked_issue("apache_nifi_misconfiguration", {
+              proof: {
+                response: JSON.parse(response)
+              }
+            })
             return
         end
 
@@ -62,7 +66,11 @@ module Intrigue
         response = http_get_body endpoint
         if  is_vuln(response)
             _log "Vulnerable!"
-            _create_linked_issue "apache_nifi_misconfiguration", {"response" => JSON.parse(response)}
+            _create_linked_issue("apache_nifi_misconfiguration", {
+              proof: {
+                response: JSON.parse(response)
+              }
+            })
             return
         end
       end

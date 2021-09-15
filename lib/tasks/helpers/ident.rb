@@ -46,6 +46,8 @@ module Ident
 
   def create_issues_from_fingerprint_tags(fingerprint, entity)
 
+    return unless fingerprint && entity
+
     issues_to_create = []
     tags = []
 

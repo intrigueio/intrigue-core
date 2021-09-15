@@ -12,7 +12,9 @@ class SuspiciousCommit< BaseIssue
       category: "leak",
       description: "A suspicious commit was found in a public Github repository.",
       remediation: "Verify the GitHub repository and delete the file or the comment which expose sensitive information.",
-      references: []
+      references: [
+        { type: "description", uri: "https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository" }
+      ]
     }.merge!(instance_details)
 
   to_return
