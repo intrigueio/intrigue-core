@@ -12,7 +12,9 @@ class OpenRdpPort < BaseIssue
       category: "misconfiguration",
       description: "A system exposing RDP to the Internet was identified.",
       remediation: "Verify that this port should be exposed to the Internet.",
-      references: []
+      references: [
+        { type: "description", uri: "https://www.microsoft.com/security/blog/2020/04/16/security-guidance-remote-desktop-adoption/" }
+      ]
     }.merge!(instance_details)
 
   to_return

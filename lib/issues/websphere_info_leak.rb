@@ -16,7 +16,9 @@ class WebsphereInfoLeak < BaseIssue
       affected_software: [
         { :vendor => "IBM", :product => "Websphere" }
       ],
-      references: [],
+      references: [
+        { type: "threat_intel", uri: "https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/websphere.txt" }
+      ],
       task: "uri_brute_focused_content"
     }.merge!(instance_details)
   end

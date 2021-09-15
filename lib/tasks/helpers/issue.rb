@@ -208,13 +208,13 @@ module Issue
       transport: transport })
   end
 
-  def _create_execessive_redirects_issue(uri, redirect_chain, count)
+  def _create_excessive_redirects_issue(uri, redirect_chain, count)
 
     proof = {
       redirect_count: count,
       redirect_chain: redirect_chain
     }
-    
+
     _create_linked_issue("excessive_redirects_identified", {
       proof: proof,
       uri: uri})

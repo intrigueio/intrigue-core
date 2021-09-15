@@ -74,7 +74,7 @@ class SearchBgp < BaseTask
 
   def search_by_org_name(entity_name)
     begin
-      json_resp = JSON.parse http_get_body "https://intrigue.io/api/bgp/org/search/#{URI.escape(entity_name)}"
+      json_resp = JSON.parse http_get_body "https://api.intrigue.io/api/bgp/org/search/#{URI.escape(entity_name)}"
 
       json_resp.each do |r|
 
