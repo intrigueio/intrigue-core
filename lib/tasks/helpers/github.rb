@@ -6,7 +6,7 @@ module Intrigue
         # the platform may try to pull the deprecated gitrob_access_token for legacy tasks
         # if that token doesn't exist, try pulling from the github_access_token
         access_token = _gh_access_token_exists?('github_access_token')
-        access_token ||= _gh_access_token_exists('gitrob_access_token')
+        access_token ||= _gh_access_token_exists?('gitrob_access_token')
 
         _log_error 'Github Access Token is not set in task config.' if access_token.nil?
         return if access_token.nil?
