@@ -10,44 +10,64 @@ module Intrigue
       require 'json'
 
       def geolocate_ip(ip)
-        config = get_config
+        # we need our files to do our job
+        return nil unless File.exist? "#{$intrigue_basedir}/data/maxmind/GeoIP2-City.mmdb"
+        return nil unless File.exist? "#{$intrigue_basedir}/data/maxmind/GeoLite2-ASN.mmdb"
 
-        return nil if config.nil?
+        begin
+          city_db = MaxMindDB.new("#{$intrigue_basedir}/data/maxmind/GeoIP2-City.mmdb",MaxMindDB::LOW_MEMORY_FILE_READER)
+          asn_db = MaxMindDB.new("#{$intrigue_basedir}/data/maxmind/GeoLite2-ASN.mmdb",MaxMindDB::LOW_MEMORY_FILE_READER)
+    
+          _log "looking up location for #{ip}"
+    
+          #
+          # This call attempts to do a lookup
+          #
+          location = city_db.lookup(ip)
+          asn = asn_db.lookup(ip)
+          return unless location.found? && asn.found?
+          
+          # build the results hash
+          
+          hash = {}
+          hash[:city] = location.city.name(:en)
+          hash[:continent] = location.continent.name(:en)
+          hash[:continent_code] = location.continent.code
+          hash[:country] = location.country.name(:en)
+          hash[:country_code] = location.country.iso_code
+          hash[:latitute] = location.location.latitude
+          hash[:longitude] = location.location.longitude
+          hash[:accuracy_radius] = location.location.accuracy_radius
+          hash[:time_zone] = location.location.time_zone
+          hash[:postal] = location.postal.code
+          hash[:asn] = {}
+          hash[:asn][:name] = asn.to_hash["autonomous_system_organization"] if asn.to_hash["autonomous_system_organization"]
+          hash[:asn][:asn] = asn.to_hash["autonomous_system_number"] if asn.to_hash["autonomous_system_number"]
+          hash[:asn][:route] = asn.to_hash["network"] if asn.to_hash["network"]
 
-        params = {
-          "api-key": config['value']
-        } # this can then be expanded to accept other args.
+          # check if the required keys are present
+          required_keys = [:country_code, :country, :longitude, :latitude]
+          required_keys.each do |h|
+            return nil unless hash.key?(h)
+          end
 
-        _log "looking up location for #{ip}"
-
-        ip = get_host_from_ip(ip)
-
-        if ip.nil?
-          _log_error 'Could not validate validate ip. Unable to proceed with Geolocation task.'
-          return nil
+          required_asn_keys = [:name, :asn, :route]
+          required_asn_keys.each do |ha|
+            return nil unless hash[:asn].key?(ha)
+          end
+    
+        rescue RuntimeError => e
+          _log "Error reading file: #{e}"
+        rescue ArgumentError => e
+          _log "Argument Error #{e}"
+        rescue Encoding::InvalidByteSequenceError => e
+          _log "Encoding error: #{e}"
+        rescue Encoding::UndefinedConversionError => e
+          _log "Encoding error: #{e}"
         end
-
-        url = build_request(config['uri'], ip, params)
-
-        response = http_request(:get, url.to_s)
-
-        if response.nil?
-          _log_error 'Failed to get response from Geolocation service.'
-          return nil
-        end
-
-        geolocation_data = JSON.parse(response.body_utf8)
         
-        unless geolocation_data.key?("ip") && geolocation_data.key?("asn") && geolocation_data.key?("country_code") 
-          _log_error "Missing required hash keys in geolocation information"
-          return nil
-        end
-
-        geolocation_data.except!('currency', 'threat', 'time_zone')
-
-        _log_debug geolocation_data
-
-        geolocation_data
+        
+        hash
       rescue StandardError => e
         _log_error "Error getting Geolocation: #{e}"
 
