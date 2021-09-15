@@ -34,16 +34,16 @@ module Intrigue
         _log "Running: #{rdesktop_command}"
         _unsafe_system(rdesktop_command)
 
-        if File.file?("/tmp/scrying_outputs/vnc/#{target}-5900.png")
+        if File.file?("/tmp/scrying_outputs/vnc/#{target}-#{port}.png")
           
           _log 'Found screenshot! Attaching to entity as detail'
           # todo, set image as entity detail
-          screenshot_image = Base64.strict_encode64(File.read("/tmp/scrying_outputs/vnc/#{target}-5900.png"))
+          screenshot_image = Base64.strict_encode64(File.read("/tmp/scrying_outputs/vnc/#{target}-#{port}.png"))
           _set_entity_detail 'extended_screenshot_contents', screenshot_image
           _set_entity_detail 'screenshot_exists', true
 
           # delete temporary screenshot file
-          _unsafe_system("rm /tmp/scrying_outputs/vnc/#{target}-5900.png")
+          _unsafe_system("rm /tmp/scrying_outputs/vnc/#{target}-#{port}.png")
         else
           _set_entity_detail 'screenshot_exists', false
         end
