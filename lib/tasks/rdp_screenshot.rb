@@ -45,7 +45,7 @@ module Intrigue
 
     
             # delete temporary screenshot file
-            _unsafe_system("rm /tmp/scrying_outputs/rdp/#{target}-3389.png")
+            File.delete("/tmp/scrying_outputs/rdp/#{target}-3389.png")
         else
           _set_entity_detail "screenshot_exists", false
         end

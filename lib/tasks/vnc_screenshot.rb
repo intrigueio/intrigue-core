@@ -43,7 +43,7 @@ module Intrigue
           _set_entity_detail 'screenshot_exists', true
 
           # delete temporary screenshot file
-          _unsafe_system("rm /tmp/scrying_outputs/vnc/#{target}-#{port}.png")
+          File.delete("/tmp/scrying_outputs/vnc/#{target}-#{port}.png")
         else
           _set_entity_detail 'screenshot_exists', false
         end
