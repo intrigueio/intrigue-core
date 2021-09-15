@@ -103,8 +103,14 @@ module Bootstrap
               next unless entity # handle nil entries
 
               # Create & scope the entity
-              created_entity = Intrigue::EntityManager.create_first_entity(
-                project_name, entity["type"], entity["details"]["name"], entity["details"], entity["sensitive_details"])
+              begin
+                created_entity = Intrigue::EntityManager.create_first_entity(
+                  project_name, entity["type"], entity["details"]["name"], entity["details"], entity["sensitive_details"])
+              rescue Sequel::UniqueConstraintViolation
+                # if the bootstrap contains duplicate seeds, it will throw a UniqueViolation error
+                # we can skip this seed, because the first instance will have been created and tasks started on it.
+                next
+              end
 
               # just in case we tried to create an invalid entity, skip
               next unless created_entity
