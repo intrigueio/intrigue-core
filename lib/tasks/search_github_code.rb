@@ -98,7 +98,7 @@ module Intrigue
         gh_client = initialize_gh_client
         _log_error 'Unable to search across Github without authentication; aborting task.' if gh_client.nil?
 
-        gh_client&.fetch('client')
+        gh_client
       end
 
     end
