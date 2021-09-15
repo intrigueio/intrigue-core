@@ -33,11 +33,12 @@ module Intrigue
         if _get_option('use_authentication')
           case _get_entity_type_string
           when 'GithubRepository'
-            access_token = initialize_gh_client&.fetch('access_token')
+            access_token = initialize_gh_client&.access_token
           when 'GitlabProject'
             access_token = retrieve_gitlab_token(parse_gitlab_uri(repo_uri).host)
           end
         end
+
 
         issues = run_gitleaks(repo_uri, access_token, custom_config)
         return if issues.nil?

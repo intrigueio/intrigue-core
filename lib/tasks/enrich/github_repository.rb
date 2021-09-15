@@ -5,7 +5,7 @@ module Intrigue
         def self.metadata
           {
             name: 'enrich/github_repository',
-            pretty_name: 'Github Repository Enrichment',
+            pretty_name: 'Enrich Github Repository',
             authors: ['maxim'],
             description: 'Ensures the entity is marked enriched. Used when there is no specific enrichment task!',
             references: [],
@@ -36,7 +36,7 @@ module Intrigue
 
         def repo_public?(repo_full_name) 
           # if non 404 we'll just assume its private
-          r = http_request(:get, "https://api.github.com/repos/#{repo_full_name}")
+          r = http_request(:get, "https://github.com/#{repo_full_name}")
           r.code == '200'
         end
 

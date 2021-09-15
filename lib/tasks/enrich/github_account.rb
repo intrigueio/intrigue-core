@@ -5,7 +5,7 @@ module Intrigue
         def self.metadata
           {
             name: 'enrich/github_account',
-            pretty_name: 'Github Account Enrichment',
+            pretty_name: 'Enrich Github Account',
             authors: ['jcran'],
             description: 'Ensures the entity is marked enriched. Used when there is no specific enrichment task!',
             references: [],
