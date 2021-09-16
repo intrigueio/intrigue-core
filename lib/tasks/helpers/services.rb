@@ -60,7 +60,7 @@ module Services
       "asn" => ip_entity.get_detail("asn"),
       "net_name" => ip_entity.get_detail("net_name"),
       "net_country_code" => ip_entity.get_detail("net_country_code"),
-      "host_id" => ip_entity.id
+      "host_id" => ip_entity.id,
       "hidden_port_open_confirmed" => true # is needed so enrich doesn't check the open port again
     })
 
