@@ -15,7 +15,7 @@ module Intrigue
           allowed_types: ['String', 'GithubAccount'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } },
                              { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'https://github.com/intrigueio' } }],
-          allowed_options: [{ name: 'ignore_forked', regex: 'boolean', default: false }],
+          allowed_options: [{ name: 'ignore_forks', regex: 'boolean', default: false }],
           created_types: ['GithubRepository'],
           queue: 'task_github'
         }
@@ -25,167 +25,124 @@ module Intrigue
       def run
         super
 
-        # use safe nav operator as initialize_gh_client can be nil
-        # however if token is valid, a hash will be returned
-        gh_client = initialize_gh_client&.fetch('client')
-        account = extract_github_account_name(_get_entity_name) if _get_entity_type_string == 'GithubAccount'
-        repos = gh_client ? retrieve_repos_authenticated(gh_client, account) : retrieve_repos_unauthenticated(account)
+        gh_client = initialize_gh_client
+        repos = retrieve_repositories(gh_client)
+        _log "Results obtained: #{repos.size}"
+        return if repos.empty?
 
-        _log 'No repositories discovered.' if repos.nil?
-        return if repos.nil?
-
-        _log_good "Retrieved #{repos.size} repositories."
         repos.each { |r| create_github_repo_entity(r) }
       end
 
-      # this needs to be updated to implement pagination
-      def retrieve_repos_authenticated(client, name)
-        retrieved_repos = []
+      ## returns a list of github repositories
+      def retrieve_repositories(client)
+        repositories = []
 
-        client_api_request_done = false
-        next_url = nil
+        construct_api_uri = determine_api_route(_get_entity_type_string)
+        parser = create_parsers
 
-        (1..5).each do |i| # attempt this 5 times in case rate limiting kicked in -> make this better
-          if client_api_request_done == false
-            retrieved_repos << client_api_request(client, name)
-            client_api_request_done = true
-          end
+        (1..10).each do |i|
+          r = _github_api_call(construct_api_uri.call(i), client&.access_token)
+          preflight = preflight_check(r) if i == 1
+          break unless preflight
 
-          next_url = client.last_response.rels[:next].href if client.last_response.rels[:next]
+          parsed_r = _parse_json_response(r.body)
+          break if parsed_r.nil? || parsed_r.equal?('rate_exhaustion') 
+          # if the secondary api rate limit is triggered, the response will contain the error message
+          # after the task sleeps for 180 seconds, it will need to redo the api call in order to get the actual results
+          redo if parsed_r.equal?('temp_rate_limit')
 
-          while next_url
-            sleep 10 # dont annoy github so they rate limit
-            _log "Getting: #{next_url}"
-            # this will use endpoint that was used in client_api_request, so if its a org /org/ else /user/
-            retrieved_repos << client.get(next_url)
-            break unless client.last_response.rels[:next]
+          parsed_r = parsed_r['items'] if _get_entity_type_string == 'GithubAccount' # dont like this
+          break if parsed_r.empty? # no more responses
 
-            next_url = client.last_response.rels[:next].href
-          end
+          parsed_r = parser.del_forks.call(parsed_r) if _get_option('ignore_forks')
 
-          break
-        rescue Octokit::AbuseDetected, Octokit::Forbidden
-          _log_error "Rate limiting hit on attempt #{i}; Retrying in 5 minutes."
-          sleep 300
-          next
-        rescue Octokit::TooManyRequests
-          # exhausted the max amount of requests per hour/ just return to not lag other tasks
-          _log_error 'Exhausted max requests per hour; exiting.'
-          return nil
+          repositories << parser.repo_parser.call(parsed_r)
+          sleep(2)
         end
-
-        parse_results(retrieved_repos.compact, name) # compact in case rate limiting occured somewhere and nil returned
+        repositories.flatten
       end
 
-      def parse_results(results, name)
-        return if results.nil? || results.empty?
-
-        results.flatten!
-        results.select! { |r| r['fork'] == false } if _get_option('ignore_forked')
-        return if results.empty? # all repos were forked
-
-        repos = results.map { |r| r['full_name'] }
-        # only retrieve repositories that are owned by the specific name if specified
-        repos = repos.select { |rn| rn.split('/')[0] == name } if name
-        repos
+      ## verifies that github account exists and whether the respective api route requires authentication
+      ## technically not really 'preflight' but called on the first request's response
+      def preflight_check(response)
+        good = true
+        case response.code
+        when '401'
+          _log_error 'Authentication is required when using a String entity.'
+          good = false
+        when '422'
+          _log_error 'Github Account does not exist; aborting.'
+          good = false
+        end
+        good
       end
 
-      def client_api_request(client, name)
-        return client.repos if name.nil? # no github account specified; return all repos belonging to token
-        return nil unless account_exists?(name, client.access_token) # github account specified; check if account exists
-
-        repositories = if org?(name, client.access_token) # if github account is an org; need to make a different API call
-                         client.org_repos(name, { 'type' => 'all' })
-                       else
-                         # when calling client.repos and passing in a name, it will return only public repositories
-                         # even if the client is associated with the user's token
-                         # since we have a valid access token; we will call client.repos
-                         # also call client.repos with the name of the github account provided
-                         # then extract out all the repos which belong to the github account provided
-                         (client.repos + client.repos(name)).uniq
-                       end
-        repositories
+      ## returns a lambda when passed a page number will construct the appropriate api route
+      ## the api route is based on whether task is ran directly on key or a githubaccount entity
+      def determine_api_route(entity_type)
+        if entity_type == 'String'
+          ->(x) { "https://api.github.com/user/repos?type=all&per_page=100&page=#{x}" }
+        elsif entity_type == 'GithubAccount'
+          account_name = extract_github_account_name(_get_entity_name)
+          ->(x) { "https://api.github.com/search/repositories?page=#{x}&per_page=100&q=user:#{account_name}+fork:true" }
+        end
       end
 
-      def http_get_json_body(url, access_token = nil)
+      ## returns a struct that contains two lambdas
+      ## the repo_parser lambda retrieves the repository urls from the json
+      ## the del_forks lambda deletes any repositories which may be forks
+      def create_parsers
+        repo_parser = ->(x) { x.map { |item| item['html_url'] } }
+        del_forks = ->(x) { x.reject { |item| item['fork'] } }
+
+        Struct.new(:repo_parser, :del_forks).new(repo_parser, del_forks)
+      end
+
+      ## invokes the Github API call and returns the results
+      def _github_api_call(url, access_token = nil)
         headers = access_token ? { 'Authorization' => "Bearer #{access_token}" } : {}
-        r = http_request(:get, url, nil, headers).body
-        return nil if http_rate_limiting?(r)
+        r = http_request(:get, url, nil, headers)
 
-        begin
-          parsed_response = JSON.parse(r)
-        rescue JSON::ParserError
-          _log_error 'Cannot parse JSON.'
-          return nil
+        exhausted = _check_rate_limiting(r)
+        # if _check_rate_limiting() returns any form of value this means that
+        # some form of rate limiting is occuring thus the response does not contain results
+        # as such return the value from _check_rate_limiting()
+        # if the value is 'rate_exhaustation' the loop will break in the caller function thus ending the script
+        return exhausted if exhausted
+
+        r
+      end
+
+      ## determines whether any form of rate limiting is occuring
+      def _check_rate_limiting(response)
+        if _api_requests_exhausted?(response)
+          _log_error 'Exhausted the maximum amount of requests per hour; aborting.'
+          'rate_exhaustion'
+        elsif _secondary_rate_limit?(response)
+          _log_error 'Rate limiting hit; will take a break before firing off additional requests.'
+          sleep(180)
+          'temp_rate_limit'
         end
-
-        parsed_response
       end
 
-      def http_rate_limiting?(response)
-        rate_limiting = response.include? 'API rate limit exceeded'
-        _log 'HTTP requests are being rate limited.' if rate_limiting
-        rate_limiting
+      ## submethod which checks whether the amount of api calls per hour were exhausted
+      def _api_requests_exhausted?(response)
+        remaining = response.headers.transform_keys(&:downcase)['x-ratelimit-remaining']&.to_i
+        remaining&.zero?
       end
 
-      def account_exists?(name, access_token = nil)
-        response = http_get_json_body("https://api.github.com/users/#{name}", access_token)
-
-        exists = response['message'] != 'Not Found' if response
-        _log_error "#{name} is not a valid Github user/repository; exiting." unless exists
-
-        exists
+      ## submethod which checks whether the request triggered a secondary rate limit
+      def _secondary_rate_limit?(response)
+        response.body.include?('You have exceeded a secondary rate limit and have been temporarily blocked')
       end
 
-      def org?(name, access_token)
-        response = http_get_json_body("https://api.github.com/users/#{name}", access_token)
-        response['type'].eql? 'Organization'
+      ## helper which parses the http json response and returns a dict
+      def _parse_json_response(response)
+        JSON.parse(response)
+      rescue JSON::ParserError
+        _log_error 'Cannot parse JSON.'
       end
 
-      def retrieve_repos_unauthenticated(name)
-        return nil unless account_exists?(name) # if account doesnt exist return nil
-
-        pages = return_max_pages(name)
-        return nil if pages.nil?
-
-        search_urls = 1.step(pages.to_i).map { |p| "https://api.github.com/users/#{name}/repos?page=#{p}" }
-
-        output = []
-        workers = (0...20).map do
-          results = api_http_request(search_urls, output)
-          [results]
-        end
-        workers.flatten.map(&:join)
-
-        output ? output.flatten : nil
-      end
-
-      def api_http_request(input_q, output_q) # change the name of this method
-        t = Thread.new do
-          until input_q.empty?
-            while url = input_q.shift
-              results = http_get_json_body(url)
-              next if results.nil?
-
-              # what happens if we hit rate limiting here?
-              output_q << results.map { |res| res['full_name'] }
-            end
-          end
-        end
-        t
-        # rate limit occurs when 403 forbidden code returns
-      end
-
-      def return_max_pages(account)
-        r = http_request(:get, "https://api.github.com/users/#{account}/repos")
-        max_pages_header = r.headers['link']
-
-        return nil unless r.code == '200' # 404 repo does not exist / or other issues such as rate limiting
-        return 1 if r.code == '200' && max_pages_header.nil? # only one page
-
-        max_pages = max_pages_header.scan(/\?page=(\d*)/i).last.first
-        max_pages
-      end
     end
   end
 end

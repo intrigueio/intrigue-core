@@ -17,7 +17,7 @@ class GithubRepository < Intrigue::Core::Model::Entity
 
 
   def validate_entity
-    name.match /^https:\/\/github.com\/[\w\-]{1,39}+\/[\w\-]{1,100}+/
+    name.match /^https:\/\/github.com\/[\w\-]{1,39}+\/[\w\-|\.]{1,100}+/
   end
 
   def scoped?

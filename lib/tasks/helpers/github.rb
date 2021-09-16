@@ -5,19 +5,13 @@ module Intrigue
       def initialize_gh_client
         # the platform may try to pull the deprecated gitrob_access_token for legacy tasks
         # if that token doesn't exist, try pulling from the github_access_token
-        access_token = access_token_exists('github_access_token')
-        access_token ||= access_token_exists('gitrob_access_token')
+        access_token = _gh_access_token_exists?('github_access_token')
+        access_token ||= _gh_access_token_exists?('gitrob_access_token')
 
         _log_error 'Github Access Token is not set in task config.' if access_token.nil?
         return if access_token.nil?
 
         _verify_gh_access_token(access_token)
-      end
-
-      def access_token_exists(type)
-        _get_task_config(type)
-      rescue MissingTaskConfigurationError
-        nil
       end
 
       def create_gitleaks_custom_config(keywords)
@@ -42,7 +36,7 @@ module Intrigue
       end
 
       def extract_full_repo_name(repo)
-        repo.scan(/https:\/\/github\.com\/([\w|\-]+\/[\w|\-]+)/i).flatten.first
+        repo.scan(/https:\/\/github\.com\/([\w|\-]+\/[\w|\-|\.]+)/i).flatten.first
       end
 
       ### Single threaded version
@@ -95,8 +89,7 @@ module Intrigue
 
         # diable auto pagination
         client.auto_paginate = false
-
-        { 'access_token' => token, 'client' => client }
+        client
       end
 
       def _parse_gitleaks_output(output_file)
@@ -153,6 +146,12 @@ module Intrigue
         end
 
         parsed_output
+      end
+
+      def _gh_access_token_exists?(type)
+        _get_task_config(type)
+      rescue MissingTaskConfigurationError
+        nil
       end
 
       def remove_gitleaks_temp_files
