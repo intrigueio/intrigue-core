@@ -32,6 +32,11 @@ module Services
 
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
+    # before anything, check if port is open and return nil if not
+    # note that we use tcp even for udp ports, because with udp we fire & hope for the best
+    # this has been tested and tcp is reliable for detecting open udp ports
+    return nil unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_entity, port_num)
+
     # first, save the port details on the ip_entity
     ports = ip_entity.get_detail("ports") || []
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
