@@ -37,6 +37,7 @@ module Services
     # this has been tested and tcp is reliable for detecting open udp ports
     return nil unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_entity, port_num)
 
+
     # first, save the port details on the ip_entity
     ports = ip_entity.get_detail("ports") || []
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
@@ -60,6 +61,7 @@ module Services
       "net_name" => ip_entity.get_detail("net_name"),
       "net_country_code" => ip_entity.get_detail("net_country_code"),
       "host_id" => ip_entity.id
+      "hidden_port_open_confirmed" => true # is needed so enrich doesn't check the open port again
     })
 
     # if this is an ssl port, let's get the CNs and create dns records
