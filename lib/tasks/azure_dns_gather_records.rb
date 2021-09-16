@@ -10,11 +10,12 @@ module Intrigue
           references: ['balbalablabl'],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String', 'AzureCredential'],
-          example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } }],
+          allowed_types: ['AzureTenant'],
+          example_entities: [],
           example_entity_placeholder: false,
           allowed_options: [
-            { name: 'SubscriptionID', regex: 'alpha_numeric', default: '' }
+            { name: 'SubscriptionID', regex: 'alpha_numeric', default: '' },
+            { name: 'ignore_private_zones', regex: 'boolean', default: true }
           ],
           created_types: ['DnsRecord', 'Mailserver', 'Nameserver']
         }
@@ -23,25 +24,49 @@ module Intrigue
       ## Default method, subclasses must override this
       def run
         super
-        
+  
+        tenant_id = _get_entity_sensitive_detail('azure_tenant_id')
+        access_token = _request_azure_oauth_token(tenant_id)
+        return if access_token.nil?
 
-        # verify oauth token is valid
-        # either get subscription from entity options or pull all subscriptions
-        # make request to pull dnszones
-        access_token = _get_task_config('azure_oauth_token')
         azure_client = Client::Search::Azure::ApiClient.new(access_token)
+        return if azure_client.key_invalid?
 
-        subscriptions = azure_client.list_subscriptions.map(&:id)
-        dns_zones = subscriptions.map { |s| azure_client.list_dns_zones(s) }.flatten
+        records = fetch_dns_records(azure_client)
+        return if records.empty?
 
-        zone = dns_zones.first
-
-        records = azure_client.get_zone_records(zone.subscription, zone.resource_group, zone.name)
         records.each do |record|
           create_dns_entity_from_string(record.name) if ['CNAME', 'A', 'AAAA', 'SRV'].include?(record.type)
         end
-
       end
+
+      def fetch_dns_records(client)
+        all_records = []
+
+        dns_zones = _collect_dns_zones(client)
+        return if dns_zones.nil?
+
+        dns_zones.each do |zone|
+          records = client.get_zone_records(zone.subscription, zone.resource_group, zone.name)
+          _log "Found #{records.size} records for #{zone.name}"
+          next if records.nil? || records.empty?
+
+          all_records << records
+        end
+
+        all_records.flatten
+      end
+
+      def _collect_dns_zones(client)
+        subscriptions = client.list_subscriptions.map(&:id)
+        return if subscriptions.nil?
+
+        zones = subscriptions.map { |s| client.list_dns_zones(s) }.flatten
+        zones.reject! { |z| z.public == false } if _get_option('ignore_private_zones')
+
+        zones
+      end
+
     end
   end
 end

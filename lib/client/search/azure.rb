@@ -40,7 +40,7 @@ module Intrigue
 
             parsed['value'].each do |zone|
               group = zone['id'].scan(%r{/resourceGroups/(.+)/providers}).flatten.first
-              zones << dns_zone.new(zone['name'], subscription, group, zone['location'], zone['zoneType'].eql?('Public'))
+              zones << dns_zone.new(zone['name'], subscription, group, zone['location'], zone['properties']['zoneType'].eql?('Public'))
             end
 
             zones
