@@ -1,4 +1,5 @@
 # Require the individual search services
+require_relative 'search/azure'
 require_relative 'search/base'
 require_relative 'search/bing'
 require_relative 'search/cymru'
