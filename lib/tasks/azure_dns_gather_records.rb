@@ -28,10 +28,8 @@ module Intrigue
         # verify oauth token is valid
         # either get subscription from entity options or pull all subscriptions
         # make request to pull dnszones
-        access_token = 'abc'
+        access_token = _get_task_config('azure_oauth_token')
         azure_client = Client::Search::Azure::ApiClient.new(access_token)
-        require 'pry'; binding.pry
-
 
         subscriptions = azure_client.list_subscriptions.map(&:id)
         dns_zones = subscriptions.map { |s| azure_client.list_dns_zones(s) }.flatten
@@ -39,8 +37,9 @@ module Intrigue
         zone = dns_zones.first
 
         records = azure_client.get_zone_records(zone.subscription, zone.resource_group, zone.name)
-
-    
+        records.each do |record|
+          create_dns_entity_from_string(record.name) if ['CNAME', 'A', 'AAAA', 'SRV'].include?(record.type)
+        end
 
       end
     end

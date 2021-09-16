@@ -62,7 +62,10 @@ module Intrigue
             records
           end
 
-          # check every response to see if access token expired?
+          # storage account methods go here
+          # virtual machine methods go here
+
+          # handle response is access token expires midway through task
 
           private
 
@@ -89,7 +92,7 @@ module Intrigue
             when 'CNAME'
               # fetch in case alias type which will return nil for CNAMERecord key
               # if alias record it will be resolved anyways so ignore it for now
-              record_struct.new('CNAME', record['properties']['fqdn'], record['properties']&.fetch('CNAMERecord'))
+              record_struct.new('CNAME', record['properties']['fqdn'], record['properties']['CNAMERecord'])
             when 'NS'
               values = record['properties']['NSRecords'].map(&:values).flatten
               record_struct.new('NS', record['properties']['fqdn'], values)
