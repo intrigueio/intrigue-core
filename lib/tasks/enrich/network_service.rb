@@ -43,7 +43,7 @@ class NetworkService < Intrigue::Task::BaseTask
 
     # check if the port is open, if not, hide this entity (its not a real NetworkService)
     unless _get_entity_detail("hidden_port_open_confirmed") == true
-      unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_address, port)
+      unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_address, port, 5)
         # note that we use tcp even for udp ports, because with udp we fire & hope for the best
         # this has been tested and tcp is reliable for detecting open udp ports
         hide_value = true
