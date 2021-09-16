@@ -41,6 +41,24 @@ class NetworkService < Intrigue::Task::BaseTask
     proto = entity_name.split(":").last.split("/").first.upcase
     net_name = _get_entity_detail("net_name")
 
+    # check if the port is open, if not, hide this entity (its not a real NetworkService)
+    unless _get_entity_detail("hidden_port_open_confirmed") == true
+      unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_address, port, 5)
+        # note that we use tcp even for udp ports, because with udp we fire & hope for the best
+        # this has been tested and tcp is reliable for detecting open udp ports
+        hide_value = true
+        hide_reason = "port_closed"
+        _set_entity_detail "hide_value", hide_value
+        _set_entity_detail "hide_reason", hide_reason
+
+        # Okay now hide based on our value
+        _log "Setting Hidden to: #{hide_value}, for reason: #{hide_reason}"
+        @entity.hidden = hide_value
+        @entity.save_changes
+        return
+      end
+    end 
+    
     _set_entity_detail("ip_address", ip_address)
     _set_entity_detail("port", port)
     _set_entity_detail("proto", proto)
