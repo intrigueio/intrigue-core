@@ -78,8 +78,7 @@ module Bootstrap
       end
 
       # parse up the seeds
-      parsed_seeds = p["seeds"].map{|s| _parse_entity_hash s }
-
+      parsed_seeds = p["seeds"].uniq.map{|s| _parse_entity_hash s }
       # handle no-seed cases
       next unless parsed_seeds.count > 0
 
@@ -103,14 +102,8 @@ module Bootstrap
               next unless entity # handle nil entries
 
               # Create & scope the entity
-              begin
-                created_entity = Intrigue::EntityManager.create_first_entity(
-                  project_name, entity["type"], entity["details"]["name"], entity["details"], entity["sensitive_details"])
-              rescue Sequel::UniqueConstraintViolation
-                # if the bootstrap contains duplicate seeds, it will throw a UniqueViolation error
-                # we can skip this seed, because the first instance will have been created and tasks started on it.
-                next
-              end
+              created_entity = Intrigue::EntityManager.create_first_entity(
+                project_name, entity["type"], entity["details"]["name"], entity["details"], entity["sensitive_details"])
 
               # just in case we tried to create an invalid entity, skip
               next unless created_entity
