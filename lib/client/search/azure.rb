@@ -38,6 +38,8 @@ module Intrigue
             r = _azure_api_call(:get, "/subscriptions/#{subscription}/providers/Microsoft.Network/dnszones?api-version=2018-05-01")
             parsed = _parse_json_response(r.body)
 
+            return zones if parsed.nil? || parsed['value'].nil? || parsed['value'].empty?
+
             parsed['value'].each do |zone|
               group = zone['id'].scan(%r{/resourceGroups/(.+)/providers}).flatten.first
               zones << dns_zone.new(zone['name'], subscription, group, zone['location'], zone['properties']['zoneType'].eql?('Public'))
@@ -53,13 +55,48 @@ module Intrigue
             r = _azure_api_call(:get, route)
             parsed = _parse_json_response(r.body)
 
-            return records if parsed.nil? || parsed['value'].empty?
+            return records if parsed.nil? || parsed['value'] || parsed['value'].empty?
 
             parsed['value'].each do |record|
               records << _parse_dns_record(record)
             end
 
             records
+          end
+
+          def list_storage_accounts(subscription)
+            accounts = []
+            account = Struct.new(:name, :subscription, :resource_group, :location, :endpoints, :public)
+
+            r = _azure_api_call(:get, "/subscriptions/#{subscription}/providers/Microsoft.Storage/storageAccounts?api-version=2021-04-01")
+            parsed = _parse_json_response(r.body)
+
+            return accounts if parsed.nil? || parsed['value'].nil? || parsed['value'].empty?
+
+            parsed['value'].each do |p|
+              group = p['id'].scan(%r{/resourceGroups/(.+)/providers}).flatten.first
+              accounts << account.new(p['name'], subscription, group, p['location'], p['primary_endpoints'], p['properties']['allowBlobPublicAccess'])
+            end
+
+            accounts
+          end
+
+          def get_storage_account_containers(subscription, resource, name)
+            container = Struct.new(:name, :resource_group, :subscription, :account, :public, :deleted)
+            containers = []
+
+            route = "/subscriptions/#{subscription}/resourceGroups/#{resource}/providers/Microsoft.Storage/storageAccounts/#{name}/blobServices/default/containers?api-version=2021-04-01"
+            r = _azure_api_call(:get, route)
+            parsed = _parse_json_response(r.body)
+
+            return containers if parsed.nil? || parsed['value'].nil? || parsed['value'].empty?
+
+            parsed['value'].each do |p|
+              containers << container.new(p['name'], resource, subscription, name, p['properties']['publicAccess'] != 'None',
+                                          p['properties']['deleted'])
+            end
+
+            containers
           end
 
           # storage account methods go here
@@ -112,6 +149,10 @@ module Intrigue
             when 'CAA'
               record_struct.new('CAA', record['properties']['fqdn'], record['properties']['caaRecords'])
             end
+          end
+
+          def _parse_storage_account_container(_container)
+            container_struct = Struct.new(:name, :deleted, :public) # value not needed as core will resolve it when enriched as dnsrecord
           end
         end
       end
