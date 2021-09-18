@@ -236,6 +236,7 @@ module Data
     tcp_ports << "995,"             # pops
     tcp_ports << "1090,"            # java rmi
     tcp_ports << "1098,"            # java rmi
+    tcp_ports << "1270,"            # azure omi
     tcp_ports << "4444,"            # java rmi
     tcp_ports << "1723,"            # pptp
     tcp_ports << "1883,"
@@ -261,6 +262,7 @@ module Data
     tcp_ports << "5556,"            # HP Data Protector
     tcp_ports << "5672,"
     tcp_ports << "5900,5901,"       # vnc
+    tcp_ports << "5985,5986,"       # azure omi
     tcp_ports << "6379,"            # redis
     tcp_ports << "6443,"
     tcp_ports << "7001,"            # Oracle WebLogic Server Listen Port for Administration Server
