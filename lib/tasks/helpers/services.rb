@@ -35,7 +35,8 @@ module Services
     # before anything, check if port is open and return nil if not
     # note that we use tcp even for udp ports, because with udp we fire & hope for the best
     # this has been tested and tcp is reliable for detecting open udp ports
-    return nil unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_entity, port_num, 5)
+    require 'pry'; binding.pry
+    return nil unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_entity.name, port_num)
 
 
     # first, save the port details on the ip_entity
