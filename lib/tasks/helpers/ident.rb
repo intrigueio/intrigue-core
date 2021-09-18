@@ -44,6 +44,30 @@ module Ident
   all_checks.flatten.compact.uniq
   end
 
+  def run_vuln_checks_from_open_ports(protocol, open_port, entity)
+
+    all_checks = []
+    project = entity.project
+
+    _log "Getting checks for protocol: #{protocol} and open port: #{open_port}"
+    checks_to_be_run = Intrigue::Issue::IssueFactory.issues_for_open_port(protocol, open_port)
+
+    checks_to_be_run.flatten.compact.uniq.each do |check|
+
+      # if we want to pass check options based on some fingerprint crtieria
+      check_options = []
+
+      # get the scan result id ... TODO, ideally we'd track this.
+      existing_scan_result_id = nil
+
+      # start the task
+      start_task("task_autoscheduled", project, existing_scan_result_id, check, entity, 1, check_options)
+    end
+
+  # return a list of checks
+  all_checks.flatten.compact.uniq
+  end
+
   def create_issues_from_fingerprint_tags(fingerprint, entity)
 
     return unless fingerprint && entity
