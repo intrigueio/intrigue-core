@@ -19,6 +19,11 @@ module Intrigue
           affected_software: [
             { :vendor => "Microsoft", :product => "Azure"}
           ],
+          affected_ports: [
+            {:protocol => "tcp", :port_number => 1270},
+            {:protocol => "tcp", :port_number => 5985},
+            {:protocol => "tcp", :port_number => 5986}
+          ],
           references: [
             { type: "description", uri: "https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-38647" },
             { type: "description", uri: "https://nvd.nist.gov/vuln/detail/CVE-2021-38647"},
@@ -44,10 +49,19 @@ module Intrigue
         end
 
         def check
-          # get enriched entity
-          url = _get_entity_name
-          hostname = URI.parse(url).host
-          port = URI.parse(url).port
+          # get entity details
+          if _get_entity_type_string == "Uri"
+            url = _get_entity_name
+            hostname = URI.parse(url).host
+            port = URI.parse(url).port
+          elsif _get_entity_type_string == "NetworkService"
+            hostname = _get_entity_detail "ip_address"
+            port = _get_entity_detail "port"
+            url = "https://#{hostname}:#{port}"
+          else
+            _log_error "Unsupported entity type"
+            return nil
+          end
           
           headers={
                 "Content-Type": "application/soap+xml",
