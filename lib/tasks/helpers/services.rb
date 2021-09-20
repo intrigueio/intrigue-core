@@ -32,6 +32,12 @@ module Services
 
   def _create_network_service_entity(ip_entity,port_num,protocol="tcp",generic_details={})
 
+    # before anything, check if port is open and return nil if not
+    # note that we use tcp even for udp ports, because with udp we fire & hope for the best
+    # this has been tested and tcp is reliable for detecting open udp ports
+    return nil unless Intrigue::Ident::SimpleSocket.connect_tcp(ip_entity, port_num, 5)
+
+
     # first, save the port details on the ip_entity
     ports = ip_entity.get_detail("ports") || []
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
@@ -54,7 +60,8 @@ module Services
       "asn" => ip_entity.get_detail("asn"),
       "net_name" => ip_entity.get_detail("net_name"),
       "net_country_code" => ip_entity.get_detail("net_country_code"),
-      "host_id" => ip_entity.id
+      "host_id" => ip_entity.id,
+      "hidden_port_open_confirmed" => true # is needed so enrich doesn't check the open port again
     })
 
     # if this is an ssl port, let's get the CNs and create dns records
