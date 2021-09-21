@@ -57,15 +57,15 @@ class NetworkService < Intrigue::Task::BaseTask
         @entity.save_changes
         return
       end
-    end 
-    
+    end
+
     _set_entity_detail("ip_address", ip_address)
     _set_entity_detail("port", port)
     _set_entity_detail("proto", proto)
 
     _log "Geolocating..."
     location_hash = geolocate_ip(ip_address)
-    if location_hash.nil? 
+    if location_hash.nil?
       _log "Unable to retrieve Gelocation."
     else
       _set_entity_detail("geolocation", location_hash)
@@ -76,7 +76,7 @@ class NetworkService < Intrigue::Task::BaseTask
     ident = Intrigue::Ident::Ident.new
     ident_response = ident.fingerprint_service(ip_address, port)
 
-    fingerprint = ident_response["fingerprint"]
+    fingerprint = ident_response["fingerprint"] || []
 
     # set entity details
     _set_entity_detail "fingerprint", fingerprint
