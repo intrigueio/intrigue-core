@@ -150,7 +150,7 @@ sudo apt-get -y --no-install-recommends install make \
 
 # Support older TLS ciphers
 sudo apt -y remove libcurl4
-sudo apt -y install libcurl4-gnutls-dev
+sudo apt -y install libcurl4-openssl-dev
 
 # NOTE! for whatever reason, this has to be with apt vs apt-get
 sudo apt -y install chromium-browser

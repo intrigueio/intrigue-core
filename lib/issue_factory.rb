@@ -44,6 +44,20 @@ module Intrigue
       end
 
       #
+      # Returns issues which have affected_ports set
+      #
+      def self.issues_for_open_port(protocol, port_number)
+        mapped_issues = []
+        self.issues.each do |h|
+          # generate the instances
+          hi = h.generate({})
+          ap = (hi[:affected_ports] || [])
+          mapped_issues << ap.map{|x| x.merge({ :name => hi[:name] }) }
+        end
+      mapped_issues.flatten.select{|x| x[:protocol].downcase == protocol.downcase && x[:port_number] == port_number}.map{|x| x[:name] }.uniq.compact
+      end
+
+      #
       # Provide the full list of issues, given a
       #
       def self.issues_for_vendor_product(vendor,product)

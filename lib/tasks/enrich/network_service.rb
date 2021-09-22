@@ -38,7 +38,7 @@ class NetworkService < Intrigue::Task::BaseTask
     end
 
     port = entity_name.split(":").last.split("/").first.to_i
-    proto = entity_name.split(":").last.split("/").first.upcase
+    proto = entity_name.split(":").last.split("/").last.upcase
     net_name = _get_entity_detail("net_name")
 
     # check if the port is open, if not, hide this entity (its not a real NetworkService)
@@ -97,6 +97,7 @@ class NetworkService < Intrigue::Task::BaseTask
     # Okay, now kick off vulnerability checks (if project allows)
     if @project.vulnerability_checks_enabled
       vuln_checks = run_vuln_checks_from_fingerprint(fingerprint, @entity)
+      vuln_checks << run_vuln_checks_from_open_ports(proto, port, @entity)
       _set_entity_detail("vuln_checks", vuln_checks)
     end
 
