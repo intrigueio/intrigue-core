@@ -26,10 +26,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: a9b75518482e739f977aafeef1602e2850ec5f3b
+  revision: 249c52b6fa0a72223b817f6982ceff2faa42d6fc
   branch: main
   specs:
-    intrigue-ident (5.6.93)
+    intrigue-ident (5.6.94)
       dnsruby
       mongo
       murmurhash3
@@ -132,13 +132,13 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.2.0)
-    aws-partitions (1.497.0)
+    aws-partitions (1.503.0)
     aws-sdk-core (3.121.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-ec2 (1.261.0)
+    aws-sdk-ec2 (1.263.0)
       aws-sdk-core (~> 3, >= 3.120.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-ecs (1.85.0)
@@ -153,7 +153,7 @@ GEM
     aws-sdk-route53 (1.55.0)
       aws-sdk-core (~> 3, >= 3.120.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.102.0)
+    aws-sdk-s3 (1.103.0)
       aws-sdk-core (~> 3, >= 3.120.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.4)
@@ -202,7 +202,7 @@ GEM
       ffi (>= 1.15.0)
     eventmachine (1.2.7)
     excon (0.85.0)
-    faraday (1.7.1)
+    faraday (1.8.0)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -334,8 +334,9 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.0901)
     mini_mime (1.1.1)
+    mini_portile2 (2.6.1)
     minitest (5.14.4)
-    mongo (2.15.0)
+    mongo (2.15.1)
       bson (>= 4.8.2, < 5.0.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
@@ -348,6 +349,9 @@ GEM
       http-2 (~> 0.11)
     netrc (0.11.0)
     nio4r (2.5.8)
+    nokogiri (1.12.4)
+      mini_portile2 (~> 2.6.1)
+      racc (~> 1.4)
     nokogiri (1.12.4-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.12.4-x86_64-linux)
@@ -377,7 +381,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.10)
     public_suffix (4.0.6)
-    puma (5.4.0)
+    puma (5.5.0)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -412,9 +416,9 @@ GEM
       nokogiri (~> 1)
       rb-readline (~> 0)
     rex-core (0.1.17)
-    rex-socket (0.1.32)
+    rex-socket (0.1.33)
       rex-core
-    rex-text (0.2.36)
+    rex-text (0.2.37)
     rexml (3.2.5)
     rkelly-remix (0.0.7)
     rprogram (0.3.2)
@@ -443,14 +447,14 @@ GEM
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
-    sentry-ruby (4.7.1)
+    sentry-ruby (4.7.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       faraday (>= 1.0)
-      sentry-ruby-core (= 4.7.1)
-    sentry-ruby-core (4.7.1)
+      sentry-ruby-core (= 4.7.2)
+    sentry-ruby-core (4.7.2)
       concurrent-ruby
       faraday
-    sentry-sidekiq (4.7.1)
+    sentry-sidekiq (4.7.2)
       sentry-ruby-core (~> 4.7.0)
       sidekiq (>= 3.0)
     sequel (5.48.0)
@@ -485,7 +489,7 @@ GEM
     socketry (0.5.1)
       hitimes (~> 1.2)
     sqlite3 (1.4.2)
-    test-unit (3.4.5)
+    test-unit (3.4.7)
       power_assert
     thor (1.1.0)
     tilt (2.0.10)
@@ -499,7 +503,7 @@ GEM
     uber (0.1.0)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.7)
+    unf_ext (0.0.8)
     versionomy (0.5.0)
       blockenspiel (~> 0.5)
     webrick (1.7.0)
