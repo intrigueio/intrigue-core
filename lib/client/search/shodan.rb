@@ -31,12 +31,13 @@ module Client
           response = _shodan_pagination(req_uri.call(1))
 
           return if response.nil?
+          return unless response['total'] # wtf is happening here - needs additioanl debugging?
           return if response['total'].zero?
 
           full_json_response << response['matches'] # concat matches into array
           total_pages = (response['total'].to_i / 100.to_f).ceil # get amount of total pages rounded up
 
-          return { 'data' => full_json_response.flatten } if total_pages == 1 # only one page < 100 results; return 
+          return { 'data' => full_json_response.flatten } if total_pages == 1 # only one page < 100 results; return
 
           (2..total_pages).each do |i|
             response = _shodan_pagination(req_uri.call(i))
@@ -64,7 +65,7 @@ module Client
           end
           response
         end
-        
+
       end
     end
     end
