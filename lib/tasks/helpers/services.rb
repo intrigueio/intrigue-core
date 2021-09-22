@@ -18,7 +18,7 @@ module Services
     begin 
       # connect
       socket = connect_ssl_socket(hostname,port,timeout)
-    rescue OpenSSL::SSL::SSLError, Errno::ECONNRESET
+    rescue OpenSSL::SSL::SSLError, Errno::ECONNRESET, Errno::ETIMEDOUT
       _log_error 'Unable to connnect to ssl certificate'
     end
     
