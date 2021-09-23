@@ -7,7 +7,7 @@ module Intrigue
         def self.metadata
           {
             name: 'uri_browser_analysis',
-            pretty_name: '',
+            pretty_name: 'URI Browser Analysis (and Screenshot)',
             authors: ['jcran'],
             description: 'This task utilizes Chrome to request a Uri, profiling, ' +
               'screenshoting and analyzing the response. Superset of uri_screenshot',
@@ -136,7 +136,7 @@ module Intrigue
             _log 'Skipping webservice browser responses'
           end
 
-          # set the screenshot details only, otherwise the entity details become too large for the 
+          # set the screenshot details only, otherwise the entity details become too large for the
            _get_and_set_entity_details browser_data_hash.select{|key,_| ['screenshot_exists', 'extended_screenshot_contents'].include? key}
         end
       end

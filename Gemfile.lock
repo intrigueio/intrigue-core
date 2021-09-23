@@ -26,10 +26,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: 249c52b6fa0a72223b817f6982ceff2faa42d6fc
+  revision: e392502695d95bc08c4bee694b36a6825275b780
   branch: main
   specs:
-    intrigue-ident (5.6.94)
+    intrigue-ident (5.6.95)
       dnsruby
       mongo
       murmurhash3
@@ -43,6 +43,12 @@ GIT
   revision: e1e4080070cf699cd0b80c5c8d6d5dddfc19d4b8
   specs:
     ip_ranger (0.0.2)
+
+GIT
+  remote: https://github.com/intrigueio/maxminddb
+  revision: 6bfbca87bcade0311096935c2f27a250b6bac330
+  specs:
+    maxminddb (0.1.22)
 
 GIT
   remote: https://github.com/intrigueio/rex-sslscan.git
@@ -115,7 +121,7 @@ GEM
       console (~> 1.10)
       nio4r (~> 2.3)
       timers (~> 4.1)
-    async-dns (1.2.6)
+    async-dns (1.3.0)
       async-io (~> 1.15)
     async-http (0.56.5)
       async (>= 1.25)
@@ -132,19 +138,19 @@ GEM
       async-http (~> 0.42)
       protocol-http (~> 0.7)
     aws-eventstream (1.2.0)
-    aws-partitions (1.503.0)
+    aws-partitions (1.504.0)
     aws-sdk-core (3.121.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-ec2 (1.263.0)
+    aws-sdk-ec2 (1.264.0)
       aws-sdk-core (~> 3, >= 3.120.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-ecs (1.85.0)
       aws-sdk-core (~> 3, >= 3.120.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-iam (1.60.0)
+    aws-sdk-iam (1.61.0)
       aws-sdk-core (~> 3, >= 3.120.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-kms (1.48.0)
@@ -190,12 +196,12 @@ GEM
       simpleidn (~> 0.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    elasticsearch (7.14.1)
-      elasticsearch-api (= 7.14.1)
-      elasticsearch-transport (= 7.14.1)
-    elasticsearch-api (7.14.1)
+    elasticsearch (7.15.0)
+      elasticsearch-api (= 7.15.0)
+      elasticsearch-transport (= 7.15.0)
+    elasticsearch-api (7.15.0)
       multi_json
-    elasticsearch-transport (7.14.1)
+    elasticsearch-transport (7.15.0)
       faraday (~> 1)
       multi_json
     ethon (0.14.0)
@@ -278,14 +284,14 @@ GEM
       thor (>= 0.20, < 2.a)
     google-apis-iamcredentials_v1 (0.7.0)
       google-apis-core (>= 0.4, < 2.a)
-    google-apis-storage_v1 (0.6.0)
+    google-apis-storage_v1 (0.7.0)
       google-apis-core (>= 0.4, < 2.a)
     google-cloud-core (1.6.0)
       google-cloud-env (~> 1.0)
       google-cloud-errors (~> 1.0)
     google-cloud-env (1.5.0)
       faraday (>= 0.17.3, < 2.0)
-    google-cloud-errors (1.1.0)
+    google-cloud-errors (1.2.0)
     google-cloud-storage (1.34.1)
       addressable (~> 2.5)
       digest-crc (~> 0.4)
@@ -447,14 +453,14 @@ GEM
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
-    sentry-ruby (4.7.2)
+    sentry-ruby (4.7.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       faraday (>= 1.0)
-      sentry-ruby-core (= 4.7.2)
-    sentry-ruby-core (4.7.2)
+      sentry-ruby-core (= 4.7.3)
+    sentry-ruby-core (4.7.3)
       concurrent-ruby
       faraday
-    sentry-sidekiq (4.7.2)
+    sentry-sidekiq (4.7.3)
       sentry-ruby-core (~> 4.7.0)
       sidekiq (>= 3.0)
     sequel (5.48.0)
@@ -561,6 +567,7 @@ DEPENDENCIES
   ip_ranger!
   ipaddr
   json (>= 2.3.0)
+  maxminddb!
   net-dns
   net-http2
   neutrino_api!

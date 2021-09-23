@@ -104,6 +104,8 @@ module Ident
           issues_to_create << ["exposed_smb_service", fp]
         elsif t.match(/^TelnetServer$/i)
           issues_to_create << ["exposed_telnet_service", fp]
+        elsif t.match(/^UpnpServer$/i)
+          issues_to_create << ["exposed_upnp_service", fp]
         elsif t.match(/^VPN$/i)
           issues_to_create << ["exposed_vpn_service", fp]
         elsif t.match(/^Webcam$/i)
