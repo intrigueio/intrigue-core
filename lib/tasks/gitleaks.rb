@@ -35,7 +35,12 @@ module Intrigue
           when 'GithubRepository'
             access_token = initialize_gh_client&.access_token
           when 'GitlabProject'
-            access_token = retrieve_gitlab_token(parse_gitlab_uri(repo_uri).host)
+            if eid = _get_entity_sensitive_detail("created_by_credential")
+              e = Intrigue::Core::Model::Entity.find(:id => eid)
+              access_token = retrieve_gitlab_token(parse_gitlab_uri(repo_uri).host, e)
+            else
+              access_token = retrieve_gitlab_token(parse_gitlab_uri(repo_uri).host, @entity)
+            end
           end
         end
 

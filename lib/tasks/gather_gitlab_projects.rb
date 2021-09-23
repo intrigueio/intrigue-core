@@ -11,8 +11,8 @@ module Intrigue
           type: 'discovery',
           passive: false,
           allowed_types: ['GitlabAccount', 'GitlabCredential'],
-          example_entities: [{ 'type' => 'GitlabAccount', 'details' => { 'name' => 'https://gitlab.intrigue.io/account' }},
-                             { 'type' => 'GitlabCredential', 'details' => { 'name' => 'GitlabCreds1' }} ],
+          example_entities: [{ 'type' => 'GitlabAccount', 'details' => { 'name' => 'https://gitlab.intrigue.io/account' } },
+                             { 'type' => 'GitlabCredential', 'details' => { 'name' => 'GitlabCreds1' } }],
           allowed_options: [],
           created_types: ['GitlabProject']
         }
@@ -29,7 +29,12 @@ module Intrigue
         _log "Gathered #{projects.size} projects!"
         return if projects.empty?
 
-        projects.each { |r| _create_entity('GitlabProject', { 'name' => r }) }
+        projects.each do |r|
+          _create_entity('GitlabProject',
+                         { 'name' => r },
+                         nil,
+                         { "created_by_credential" => (entity_info.type == "credential" ? @entity.id : nil) })
+        end
       end
 
       def gather_gitlab_projects(entity_info)
@@ -68,7 +73,7 @@ module Intrigue
         elsif _get_entity_type_string == 'GitlabAccount'
           group = is_gitlab_group?(info.host, info.account, info.token)
           if group
-           ->(x) { "#{info.host}/api/v4/groups/#{info.account}/projects?page=#{x}&simple=true&per_page=100" }
+            ->(x) { "#{info.host}/api/v4/groups/#{info.account}/projects?page=#{x}&simple=true&per_page=100" }
           else
             ->(x) { "#{info.host}/api/v4/users/#{info.account}/projects?page=#{x}&simple=true&per_page=100" }
           end
@@ -85,14 +90,14 @@ module Intrigue
 
       def _parse_gitlab_credential_entity
         host = _get_entity_sensitive_detail('gitlab_host')
-        access_token = retrieve_gitlab_token(host, 'GitlabCredential')
+        access_token = retrieve_gitlab_token(host, @entity)
 
         if access_token.nil?
           _log_error 'Valid access token required when using GitlabCredential entity.'
           return
         end
 
-        Struct.new(:host, :token).new(host, access_token)
+        Struct.new(:host, :token, :type).new(host, access_token, "credential")
       end
 
       def _parse_gitlab_account_entity
@@ -104,8 +109,9 @@ module Intrigue
           return
         end
 
-        parsed_uri.token = retrieve_gitlab_token(parsed_uri.host, 'GitlabAccount') || ''
+        parsed_uri.token = retrieve_gitlab_token(parsed_uri.host, @entity) || ''
 
+        parsed_uri.type = "config"
         parsed_uri
       end
 

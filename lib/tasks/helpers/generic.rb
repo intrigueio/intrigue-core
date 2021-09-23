@@ -49,7 +49,7 @@ module Generic
   ###
   ### Helper method to reach out to the entity manager
   ###
-  def _create_entity(type, hash, primary_entity=nil)
+  def _create_entity(type, hash, primary_entity=nil, sensitive_hash={})
 
     # just in case we were given a hash with symbolized keys, convert to strings for
     # our purposes... bitten by the bug a bunch lately
@@ -59,7 +59,7 @@ module Generic
     name = hash.delete("name")
 
     # Create or merge the entity
-    EntityManager.create_or_merge_entity(@task_result.id, type, name, hash, primary_entity)
+    EntityManager.create_or_merge_entity(@task_result.id, type, name, hash, primary_entity, sensitive_hash)
   end
 
   ###

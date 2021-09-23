@@ -2,12 +2,13 @@ module Intrigue
   module Task
     module Gitlab
 
-      def retrieve_gitlab_token(host, entity_type)
+      def retrieve_gitlab_token(host, entity)
+        entity_type = "#{entity.type_string}"
         begin
           token = if entity_type == 'GitlabAccount'
                     _get_task_config('gitlab_access_token')
                   elsif entity_type == 'GitlabCredential'
-                    _get_entity_sensitive_detail('gitlab_access_token')
+                    entity.get_sensitive_detail('gitlab_access_token')
                   end
         rescue MissingTaskConfigurationError
           _log 'Gitlab Access Token is not set in task_config.'
