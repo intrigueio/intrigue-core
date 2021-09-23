@@ -3,7 +3,7 @@ module Intrigue
     module Gitlab
 
       def retrieve_gitlab_token(host, entity)
-        entity_type = "#{entity.type_string}"
+        entity_type = entity.type_string
         begin
           token = if entity_type == 'GitlabAccount'
                     _get_task_config('gitlab_access_token')
