@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@0.1.2
+  ruby: circleci/ruby@1.1.4
   slack: circleci/slack@4.1.3 
 
 workflows:
@@ -22,7 +22,7 @@ workflows:
 jobs:
   build-core:
     docker:
-      - image: circleci/ruby:2.7.2
+      - image: cimg/ruby:2.7.2
         environment:
           BUNDLER_VERSION: 2.1.4
     executor: ruby/default
@@ -67,7 +67,7 @@ jobs:
             }
   security-scan-core:
     docker:
-      - image: circleci/ruby:2.7.2-browsers
+      - image: cimg/ruby:2.7.2-browsers
     steps:
       - checkout
       - run:
