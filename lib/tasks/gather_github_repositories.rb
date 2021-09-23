@@ -43,8 +43,11 @@ module Intrigue
 
         (1..10).each do |i|
           r = _github_api_call(construct_api_uri.call(i), client&.access_token)
-          preflight = preflight_check(r) if i == 1
-          break unless preflight
+
+          if i == 1
+            preflight = preflight_check(r) if i == 1
+            break unless preflight
+          end
 
           parsed_r = _parse_json_response(r.body)
           break if parsed_r.nil? || parsed_r.equal?('rate_exhaustion') 
