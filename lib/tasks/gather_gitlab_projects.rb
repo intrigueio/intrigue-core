@@ -33,7 +33,9 @@ module Intrigue
           _create_entity('GitlabProject',
                          { 'name' => r },
                          nil,
-                         { "created_by_credential" => (entity_info.type == "credential" ? @entity.id : nil) })
+                         # save GitlabCredential entity id if one was used to gather the gitlab project
+                         # this is so gitleak will be able to use the correct credential to access a private repo
+                         { 'created_by_credential' => (entity_info.type == 'credential' ? @entity.id : nil) }) 
         end
       end
 
@@ -97,7 +99,7 @@ module Intrigue
           return
         end
 
-        Struct.new(:host, :token, :type).new(host, access_token, "credential")
+        Struct.new(:host, :account, :token, :type).new(host, nil, access_token, 'credential')
       end
 
       def _parse_gitlab_account_entity
@@ -111,8 +113,8 @@ module Intrigue
 
         parsed_uri.token = retrieve_gitlab_token(parsed_uri.host, @entity) || ''
 
-        parsed_uri.type = "config"
-        parsed_uri
+        # cant dynamically add new field to existing struct; so create a new one
+        Struct.new(:host, :account, :token, :type).new(parsed_uri.host, parsed_uri.account, parsed_uri.token, 'account')
       end
 
       def _return_total_requests(uri, headers)

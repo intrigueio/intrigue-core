@@ -34,7 +34,7 @@ module Intrigue
         end
 
         def repo_public?(repo_uri)
-          r = http_request(:get, repo_uri)
+          r = http_request(:get, repo_uri, nil, {}, nil, false)
           r.code == '200'
         end
 
