@@ -68,7 +68,7 @@ module Intrigue
         elsif _get_entity_type_string == 'GitlabAccount'
           group = is_gitlab_group?(info.host, info.account, info.token)
           if group
-           ->(x) { "#{info.host}/api/v4/group/#{info.account}/projects?page=#{x}&simple=true&per_page=100" }
+           ->(x) { "#{info.host}/api/v4/groups/#{info.account}/projects?page=#{x}&simple=true&per_page=100" }
           else
             ->(x) { "#{info.host}/api/v4/users/#{info.account}/projects?page=#{x}&simple=true&per_page=100" }
           end
