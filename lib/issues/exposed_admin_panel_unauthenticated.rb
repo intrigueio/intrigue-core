@@ -6,11 +6,11 @@ class ExposedAdminPanelUnauthenticated < BaseIssue
     {
       added: "2020-01-01",
       name: "exposed_admin_panel_unauthenticated",
-      pretty_name: "Exposed Admin Panel (Unauthenticated)",
-      severity: 4, # default
+      pretty_name: "Exposed Admin Login Panel",
+      severity: 2, # default
       category: "misconfiguration",
       status: "confirmed",
-      description: "An admin panel was discovered. This panel should generally not be exposed to unauthenticated users.",
+      description: "An admin login panel was discovered. This panel should generally not be exposed to the Internet.",
       remediation: "Prevent access to this panel by placing it behind a firewall or otherwise restricting access.",
       references: [ # types: description, remediation, detection_rule, exploit, threat_intel
       ],

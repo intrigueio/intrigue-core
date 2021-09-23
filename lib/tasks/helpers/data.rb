@@ -161,19 +161,8 @@ module Data
     ]
   end
 
-  def issueable_tcp_ports
-    [
-      { port: "3389", issue: "exposed_sensitive_service", service_name: "RDP service", severity: 2 },
-      { port: "135", issue: "exposed_sensitive_service", service_name: "SMB Service", severity: 2 },
-      { port: "445", issue: "exposed_sensitive_service", service_name: "SMB Service", severity: 2 },
-      { port: "4786", issue: "exposed_sensitive_service", service_name: "Cisco Smart Install", severity: 2 },
-      { port: "49152", issue: "exposed_sensitive_service", service_name: "Windows RPC Service", severity: 2 },
-      { port: "49154", issue: "exposed_sensitive_service", service_name: "Windows RPC-over-Http Service", severity: 2 }
-    ]
-  end
-
   def fingerprintable_udp_ports
-    [53, 161].sort.uniq
+    [53, 161, 1900].sort.uniq
   end
 
   def fingerprintable_tcp_ports
@@ -183,7 +172,7 @@ module Data
 
   def scannable_web_ports
     [
-      80,81,82,83,84,85,88,443,888,3000,6443,7443,
+      80,81,82,83,84,85,88,443,888,3000,4433,6443,7443,
       8000,8080,8081,8087,8088,8089,8090,8095,
       8098,8161,8180,8443,8880,8888,9443,10000,10001
     ]

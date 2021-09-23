@@ -75,6 +75,11 @@ module Ident
     issues_to_create = []
     tags = []
 
+
+    #{ port: "4786", issue: "exposed_sensitive_service", service_name: "Cisco Smart Install", severity: 2 },
+    #{ port: "49152", issue: "exposed_sensitive_service", service_name: "Windows RPC Service", severity: 2 },
+    #{ port: "49154", issue: "exposed_sensitive_service", service_name: "Windows RPC-over-Http Service", severity: 2 }
+
     # iterate through the fingerprints and create
     # issues for each known tag
     fingerprint.each do |fp|
@@ -88,7 +93,7 @@ module Ident
         elsif t.match(/^DefaultPage$/i)
           issues_to_create << ["default_web_server_page_exposed", fp]
         elsif t.match(/^FTP Server$/i)
-          issues_to_create << ["weak_service_identified", fp]
+          issues_to_create << ["exposed_ftp_service", fp]
         elsif t.match(/^SNMPServer$/i)
           issues_to_create << ["exposed_snmp_service", fp]
         elsif t.match(/^Printer$/i)
@@ -98,7 +103,9 @@ module Ident
         elsif t.match(/^SMB$/i)
           issues_to_create << ["exposed_smb_service", fp]
         elsif t.match(/^TelnetServer$/i)
-          issues_to_create << ["weak_service_identified", fp]
+          issues_to_create << ["exposed_telnet_service", fp]
+        elsif t.match(/^VPN$/i)
+          issues_to_create << ["exposed_vpn_service", fp]
         elsif t.match(/^Webcam$/i)
           issues_to_create << ["exposed_webcam_interface", fp]
         end

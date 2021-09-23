@@ -12,16 +12,16 @@ module Task
 module Services
 
   include Intrigue::Task::Web
-  
+
   def get_certificate(hostname, port, timeout=30)
-    
-    begin 
+
+    begin
       # connect
       socket = connect_ssl_socket(hostname,port,timeout)
     rescue OpenSSL::SSL::SSLError, Errno::ECONNRESET, Errno::ETIMEDOUT
       _log_error 'Unable to connnect to ssl certificate'
     end
-    
+
     return nil unless socket && socket.peer_cert
     # Grab the cert
     cert = OpenSSL::X509::Certificate.new(socket.peer_cert)
@@ -44,11 +44,12 @@ module Services
     updated_ports = ports.append({"number" => port_num, "protocol" => protocol}).uniq
     ip_entity.set_detail("ports", updated_ports)
 
-    weak_tcp_services = [21, 23, 79]  # possibly 25, but STARTTLS support is currently unclear
-    weak_udp_services = [60, 1900, 5000]
+    # This is handled via fingerprint-identified services in ident helper
+    #weak_tcp_services = [21, 23, 79]
+    #weak_udp_services = [60, 1900, 5000]
 
-    # set sssl if we end in 443 or are in our includeed list 
-    ssl = true if port_num.to_s =~ /443$/
+    # set sssl if we end in 443 or are in our includeed list
+    ssl = true if port_num.to_s =~ /443/
     ssl = true if [10000].include?(port_num)
 
     # Ensure we always save our host and key details.
@@ -71,11 +72,11 @@ module Services
       # connect, grab the socket and make sure we
       # keep track of these details, and create entitie
       cert = get_certificate(ip_entity.name,port_num)
-      
-      if cert 
-        
-        # grabs cert names, if not a universal cert 
-        cert_names = parse_names_from_cert(cert)    
+
+      if cert
+
+        # grabs cert names, if not a universal cert
+        cert_names = parse_names_from_cert(cert)
 
         generic_details.merge!({
           "alt_names" => cert_names,
@@ -91,11 +92,11 @@ module Services
           }
         })
 
-        # For each of the discovered cert names, now create a 
+        # For each of the discovered cert names, now create a
         # DnsRecord, Domain, or IpAddress.
         if cert_names
           cert_names.uniq do |cn|
-            cert_entities << create_dns_entity_from_string(cn) 
+            cert_entities << create_dns_entity_from_string(cn)
           end
         end
 
@@ -104,19 +105,19 @@ module Services
 
     # Grab all the aliases, since we'll want to auto-create services on them
     # (VHOSTS use case)
-    hosts = [] 
-    # add our ip 
+    hosts = []
+    # add our ip
     hosts << ip_entity
-    
+
     # add everything we got from the cert
     hosts.concat(cert_entities)
-    
-    # add in our aliases 
+
+    # add in our aliases
     hosts.concat(ip_entity.aliases)
 
     # remove out deny list entities, no sense in wasting time on them
-    hosts = hosts.select{|x| !x.project.deny_list_entity?(x) } 
-    
+    hosts = hosts.select{|x| !x.project.deny_list_entity?(x) }
+
     create_service_lambda = lambda do |h|
       try_http_ports = scannable_web_ports
 
@@ -133,8 +134,8 @@ module Services
           uri = "#{prefix}://#{h.name.strip}:#{port_num}"
         end
 
-        # if we've never seen this before, go ahead and open it to ensure it's 
-        # something we want to create (this helps eliminate unusable urls). However, 
+        # if we've never seen this before, go ahead and open it to ensure it's
+        # something we want to create (this helps eliminate unusable urls). However,
         # skip if we have, we want to minimize requests to the services
         if !entity_exists?(ip_entity.project, "Uri", uri)
 
@@ -152,11 +153,11 @@ module Services
             "uri" => uri,
             "service" => prefix
           }.merge!(generic_details)
-  
-          # Create entity
-          _create_entity("Uri", entity_details)  
 
-        else 
+          # Create entity
+          _create_entity("Uri", entity_details)
+
+        else
           _log "Skipping Page grab, entity: #{ip_entity.name} already exists"
         end
 
@@ -165,7 +166,7 @@ module Services
 
         service_specific_details = {}
         service = _map_tcp_port_to_name(port_num)
-       
+
         # now we have all the details we need, create it
         name = "#{h.name.strip}:#{port_num}/#{protocol}"
 
@@ -208,11 +209,6 @@ module Services
 
         _create_entity("NetworkService", entity_details)
 
-        # if its a weak service, file an issue
-        if weak_udp_services.include?(port_num)
-          _create_weak_service_issue(name, port_num, service, 'udp')
-        end
-
       else
         raise "Unknown protocol" if h.name.strip.is_ip_address?
       end
@@ -222,21 +218,21 @@ module Services
 
     # use a generic threaded iteration method to create them,
     # with the desired number of threads
-    thread_count = (hosts.compact.count / 10) + 1 
+    thread_count = (hosts.compact.count / 10) + 1
     _log "Creating service (#{port_num}) on #{hosts.compact.map{|x| x.name }} with #{thread_count} threads."
-        
+
     # Create our queue of work from the checks in brute_list
     input_queue = Queue.new
     hosts.uniq.compact.each do |item|
       input_queue << item
     end
-    
+
     _threaded_iteration(thread_count, input_queue, create_service_lambda)
-        
+
   end
 
 
-  
+
   ## Default method, subclasses must override this
   def _masscan_netblock(range,tcp_ports,udp_ports,max_rate=1000)
 
@@ -368,7 +364,7 @@ module Services
 
   def _map_tcp_port_to_name(port_num)
     case port_num
-    when 1 
+    when 1
       service = "TCPMUX"
     when 7
       service = "ECHO"
@@ -396,11 +392,11 @@ module Services
       service = "DNS"
     when 79
       service = "FINGER"
-    when 102 
+    when 102
       service = "TSAP"
     when 105
       service = "CCSO"
-    when 109 
+    when 109
       service = "POP2"
     when 110
       service = "POP3"
@@ -438,11 +434,11 @@ module Services
     when 2087
       service = "HTTPS-CLOUDFLARE"
     when 2095
-      service = "HTTP-CLOUDFLARE"  
+      service = "HTTP-CLOUDFLARE"
     when 2096
       service = "HTTPS-CLOUDFLARE"
     # End cloudflare oddities
-    when 2181,2888,3888 
+    when 2181,2888,3888
       service = "ZOOKEEPER"
     when 3306
       service = "MYSQL"
@@ -491,7 +487,7 @@ module Services
     else
       service = _service_name_for(port_num, "udp")
     end
-  service 
+  service
   end
 
 
