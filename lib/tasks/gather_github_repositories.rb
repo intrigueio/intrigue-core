@@ -12,9 +12,10 @@ module Intrigue
           references: ['https://docs.github.com/en/rest'],
           type: 'discovery',
           passive: true,
-          allowed_types: ['String', 'GithubAccount'],
+          allowed_types: ['String', 'GithubAccount', 'GithubCredential'],
           example_entities: [{ 'type' => 'String', 'details' => { 'name' => '__IGNORE__', 'default' => '__IGNORE__' } },
-                             { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'https://github.com/intrigueio' } }],
+                             { 'type' => 'GithubAccount', 'details' => { 'name' => 'intrigueio', 'default' => 'https://github.com/intrigueio' } },
+                             { 'type' => 'GithubCredential', 'details' => { 'name' => 'GithubCreds1', 'default' => 'GithubCreds1' } }],
           allowed_options: [{ name: 'ignore_forks', regex: 'boolean', default: false }],
           created_types: ['GithubRepository'],
           queue: 'task_github'
@@ -25,7 +26,7 @@ module Intrigue
       def run
         super
 
-        gh_client = initialize_gh_client
+        gh_client = initialize_gh_client(_get_entity_type_string)
         repos = retrieve_repositories(gh_client)
         _log "Results obtained: #{repos.size}"
         return if repos.empty?
@@ -42,8 +43,11 @@ module Intrigue
 
         (1..10).each do |i|
           r = _github_api_call(construct_api_uri.call(i), client&.access_token)
-          preflight = preflight_check(r) if i == 1
-          break unless preflight
+
+          if i == 1
+            preflight = preflight_check(r) if i == 1
+            break unless preflight
+          end
 
           parsed_r = _parse_json_response(r.body)
           break if parsed_r.nil? || parsed_r.equal?('rate_exhaustion') 
@@ -68,7 +72,7 @@ module Intrigue
         good = true
         case response.code
         when '401'
-          _log_error 'Authentication is required when using a String entity.'
+          _log_error 'Authentication is required when using a String/GithubCredential entity.'
           good = false
         when '422'
           _log_error 'Github Account does not exist; aborting.'
@@ -80,7 +84,7 @@ module Intrigue
       ## returns a lambda when passed a page number will construct the appropriate api route
       ## the api route is based on whether task is ran directly on key or a githubaccount entity
       def determine_api_route(entity_type)
-        if entity_type == 'String'
+        if ['String', 'GithubCredential'].include?(entity_type)
           ->(x) { "https://api.github.com/user/repos?type=all&per_page=100&page=#{x}" }
         elsif entity_type == 'GithubAccount'
           account_name = extract_github_account_name(_get_entity_name)

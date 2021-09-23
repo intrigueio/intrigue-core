@@ -2,11 +2,15 @@ module Intrigue
   module Task
     module Github
 
-      def initialize_gh_client
-        # the platform may try to pull the deprecated gitrob_access_token for legacy tasks
-        # if that token doesn't exist, try pulling from the github_access_token
-        access_token = _gh_access_token_exists?('github_access_token')
-        access_token ||= _gh_access_token_exists?('gitrob_access_token')
+      def initialize_gh_client(entity_type = nil)
+        if entity_type == 'GithubCredential'
+          access_token = _get_entity_sensitive_detail('github_access_token')
+        else
+          # the platform may try to pull the deprecated gitrob_access_token for legacy tasks
+          # if that token doesn't exist, try pulling from the github_access_token
+          access_token = _gh_access_token_exists?('github_access_token')
+          access_token ||= _gh_access_token_exists?('gitrob_access_token')
+        end
 
         _log_error 'Github Access Token is not set in task config.' if access_token.nil?
         return if access_token.nil?
