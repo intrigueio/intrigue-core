@@ -42,6 +42,64 @@ config = {
 # initialize control
 control = Intrigue::Control::Intrigueio.new(config)
 
-# start control
-control.run
+while true
+  # start collection
+  control.start_collect # TODO: loop until this is true
+
+  sleep(config["sleep_interval"])
+  _process_command
+  tasks_left, seconds_elapsed = _get_progress
+
+
+
+
+
+def _process_command
+  begin
+    lines = File.readlines("#{@core_dir}/tmp/commands.txt")
+    command = lines.first&.strip
+    success = false
+
+    if command == "pause"
+      puts "Pausing control."
+      while true
+        sleep 5
+        lines2 = File.readlines("#{@core_dir}/tmp/commands.txt")
+        command2 = lines2.first&.strip
+        if command2 == "unpause"
+          puts "UN-Pausing control."
+          File.open("#{@core_dir}/tmp/commands.txt", 'w') {|file| file.puts(lines2.drop(1)) }
+          break
+        end
+      end
+      success = true
+    end
+  
+    if command == "unpause"
+      puts "Got unpause command but we're not paused."
+      success = true
+    end
+
+    if command == "cleanup"
+      puts "Got cleanup command"
+      _cleanup
+      success = true
+    end
+    
+    if command == "restart"
+      puts "Got restart command"
+      success = true
+    end
+
+    # if command executed successfully, remove it from list 
+    if success
+      File.open("#{@core_dir}/tmp/commands.txt", 'w') {|file| file.puts(lines.drop(1)) }
+    else
+      File.open("#{@core_dir}/tmp/commands.txt", 'w') {|file| file.puts(lines) }
+    end
+  rescue Errno::ENOENT
+    return
+  end
+
+end # process command
 
