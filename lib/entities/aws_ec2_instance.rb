@@ -16,7 +16,7 @@ module Intrigue
 
     def validate_entity
       # validate either public ipv4 hostname or private ipv4 hostname
-      (name.match(/ec2/) && name.match(/\.compute\.amazonaws\.com/)) || (name.match(/ip/) && name.match(/\.compute\.internal/))
+      (name.match(/ec2/) && name.match(/\.amazonaws\.com/)) || (name.match(/ip/) && name.match(/\.internal/))
     end
 
     def detail_string
