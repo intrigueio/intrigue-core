@@ -26,10 +26,10 @@ GIT
 
 GIT
   remote: https://github.com/intrigueio/intrigue-ident.git
-  revision: e392502695d95bc08c4bee694b36a6825275b780
+  revision: e083b864eb60dfb2b48bdac9b430773290a02e6f
   branch: main
   specs:
-    intrigue-ident (5.6.95)
+    intrigue-ident (5.6.97)
       dnsruby
       mongo
       murmurhash3
@@ -355,12 +355,12 @@ GEM
       http-2 (~> 0.11)
     netrc (0.11.0)
     nio4r (2.5.8)
-    nokogiri (1.12.4)
+    nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
-    nokogiri (1.12.4-x86_64-darwin)
+    nokogiri (1.12.5-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.12.4-x86_64-linux)
+    nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
     octokit (4.21.0)
       faraday (>= 0.9)
