@@ -52,8 +52,8 @@ module Intrigue
             proof_msg = "Host appears to be vulnerable using the #{http_method.upcase} method with the #{vuln_indicator.keys[0]} as the indicator."
             _log_good proof_msg
 
-            unless bruteforce
-             _create_linked_issue "iis_shortnames_misconfiguration", {proof: {"Discovered Shortname Items": shortname_items}}
+            if !bruteforce
+             _create_linked_issue "iis_shortnames_misconfiguration", {proof: proof_msg}
             else # only run if bruteforce is set to true which will bruteforce and attempt to return the shortnames of files & directories
               possible_items, possible_exts, dupes = determine_valid_chars(uri, http_method, vuln_indicator)
               items, exts = retrieve_shortnames(uri, http_method, vuln_indicator, possible_items, possible_exts)
