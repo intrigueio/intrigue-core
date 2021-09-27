@@ -211,6 +211,7 @@ module Data
     tcp_ports << "53,"
     tcp_ports << "80,"
     tcp_ports << "81,"
+    tcp_ports << "82,"
     tcp_ports << "106,"
     tcp_ports << "110,"
     tcp_ports << "135,"
