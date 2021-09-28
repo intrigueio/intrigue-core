@@ -91,14 +91,14 @@ module Intrigue
               # only save the values
               nameservers = item.resource_records.map(&:value)
               _log_good "Retrieved #{nameservers.size} NS records associated with #{item.name}"
-              nameservers.compact.uniq.each { |n| _create_entity 'Nameserver', 'name' => n.scan(subdomain_regex).last.first }
+              nameservers.compact.uniq.each { |n| _create_entity 'Nameserver', {'name' => n.scan(subdomain_regex).last.first, "scoped": true} }
             when 'MX'
               # only save the values -> may save the record name as well however most of the time its set for the domain rather than a specific subdomain
               mxvalues = item.resource_records.map(&:value)
-              mxvalues.compact.uniq.each { |m| _create_entity 'Mailserver', 'name' => m.scan(subdomain_regex).last.first }
+              mxvalues.compact.uniq.each { |m| _create_entity 'Mailserver', {'name' => m.scan(subdomain_regex).last.first, "scoped": true} }
             when 'A', 'CNAME', 'AAAA', 'SRV'
               _log_good "Retrieved the following #{item.type} Record: #{item.name.scan(subdomain_regex).last.first}"
-              _create_entity 'DnsRecord', 'name' => item.name.scan(subdomain_regex).last.first
+              _create_entity 'DnsRecord', { 'name' => item.name.scan(subdomain_regex).last.first, "scoped": true}
             end
           end
         end
