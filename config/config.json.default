@@ -19,6 +19,7 @@
   "browser_enabled": true,
   "intrigue_task_log_location": "database",
   "intrigue_task_log_level": "error",
+  "scan_internal_ips": false,
   "intrigue_load_paths": [],
   "intrigue_handler_processing_wait_time": 60,
   "intrigue_notifiers": {
