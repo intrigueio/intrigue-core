@@ -4,6 +4,7 @@
 ### In the case where we're a gem, they're not yet available. add them as deps
 ###
 begin  # try to load runtime deps
+  require 'aws-sdk-core'
   require 'aws-sdk-iam'
   require 'aws-sdk-ecs'
   require 'aws-sdk-ec2'

@@ -48,7 +48,7 @@ module Intrigue
           instances = ec2.instances
           instances.first # force to authenticate to ensure creds are valid
         rescue Aws::EC2::Errors::UnauthorizedOperation
-          _log_error 'API Key lacks permission to list instances.'
+          _log_error "API Key lacks permission to list instances in #{region}"
           return nil
         rescue Seahorse::Client::NetworkingError
           _log_error "Unable to connect to the AWS EC2 API, this is most likely because #{region} is an invalid region."
