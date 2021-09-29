@@ -5,7 +5,7 @@ module Intrigue
 
       def self.metadata
         {
-          name: 'Gather Github Repositories',
+          name: 'gather_github_repositories',
           pretty_name: 'Gather Github Repositories',
           authors: ['jcran', 'maxim'],
           description: 'Gathers repositories belonging to a Github account (personal/organization). This task uses either authenticated or unauthenticated techniques based on whether a Github Access Token is provided. Please note that the unauthenticated technique is rate limited at 60 requests per hour, while the authenticated technique allows for 5,000 requests per hour. <br><br>Allowed Task Entities:<br><ul><li><b>String</b> - (default value: __IGNORE__) - <b>Requires Valid Github Access Token</b>. Leave this default if you would like to retrieve all repositories belonging to the access token.</li><li><b>Github Account</b> - (Default value: intrigueio) - If you would like to retrieve repositories for a specific Github account, use this entity. This will use either authenticated or unauthenticated techniques to retrieve repositories belonging to the account specified.</li></ul>',
