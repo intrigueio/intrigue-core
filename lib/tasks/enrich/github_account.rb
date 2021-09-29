@@ -26,7 +26,13 @@ module Intrigue
         ## Default method, subclasses must override this
         
         def run
-          _log "Marking #{_get_entity_type_string}: #{_get_entity_name} enriched!"
+          # check if account exists
+          account_name = _get_entity_name
+          unless check_uri_exists(account_name, :code)
+            # this account does not exist.
+            @entity.hidden = true
+            @entity.save
+          end
         end
       end
     end
