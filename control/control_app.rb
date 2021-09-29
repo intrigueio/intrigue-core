@@ -45,6 +45,9 @@ module Intrigue
         Intrigue::ControlHelpers::set_notifier(config["slack_hook_url"])
         Intrigue::ControlHelpers::set_logfile(@logfile)
 
+        # debug mode?
+        @debug = config["debug"]
+
         # cleanup in case we're not clean
         _cleanup
 
@@ -54,7 +57,7 @@ module Intrigue
       end
 
       # the run method, this is where the magic happens
-      def start_collect
+      def run
         # ensure we're clean
         _cleanup
 
@@ -74,10 +77,13 @@ module Intrigue
         @instruction_data = instruction_data
         @bootstrap_data = bootstrap_data
         @collection_name = instruction_data["collection"]
-        @start_time = Time.now
         @collection_run_uuid = instruction_data["uuid"] || instruction_data["id"]
         @cr_session_token = instruction_data["session_token"]
+        @start_time = Time.now
 
+
+        # set status to started
+        _set_status "started", collection_run_uuid, {}, cr_session_token unless @debug
         return @collection_name
 
       end
@@ -135,7 +141,7 @@ module Intrigue
           cr_session_token = instruction_data["session_token"]
 
           # get boostrap information for collection
-          bootstrap_data = _get_bootstrap_data("#{collection_name}", collection_run_uuid, cr_session_token)
+          bootstrap_data = _get_bootstrap_data(collection_name, cr_session_token)
           if !bootstrap_data
             _log_error "Failed to get bootstrap information for colleciton #{collection_name}. Retrying..."
             counter -= 1
@@ -150,7 +156,7 @@ module Intrigue
       
       # this method obtains the next collection from the queue
       def _get_queued_instruction
-        _log "Getting next queued instruction"
+        _log "Getting instructions for collection"
         uri = "#{@app_protocol}://#{@app_hostname}/api/system/scheduler/request?key=#{@app_key}&min_priority=#{@min_priority}&max_priority=#{@max_priority}"
         
         begin
@@ -169,14 +175,14 @@ module Intrigue
       end
 
       # this method obtains the boostrap information for a given queue
-      def _get_bootstrap_data
-        _log "Getting bootstrap information for collection: #{@collection_name}"
-        uri = "#{@app_protocol}://#{@app_hostname}/api/system/collections/#{@collection_name}/bootstrap?key=#{@app_key}"
+      def _get_bootstrap_data(collection_name, cr_session_token)
+        _log "Getting bootstrap information for collection: #{collection_name}"
+        uri = "#{@app_protocol}://#{@app_hostname}/api/system/collections/#{collection_name}/bootstrap?key=#{@app_key}"
 
         begin
           # _log "Making attempt #{counter} for bootstrap"
           headers = {
-            "COLLECTION_RUN_SESSION_TOKEN" => "#{@cr_session_token}", 
+            "COLLECTION_RUN_SESSION_TOKEN" => "#{cr_session_token}", 
             "ENGINE_API_KEY" => "#{@app_key}"
           }
           response = http_request(:get, uri, nil, headers, nil, true, 60)
@@ -194,14 +200,13 @@ module Intrigue
       # method to get current progress
       def _get_progress
         task_count_left = _tasks_left
-        seconds_elapsed = Time.now - @start_time
+        seconds_elapsed = _seconds_elapsed
       
         # print some output every 5th iteration
-        log_message =  " Collection: #{@collection_name}"
+        log_message =  "Collection: #{@collection_name}"
         log_message << " | Seconds elapsed: #{seconds_elapsed}" 
         log_message << " | Tasks left: #{task_count_left}"
-        _log log_message
-        return task_count_left, seconds_elapsed
+        return log_message
       end
 
       def _send_finished_project
@@ -311,6 +316,10 @@ module Intrigue
     
         count += Sidekiq::Stats.new.enqueued
         return count
+      end
+
+      def _seconds_elapsed
+        Time.now - @start_time
       end
 
       def _clear_queues

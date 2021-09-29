@@ -47,6 +47,42 @@ module Intrigue
         end
       end
     end
-  
+
+    def _process_command(control=nil)
+      begin
+        lines = File.readlines("#{@core_dir}/tmp/commands.txt")
+        command = lines.first&.strip
+        success = false
+    
+        if command == "pause"
+          puts "Control paused."
+          sleep 10
+          _process_command
+        end
+    
+        if command == "abort"
+          puts "Got abort command"
+          control._cleanup
+          success = true
+        end
+        
+        if command == "finish"
+          puts "Got finish command"
+          control._clear_queues
+          success = true
+        end
+    
+        # if command executed successfully, remove it from list 
+        if success
+          File.open("#{@core_dir}/tmp/commands.txt", 'w') {|file| file.puts(lines.drop(1)) }
+        else
+          File.open("#{@core_dir}/tmp/commands.txt", 'w') {|file| file.puts(lines) }
+        end
+      rescue Errno::ENOENT
+        return
+      end
+    
+    end # process command
+    
   end
-  end
+end
