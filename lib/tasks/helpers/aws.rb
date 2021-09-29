@@ -17,6 +17,34 @@ module Intrigue
         client
       end
 
+      def aws_keys_valid?(access_key, secret_key, session_token = nil)
+        sts_client = Aws::STS::Client.new(region: 'us-east-1', access_key_id: access_key, secret_access_key: secret_key,
+                                          session_token: session_token)
+        begin
+          sts_client.get_caller_identity # no permissions required to call this operation
+          true # return true
+        rescue Aws::STS::Errors::SignatureDoesNotMatch, Aws::STS::Errors::InvalidClientTokenId
+          _log_error 'AWS Keys provided are invalid.'
+          false # return false
+        end
+      end
+
+      def retrieve_ec2_regions(access_key, secret_key, session_token = nil)
+        client = Aws::EC2::Client.new(region: 'us-east-1', access_key_id: access_key,
+                                      secret_access_key: secret_key, session_token: session_token)
+
+        begin
+          result = client.describe_regions
+        rescue Aws::EC2::Errors::AuthFailure, Aws::EC2::Errors::UnauthorizedOperation
+          # failure; just return the list of default regions - will not include gov ones
+          return ['eu-north-1', 'ap-south-1', 'eu-west-3', 'eu-west-2', 'eu-west-1', 'ap-northeast-3', 
+                  'ap-northeast-2', 'ap-northeast-1', 'sa-east-1', 'ca-central-1', 'ap-southeast-1', 
+                  'ap-southeast-2', 'eu-central-1', 'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2']
+        end
+
+        result.regions.map(&:region_name) # return the list of regions account has access to
+      end
+
       # checks if the bucket has been enriched and if so returns the region (as its required to initalize the s3 client)
       # if bucket does not exist; we end the task abruptly as theres no point in working with a non-existent bucket
       def s3_bucket_enriched?
