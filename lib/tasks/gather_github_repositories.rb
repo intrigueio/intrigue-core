@@ -75,7 +75,7 @@ module Intrigue
           _log_error 'Authentication is required when using a String/GithubCredential entity.'
           good = false
         when '422'
-          _log_error 'Github Account does not exist; aborting.'
+          _log_error 'Github Account does not exist or no permission to access; aborting.'
           good = false
         end
         good
