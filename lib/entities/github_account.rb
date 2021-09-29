@@ -12,6 +12,7 @@ module Intrigue
 
       def self.transform_before_save(name, details_hash)
         new_name = "https://github.com/#{name}" unless name.match(/^https:\/\/github.com\/[\w\-]{1,39}$/)
+        details_hash[:name] = new_name
         return new_name, details_hash
       end
 
