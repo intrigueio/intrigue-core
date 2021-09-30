@@ -6,9 +6,9 @@ module Model
     plugin :validation_helpers
     plugin :serialization, :json, :options, :handlers, :whitelist_strings, :blacklist_strings
 
-    many_to_one :logger
+    many_to_one :logger, dependent: :destroy
     many_to_one :project
-    one_to_many :task_results
+    one_to_many :task_results, dependent: :destroy
     many_to_one :base_entity, :class => :'Intrigue::Core::Model::Entity', :key => :base_entity_id
 
     include Intrigue::Core::ModelMixins::Handleable

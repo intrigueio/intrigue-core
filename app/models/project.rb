@@ -13,6 +13,11 @@ module Model
     one_to_many :task_results
     one_to_many :scan_results
     one_to_many :issues
+    one_to_many :entities
+
+    plugin :association_dependencies,
+    alias_groups: :destroy, logger: :destroy, task_results: :destroy,
+    scan_results: :destroy, issues: :destroy, entities: :destroy
 
     include Intrigue::Core::ModelMixins::Handleable
     include Intrigue::Core::System::DnsHelpers
@@ -23,24 +28,7 @@ module Model
     end
 
     def delete!
-      self.scan_results.each{|x| x.delete }
-      self.entities_task_results.each{|x| x.delete }
-      self.task_results.each{|x| x.delete }
-      self.alias_groups.each{ |x| x.delete}
-      self.issues.each{|x| x.delete }
-      self.entities.each{ |x| x.remove_all_task_results }
-      self.entities.each{|x| x.delete }
-      self.logger.each{|x| x.delete }
-      self.delete
-    true
-    end
-
-    def issues
-      Intrigue::Core::Model::Issue.scope_by_project(self.name) || []
-    end
-
-    def entities
-      Intrigue::Core::Model::Entity.scope_by_project(self.name) || []
+      self.destroy
     end
 
     def seeds

@@ -26,6 +26,8 @@ module Model
     many_to_one  :project
     one_to_many  :issues
 
+    plugin :association_dependencies, task_results: :nullify
+
     include Intrigue::Core::System::DnsHelpers
     include Intrigue::Core::System::Validations
 

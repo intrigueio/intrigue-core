@@ -16,6 +16,8 @@ module Model
 
     #self.raise_on_save_failure = true
 
+    plugin :association_dependencies, logger: :destroy, entities: :nullify
+
     include Intrigue::Core::ModelMixins::Handleable
 
     def self.scope_by_project(project_name)
