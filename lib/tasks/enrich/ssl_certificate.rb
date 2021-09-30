@@ -81,6 +81,13 @@ class SslCertificate < Intrigue::Task::BaseTask
         proof: "Configured Alorigthm is: #{algo}, included in: #{invalid_algos}" }
     end
 
+    list_of_domains_sharing_same_certificate = _get_entity_detail("list_of_domains_sharing_same_certificate")
+    # Create in case of wildcard certificate
+    if list_of_domains_sharing_same_certificate != nil  
+      _create_linked_issue "wildcard_certificate", {
+        proof: list_of_domains_sharing_same_certificate }
+    end 
+
   end
 
 end
