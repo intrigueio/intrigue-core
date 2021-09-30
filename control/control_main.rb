@@ -36,8 +36,7 @@ config = {
   "platform_ingress" => ("#{ENV["PLATFORM_INGRESS"]}" == "true"),
   "load_global_entities" => false,# ("#{ENV["LOAD_GLOBAL_ENTITIES"]}" == "true")
   "core_dir" => "#{ENV["INTRIGUE_DIRECTORY"]}",
-  "engine_source" => "#{ENV["ENGINE_SOURCE"]}",
-  "debug" => ("#{ENV["DEBUG"]}" == "true")
+  "engine_source" => "#{ENV["ENGINE_SOURCE"]}"
 }
 
 # initialize control
@@ -45,21 +44,28 @@ control = Intrigue::Control::Intrigueio.new(config)
 
 while true
   # process command in case we're asked to do anything before starting a new collection
-  _process_command
+  process_command
 
   # start scanning a collection
   current_collection = control.run
-  next unless current_collection
+  unless current_collection
+    # if we fail to start a colleciton run, we sleep randomly to not waste cpu because there may not be anything to collect atm
+    wait_time = rand(100)
+    puts "Unable to start collection run. Sleeping... #{wait_time}"
+    sleep wait_time
+    next
+  end
+  
   _log "Starting to scan collection: #{current_collection}"
-
   # loop until we're done or the maximum duration is achieved
-  while control._tasks_left.positive? || control._seconds_elapsed < config["max_seconds"]
+  while control.tasks_left.positive? && control.seconds_elapsed < config["max_seconds"]
     sleep(config["sleep_interval"])
-    _log control._get_progress
-    _process_command(control)
+    _log control.get_progress
+    control.send_heartbeat
+    process_command(control)
   end
 
   # ok we're done. upload results
-  control._send_finished_project
+  control.send_finished_project
 
 end

@@ -48,42 +48,60 @@ module Intrigue
       end
     end
 
-    def _process_command(control=nil)
-      begin
-        lines = File.readlines("#{@core_dir}/tmp/commands.txt")
-        command = lines.first&.strip
-        success = false
+    def process_command(control=nil)
+      command = _read_command
+      success = false
+
+      puts "Processing command: #{command}"
     
-        if command == "pause"
-          puts "Control paused."
-          sleep 10
-          _process_command
-          success = true
-        end
-    
-        if command == "abort"
-          puts "Got abort command"
-          control._cleanup
-          success = true
-        end
-        
-        if command == "finish"
-          puts "Got finish command"
-          control._clear_queues
-          success = true
-        end
-    
-        # if command executed successfully, remove it from list 
-        if success
-          File.open("#{@core_dir}/tmp/commands.txt", 'w') {|file| file.puts(lines.drop(1)) }
-        else
-          File.open("#{@core_dir}/tmp/commands.txt", 'w') {|file| file.puts(lines) }
-        end
-      rescue Errno::ENOENT
-        return
+      if command == "pause"
+        puts "Control paused."
+        sleep 10
+        _process_command
+        success = true
       end
-    
-    end # process command
+  
+      if command == "abort"
+        puts "Got abort command"
+        control._cleanup
+        success = true
+      end
+      
+      if command == "finish"
+        puts "Got finish command"
+        control._clear_queues
+        success = true
+      end
+
+      if command == "test"
+        success = true
+      end
+
+      if success
+        _delete_command
+      end
+    end
+
+    def _read_command
+      begin
+        # ugly hack, should not hardcode core directory
+        lines = File.readlines("/home/ubuntu/core/tmp/commands.txt")
+        command = lines.first&.strip
+        return command
+      rescue Errno::ENOENT
+        return nil
+      end
+    end
+
+    def _delete_command
+      begin
+        lines = File.readlines("/home/ubuntu/core/tmp/commands.txt")
+        File.open("/home/ubuntu/core/tmp/commands.txt", 'w') {|file| file.puts(lines.drop(1)) }
+        return true
+      rescue Errno::ENOENT
+        return nil
+      end
+    end
     
   end
 end
