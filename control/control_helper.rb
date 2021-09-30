@@ -58,6 +58,7 @@ module Intrigue
           puts "Control paused."
           sleep 10
           _process_command
+          success = true
         end
     
         if command == "abort"
