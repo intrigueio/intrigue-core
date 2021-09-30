@@ -93,11 +93,11 @@ class BaseTask
       our_task_result_name = "#{@task_result.name}"
 
       # query existing results, limit to those that have been started
-      existing_task_results = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where(
-        name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id)
+      existing_running_task_result = Intrigue::Core::Model::TaskResult.scope_by_project(@project.name).where(
+        name: our_task_result_name).exclude(timestamp_start: nil).exclude(id: @task_result.id).first
 
       # if we've already completed another one, return eearly
-      if existing_task_results.first
+      if existing_running_task_result
         _log "This task is in progress, or has already been completed in this project"
 
         # we want to be able to intelligently re-run flows we havent seen before... this is a way to do that
@@ -111,6 +111,7 @@ class BaseTask
           _log_error "Returning, this task was already scheduled or run!"
           return_early = true
         end
+
       end
     end
 
