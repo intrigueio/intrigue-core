@@ -10,13 +10,20 @@ module Intrigue
         }
       end
 
+      def self.transform_before_save(name, details_hash)
+        new_name = name
+        new_name = "https://github.com/#{name}" unless name.match(/^https:\/\/github.com\/[\w\-]{1,39}$/)
+        details_hash[:name] = new_name
+        return new_name, details_hash
+      end
+
       def validate_entity
         name.match /^https:\/\/github.com\/[\w\-]{1,39}$/
       end
 
       def enrichment_tasks
         # to enrich github accounts, use enrich/github_account and prepend to array below
-        ['gather_github_repositories']
+        ['enrich/github_account']
       end
 
       def scoped?
