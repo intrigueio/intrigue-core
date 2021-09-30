@@ -109,8 +109,22 @@ class EntityManager
     new_entity = Intrigue::Core::Model::Entity.find(:id => entity.id)
 
     # Ensure we have an entity
-    unless new_entity && new_entity.transform! && new_entity.validate_entity
+    unless new_entity
       puts "Error creating entity: #{new_entity}. " + "Entity: #{type_string}##{name} #{details_hash}"
+      return nil
+    end
+
+    ### Run transformation (to hide attributes... HACK)
+    unless new_entity.transform!
+      puts "Transformation of entity failed: #{new_entity}, rolling back entity creation!!"
+      new_entity.delete
+      return nil
+    end
+
+    ### Run Validation
+    unless new_entity.validate_entity
+      puts "Validation of entity failed: #{new_entity}, rolling back entity creation!!"
+      new_entity.delete
       return nil
     end
 

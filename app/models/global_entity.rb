@@ -38,7 +38,8 @@ module Model
         "NetBlock",
         "Uri",
         "UniqueKeyword",
-        "UniqueToken"
+        "UniqueToken",
+        "IpAddress"
       ]
     end
 

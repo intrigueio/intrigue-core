@@ -19,7 +19,12 @@ module System
 
       ip_exceptions = [
         /^127\..*$/,
-        /^0.0.0.0$/
+        /^0.0.0.0$/,
+        /(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)/, # check if we match 172.16.x.x
+        /(^10\.)/, # check if we match 10.x.x.x
+        /(^192\.168\.)/, # check if we match 192.168.x.x
+        /(^fc00\:)/, # fc00::/7 address block = RFC 4193 Unique Local Addresses (ULA)
+        /(^fec0\:)/ # fec0::/10 address block = deprecated (RFC 3879)
       ]
     end
 
