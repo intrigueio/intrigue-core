@@ -29,6 +29,7 @@ module Model
 
     def delete!
       self.destroy
+      true
     end
 
     def seeds
