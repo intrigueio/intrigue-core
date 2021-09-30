@@ -53,7 +53,7 @@ while true
   _log "Starting to scan collection: #{current_collection}"
 
   # loop until we're done or the maximum duration is achieved
-  while control._tasks_left.positive? && control._seconds_elapsed < config["max_seconds"]
+  while control._tasks_left.positive? || control._seconds_elapsed < config["max_seconds"]
     sleep(config["sleep_interval"])
     _log control._get_progress
     _process_command(control)
