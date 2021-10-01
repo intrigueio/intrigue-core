@@ -1,7 +1,7 @@
 
 # Notice
 
-As of October 1, 2021, this component of the Intrigue project is no longer actively maintained at this location, and the code in this reposiotry has been re-licensed under the terms of the Mandiant Limited Open Source License Agreement (see: LICENSE.md).
+As of October 1, 2021, this component of the Intrigue project is no longer actively maintained at this location, and the code in this repository has been re-licensed under the terms of the Mandiant Limited Open Source License Agreement (see: LICENSE.md).
 
 # Welcome!
 
