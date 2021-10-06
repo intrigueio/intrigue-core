@@ -282,7 +282,7 @@ if (Intrigue::Core::System::Config.config && Intrigue::Core::System::Config.conf
   Sentry.init do |config|
     config.dsn = Intrigue::Core::System::Config.config["sentry_dsn"]
     config.breadcrumbs_logger = [:sentry_logger, :http_logger]
-    config.traces_sample_rate = 0.2
+    config.traces_sample_rate = 0.0
   end
 end
 
