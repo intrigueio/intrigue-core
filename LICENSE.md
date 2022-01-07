@@ -1,4 +1,4 @@
-Copyright (c) 2015-2021, Mandiant Corporation
+Copyright (c) 2015-2022, Mandiant Corporation
 All rights reserved.
 
 
