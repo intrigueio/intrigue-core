@@ -466,7 +466,7 @@ GEM
     sequel (5.48.0)
     shodan (1.0.0)
       json (>= 1.4.6)
-    sidekiq (6.2.2)
+    sidekiq (6.4.0)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
