@@ -49,6 +49,10 @@ require_relative 'lib/initialize/string'
 require_relative 'lib/initialize/symbol'
 require_relative 'lib/initialize/typhoeus'
 
+# https://github.com/rails/rails/issues/43851
+require "active_support/isolated_execution_state"
+
+
 # load up our system config
 require_relative 'lib/system/config'
 Intrigue::Core::System::Config.load_config
