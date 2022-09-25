@@ -31,7 +31,14 @@ fi
 if [ ! -f public_suffix_list.dat ]; then
   echo "[+] Getting latest Public suffix list"
   wget -N -q https://publicsuffix.org/list/public_suffix_list.dat
-  cat public_suffix_list.dat | grep -i -e '^/' -v | awk 'NF' | sed 's/\*\.//g' > public_suffix_list.clean.txt
+  sed -r '{
+    # removing lines with sentences (which need spaces)
+    / /d
+    # removing blank lines
+    /^\s*$/d
+    # getting just valid suffix, "*.foo.com" should be "foo.com"
+    s/\*\.//g
+  }' public_suffix_list.dat > public_suffix_list.clean.txt
   rm public_suffix_list.dat
 fi
 
