@@ -378,6 +378,12 @@
       "editable": "true",
       "comment": ""
     },
+    "leakcheck_api_key": {
+      "value": "",
+      "uri": "https://leakcheck.net/api_s",
+      "editable": "true",
+      "comment": ""
+    },
     "mailbox_layer_apikey": {
       "value": "",
       "uri": "https://mailboxlayer.com/dashboard",
